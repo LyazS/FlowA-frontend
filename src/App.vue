@@ -82,9 +82,9 @@ const buildNestedNodeGraph = () => {
       NestedNodeGraph.value[node.parentNode].children.push(nid)
     }
   })
-  console.log("NestedNodeGraph", NestedNodeGraph.value);
-  console.log("getNodes", getNodes.value);
-  console.log("edges", getEdges.value);
+  // console.log("NestedNodeGraph", NestedNodeGraph.value);
+  // console.log("getNodes", getNodes.value);
+  // console.log("edges", getEdges.value);
 }
 
 const recursiveUpdateNodeSize = (nodeId) => {
@@ -157,6 +157,18 @@ onMounted(async () => {
 const recursiveAddNodeToVFlow = (parentNodeId, nodetype, position) => {
   console.log("addNodeToVFlow", parentNodeId, nodetype, position);
   const parentNode = getVFNodeById(parentNodeId);
+  let can_add_child = false;
+  if (!parentNode) {
+    console.log("parent node is null/undefined, can add child node");
+    can_add_child = true;
+  }
+  else { console.log("parent node is not null/undefined, check next step"); }
+  console.log(`parent node nested:${parentNode?.data._is_nested}`);
+  if (!!parentNode && parentNode.data._is_nested) {
+    can_add_child = true;
+  }
+  console.log("can_add_child", can_add_child);
+  if (!can_add_child) return;
   const node_init_info = _.cloneDeep(AllNodeInitInfos[nodetype]);
   let new_node = {
     id: getUuid(),
@@ -262,8 +274,19 @@ const showContextMenu = (event_cm) => {
   showMenu.value = true
   menuOptions.x = event_cm.event.clientX
   menuOptions.y = event_cm.event.clientY
-  menuOptions.items = [
-    {
+  let can_add_child = true;
+  menuOptions.items = [];
+  if (event_cm.type === 'node') {
+    menuOptions.items.push({
+      label: '删除节点',
+      onClick: () => onClickContextMenuRmNode(event_cm),
+    });
+    if (!event_cm.node.data._is_nested) {
+      can_add_child = false;
+    }
+  }
+  if (can_add_child) {
+    menuOptions.items.push({
       label: '添加节点',
       children: Object.values(AllNodeInitInfos).map((node_init_info) => ({
         label: node_init_info.name,
@@ -278,14 +301,9 @@ const showContextMenu = (event_cm) => {
           addNodeToVFlow(event_cm.node?.id, node_init_info.type, node_position);
         },
       })),
-    },
-  ];
-  if (event_cm.type === 'node') {
-    menuOptions.items.push({
-      label: '删除节点',
-      onClick: () => onClickContextMenuRmNode(event_cm),
     });
   }
+
 }
 onNodeContextMenu((event) => {
   console.log("右键节点", event.node.id);
