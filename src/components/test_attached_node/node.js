@@ -1,12 +1,13 @@
 import NodeVue from './node.vue';
 export const initInfo = {
-    name: "测试子节点",
-    type: "test_child_node",
+    name: "测试附属节点",
+    type: "test_attached_node",
     init_width: 30,
     init_height: 30,
     init_data: {
         // 必要参数 ========
         _is_nested: false,// 是否可嵌套
+        _is_attached: true,// 是否为附属节点
         _size: {
             width: -1,
             height: -1,

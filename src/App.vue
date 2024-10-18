@@ -270,7 +270,6 @@ const menuOptions = reactive({
   items: [],
 })
 const showContextMenu = (event_cm) => {
-  event_cm.event.preventDefault()
   showMenu.value = true
   menuOptions.x = event_cm.event.clientX
   menuOptions.y = event_cm.event.clientY
@@ -307,6 +306,8 @@ const showContextMenu = (event_cm) => {
 }
 onNodeContextMenu((event) => {
   console.log("右键节点", event.node.id);
+  event.event.preventDefault();
+  if (event.node.data._is_attached) return;
   const event_cm = {
     type: 'node',
     event: event.event,
@@ -316,6 +317,7 @@ onNodeContextMenu((event) => {
 })
 onPaneContextMenu((event) => {
   console.log("右键空白");
+  event.preventDefault();
   const event_cm = {
     type: 'pane',
     event: event,

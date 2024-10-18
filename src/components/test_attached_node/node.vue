@@ -1,7 +1,7 @@
 <template>
     <div :style="{ width: '100%', height: '100%' }">
-        <Handle class="test_child_node-handle-com test_child_node-handle" id="input" type="target" :position="Position.Left" />
-        <Handle class="test_child_node-handle-com test_child_node-handle" id="output" type="source" :position="Position.Right" />
+        <Handle class="test_attached_node-handle-com test_attached_node-handle" id="input" type="target" :position="Position.Left" />
+        <Handle class="test_attached_node-handle-com test_attached_node-handle" id="output" type="source" :position="Position.Right" />
         <n-flex vertical align="center" justify="center">
             <n-flex class="left-flex">
                 <div :style="{ color: 'white', height: '5px' }">子</div>
@@ -19,7 +19,7 @@ const props = defineProps(['id', 'label', 'data'])
 </script>
 
 <style>
-.vue-flow__node-test_child_node {
+.vue-flow__node-test_attached_node {
     border: 2px solid rgb(52, 52, 56);
     background-color: rgb(52, 52, 56);
     border-radius: 10px;
@@ -30,26 +30,26 @@ const props = defineProps(['id', 'label', 'data'])
     align-items: center;
 }
 
-.vue-flow__node-test_child_node.node-name {
+.vue-flow__node-test_attached_node.node-name {
     align-content: left;
     align-items: left;
 }
 
-.vue-flow__node-test_child_node.selected {
+.vue-flow__node-test_attached_node.selected {
     border: 2px solid rgb(138, 203, 236);
 }
 
-.vue-flow__node-test_child_node:hover {
+.vue-flow__node-test_attached_node:hover {
     box-shadow: 0 0 10px rgb(138, 203, 236);
 }
 </style>
 
 <style scoped>
-.test_child_node-handle-com:hover {
+.test_attached_node-handle-com:hover {
     background-color: rgb(255, 255, 255);
 }
 
-.test_child_node-handle {
+.test_attached_node-handle {
     height: 5px;
     width: 5px;
     border-radius: 4px
