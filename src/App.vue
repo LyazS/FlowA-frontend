@@ -148,12 +148,6 @@ const recursiveUpdateNodeSize = (nodeId) => {
   recursiveUpdateNodeSize(nested_node.parentNode);
 }
 
-
-onMounted(async () => {
-  await initAllNodeInfos();
-  buildNestedNodeGraph();
-})
-
 const recursiveAddNodeToVFlow = (parentNodeId, nodetype, position) => {
   console.log("addNodeToVFlow", parentNodeId, nodetype, position);
   const parentNode = getVFNodeById(parentNodeId);
@@ -231,30 +225,7 @@ const addNodeToVFlow = (parentNodeId, nodetype, position) => {
   buildNestedNodeGraph();
   recursiveUpdateNodeSize(parentNodeId);
 };
-const removeNodeFromVFlow = (nodeId) => {
-
-};
-const addEdgeToVFlow = (edge) => {
-
-};
-const removeEdgeFromVFlow = (edge) => {
-
-};
-onNodeDrag((event) => {
-  const e_nodes = event.nodes;
-  e_nodes.forEach(node => {
-    if (node.parentNode) {
-      recursiveUpdateNodeSize(node.parentNode)
-    }
-  })
-})
-// 右键菜单相关代码
-const onClickContextMenuRmNode = (event_cm) => {
-  console.log('删除节点');
-  const event = event_cm.event;
-  const node = event_cm.node;
-  const parent_id= node.parentNode;
-
+const removeNodeFromVFlow = (node) => {
   let need_del = [];
   let want_del = [node];
   while (want_del.length > 0) {
@@ -269,6 +240,21 @@ const onClickContextMenuRmNode = (event_cm) => {
     })
   }
   removeNodes(need_del);
+};
+const addEdgeToVFlow = (edge) => {
+
+};
+const removeEdgeFromVFlow = (edge) => {
+
+};
+
+// 右键菜单相关代码
+const onClickContextMenuRmNode = (event_cm) => {
+  console.log('删除节点');
+  const node = event_cm.node;
+  const parent_id = node.parentNode;
+
+  removeNodeFromVFlow(node);
   buildNestedNodeGraph();
   recursiveUpdateNodeSize(parent_id);
 }
@@ -322,6 +308,15 @@ const showContextMenu = (event_cm) => {
   }
 }
 
+// vueflow事件监听
+onNodeDrag((event) => {
+  const e_nodes = event.nodes;
+  e_nodes.forEach(node => {
+    if (node.parentNode) {
+      recursiveUpdateNodeSize(node.parentNode)
+    }
+  })
+})
 onNodeContextMenu((event) => {
   console.log("右键节点", event.node.id);
   event.event.preventDefault();
@@ -345,5 +340,10 @@ onPaneContextMenu((event) => {
 onEdgeContextMenu((event) => {
   console.log("右键边");
   event.event.preventDefault();
+})
+
+onMounted(async () => {
+  await initAllNodeInfos();
+  buildNestedNodeGraph();
 })
 </script>
