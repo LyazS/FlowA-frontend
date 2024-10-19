@@ -249,6 +249,29 @@ onNodeDrag((event) => {
   })
 })
 // 右键菜单相关代码
+const onClickContextMenuRmNode = (event_cm) => {
+  console.log('删除节点');
+  const event = event_cm.event;
+  const node = event_cm.node;
+  const parent_id= node.parentNode;
+
+  let need_del = [];
+  let want_del = [node];
+  while (want_del.length > 0) {
+    let cur_node = want_del.shift();
+    need_del.push(cur_node);
+    let children = NestedNodeGraph.value[cur_node.id].children;
+    children.forEach(child_id => {
+      let child_node = getVFNodeById(child_id);
+      if (child_node) {
+        want_del.push(child_node);
+      }
+    })
+  }
+  removeNodes(need_del);
+  buildNestedNodeGraph();
+  recursiveUpdateNodeSize(parent_id);
+}
 const showMenu = ref(false);
 const menuOptions = reactive({
   theme: 'mac dark',
