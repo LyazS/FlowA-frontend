@@ -14,8 +14,7 @@ export const initInfo = {
         },
         // =================
         // 可选参数
-        // _is_fixed_child_in_nest: true,// 是否是嵌套节点中的固定子节点，会自动添加
-        // _fixed_position_in_nest: "top-left",// 固定子节点在嵌套节点中的位置，会自动添加
+        // _attached_pos: "top-left",// 固定子节点在嵌套节点中的位置，会自动添加
         // =================
     },
 };
