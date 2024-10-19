@@ -1,10 +1,21 @@
 <template>
-  <VueFlow :connection-mode="ConnectionMode.Strict" :connection-radius="30" :nodes="InitVFNodes" :edges="InitVFEdges"
-    :nodeTypes="AllVFNodeTypes" fit-view-on-init elevate-edges-on-select>
+  <VueFlow class="basic-flow" :connection-mode="ConnectionMode.Strict" :connection-radius="30"
+    :nodeTypes="AllVFNodeTypes" fit-view-on-init elevate-edges-on-select :max-zoom="4" :min-zoom="0.1"
+    :select-nodes-on-drag="false">
     <Background />
   </VueFlow>
   <ContextMenu v-model:show="showMenu" :options="menuOptions" />
 </template>
+
+<style scoped>
+.basic-flow {
+  height: 100%;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  background: rgb(16, 16, 20);
+}
+</style>
 
 <script setup>
 import _ from 'lodash';
@@ -41,8 +52,7 @@ const {
   onEdgeContextMenu,
   screenToFlowCoordinate,
 } = useVueFlow();
-const InitVFNodes = ref([]);
-const InitVFEdges = ref([]);
+
 const NestedNodeGraph = ref({});
 const AllNodeInitInfos = {};
 const AllVFNodeTypes = reactive({});
