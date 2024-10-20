@@ -3,6 +3,8 @@
     :nodeTypes="AllVFNodeTypes" fit-view-on-init elevate-edges-on-select :max-zoom="4" :min-zoom="0.1"
     :select-nodes-on-drag="false">
     <Background />
+    <miniMap />
+    <miniMapCtrl />
   </VueFlow>
   <ContextMenu v-model:show="showMenu" :options="menuOptions" />
 </template>
@@ -23,9 +25,10 @@ import { ref, markRaw, onMounted, reactive, watch } from 'vue'
 import { ConnectionMode, VueFlow, Panel, useVueFlow } from '@vue-flow/core'
 import { Background } from '@vue-flow/background'
 import { Controls, ControlButton } from '@vue-flow/controls'
-import { MiniMap } from '@vue-flow/minimap'
 import { NIcon, NTag, useMessage, NButton, NModal, NDrawer, NDrawerContent, NTabs, NTab, NDropdown, NGrid, NGridItem, NH3, NText, NSpin, NFlex } from 'naive-ui';
 import { ContextMenu, ContextMenuGroup, ContextMenuSeparator, ContextMenuItem } from '@imengyu/vue3-context-menu';
+import miniMap from './components/panelctrls/miniMap.vue'
+import miniMapCtrl from './components/panelctrls/miniMapCtrl.vue'
 import { getUuid } from './utils/tools.js';
 const {
   getNodes,
@@ -69,7 +72,7 @@ const getNestedNodeById = (id) => {
 }
 
 const initAllNodeInfos = async () => {
-  const modules = import.meta.glob('./components/**/node.js');
+  const modules = import.meta.glob('./components/nodes/**/node.js');
   Object.keys(modules).forEach(async (key) => {
     const module = await modules[key]();
     const initInfo = module.initInfo;
