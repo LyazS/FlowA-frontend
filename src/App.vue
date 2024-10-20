@@ -5,6 +5,11 @@
     <Background />
     <miniMap />
     <miniMapCtrl />
+    <n-config-provider :theme="darkTheme">
+      <n-message-provider>
+        <nodepanel v-if="!!lastClickedNodeId" :nodeId="lastClickedNodeId" />
+      </n-message-provider>
+    </n-config-provider>
   </VueFlow>
   <ContextMenu v-model:show="showMenu" :options="menuOptions" />
 </template>
@@ -22,6 +27,7 @@
 <script setup>
 import _ from 'lodash';
 import { ref, markRaw, onMounted, reactive, watch } from 'vue'
+import { darkTheme, NConfigProvider, NMessageProvider } from 'naive-ui'
 import { ConnectionMode, VueFlow, Panel, useVueFlow } from '@vue-flow/core'
 import { Background } from '@vue-flow/background'
 import { Controls, ControlButton } from '@vue-flow/controls'
@@ -29,6 +35,7 @@ import { NIcon, NTag, useMessage, NButton, NModal, NDrawer, NDrawerContent, NTab
 import { ContextMenu, ContextMenuGroup, ContextMenuSeparator, ContextMenuItem } from '@imengyu/vue3-context-menu';
 import miniMap from './components/panelctrls/miniMap.vue'
 import miniMapCtrl from './components/panelctrls/miniMapCtrl.vue'
+import nodepanel from './components/panelctrls/nodepanel.vue'
 import { getUuid } from './utils/tools.js';
 const {
   getNodes,
@@ -203,6 +210,7 @@ const recursiveAddNodeToVFlow = (parentNodeId, nodetype, position) => {
     new_node.data._is_attached = true;
     new_node.data._attached_pos = position.position;
     new_node.draggable = false;
+    new_node.selectable = false;
     console.log("add fixed child node in", new_node.data._attached_pos)
   }
   else if (position.type === 'client') {
@@ -320,8 +328,35 @@ const showContextMenu = (event_cm) => {
     });
   }
 }
+// 节点选择事件
+const lastClickedNodeId = ref(null);
+const selcetNodeEvent = (event) => {
+  const node = event.node;
+  if (node.data._is_attached) return;
+  // 如果点击的是同一个节点，不做任何操作
+  if (lastClickedNodeId.value === node.id) return;
+  // 如果之前有选中的节点，先取消选中
+  if (lastClickedNodeId.value) {
+    console.log(`Node ${lastClickedNodeId.value} deselected`);
+    lastClickedNodeId.value = null;
+  }
+  console.log(`Node ${node.id} selected`);
+  lastClickedNodeId.value = node.id;
+};
+watch(getSelectedNodes, (nodes) => {
+  // 如果选中的节点数量不为1，说明是批量选择或取消选择
+  if (nodes.length !== 1) {
+    if (lastClickedNodeId.value) {
+      console.log(`Node ${lastClickedNodeId.value} deselected`);
+      lastClickedNodeId.value = null;
+    }
+  }
+})
 
 // vueflow事件监听
+onNodeClick((event) => {
+  selcetNodeEvent(event);
+})
 onNodeDrag((event) => {
   const e_nodes = event.nodes;
   e_nodes.forEach(node => {
