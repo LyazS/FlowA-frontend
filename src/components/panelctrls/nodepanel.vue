@@ -27,7 +27,7 @@ const nodetext = computed(() => {
 
 <template>
     <Panel class="nodepanel" position="top-right">
-        <n-card title="卡片">
+        <n-card class="nodepanel-card" title="卡片" >
             {{ nodetext }}
         </n-card>
     </Panel>
@@ -35,5 +35,12 @@ const nodetext = computed(() => {
 <style scoped>
 .nodepanel {
     transform: translateY(50px);
+}
+
+.nodepanel-card{
+    max-width: 500px;
+}
+.nodepanel-card:hover {
+    box-shadow: 0 0 20px rgb(138, 203, 236);
 }
 </style>

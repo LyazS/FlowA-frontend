@@ -5,11 +5,7 @@
     <Background />
     <miniMap />
     <miniMapCtrl />
-    <n-config-provider :theme="darkTheme">
-      <n-message-provider>
-        <nodepanel v-if="!!lastClickedNodeId" :nodeId="lastClickedNodeId" />
-      </n-message-provider>
-    </n-config-provider>
+    <nuipanel :nodeId="lastClickedNodeId" />
   </VueFlow>
   <ContextMenu v-model:show="showMenu" :options="menuOptions" />
 </template>
@@ -35,7 +31,7 @@ import { NIcon, NTag, useMessage, NButton, NModal, NDrawer, NDrawerContent, NTab
 import { ContextMenu, ContextMenuGroup, ContextMenuSeparator, ContextMenuItem } from '@imengyu/vue3-context-menu';
 import miniMap from './components/panelctrls/miniMap.vue'
 import miniMapCtrl from './components/panelctrls/miniMapCtrl.vue'
-import nodepanel from './components/panelctrls/nodepanel.vue'
+import nuipanel from './components/panelctrls/nuipanel.vue'
 import { getUuid } from './utils/tools.js';
 const {
   getNodes,
