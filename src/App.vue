@@ -258,8 +258,8 @@ const removeNodeFromVFlow = (node) => {
   }
   removeNodes(need_del);
 };
-const addEdgeToVFlow = (edge) => {
-
+const addEdgeToVFlow = (params) => {
+  addEdges(params);
 };
 const removeEdgeFromVFlow = (edge) => {
 
@@ -386,6 +386,10 @@ onEdgeContextMenu((event) => {
   event.event.preventDefault();
 })
 
+onConnect((event) => {
+  console.log("连接", event.edge);
+  addEdgeToVFlow(event);
+})
 onMounted(async () => {
   await initAllNodeInfos();
   buildNestedNodeGraph();
