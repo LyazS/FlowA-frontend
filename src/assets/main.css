@@ -29,10 +29,43 @@ body,
   justify-content: space-between;
   align-items: center;
 }
-.vue-flow__node.selected{
+
+.vue-flow__node.selected {
   border: 2px solid rgb(138, 203, 236);
 }
 
 .vue-flow__node:hover {
   box-shadow: 0 0 10px rgb(138, 203, 236);
+}
+
+.vue-flow__handle-input {
+  background-color: #63e2b7;
+  border: 0;
+  border-radius: 2px;
+  width: 5px;
+  height: 10px;
+}
+
+.vue-flow__handle-output {
+  background-color: #70c0e8;
+  border: 0px;
+  border-radius: 2px;
+  width: 5px;
+  height: 10px;
+}
+
+.vue-flow__handle-callback-user {
+  background-color: #f2c97d;
+  border: 0px;
+  border-radius: 2px;
+  width: 10px;
+  height: 5px;
+}
+
+.vue-flow__handle-callback-provider {
+  background-color: #e88080;
+  border: 0px;
+  border-radius: 2px;
+  width: 10px;
+  height: 5px;
 }
