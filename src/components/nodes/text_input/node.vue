@@ -1,9 +1,9 @@
 <template>
     <div :style="{ width: '100%', height: '100%' }">
-        <Handle id="input" type="target" :position="Position.Left" :style="{ left: '3px' }" />
-        <Handle id="output" type="source" :position="Position.Right" :style="{ right: '3px' }" />
-        <Handle id="callback-user" type="target" :position="Position.Top" :style="{ top: '3px' }" />
-        <Handle id="callback-provider" type="source" :position="Position.Bottom" :style="{ bottom: '3px' }" />
+        <Handle id="input" type="target" :position="Position.Left" :style="{ left: '-4px' }" />
+        <Handle id="output" type="source" :position="Position.Right" :style="{ right: '-4px' }" />
+        <Handle id="callback-user" type="target" :position="Position.Top" :style="{ top: '-4px' }" />
+        <Handle id="callback-provider" type="source" :position="Position.Bottom" :style="{ bottom: '-4px' }" />
         <n-flex vertical class="center-flex" justify="center" align="center">
             <div class="center-flex-div">文本输入</div>
         </n-flex>
