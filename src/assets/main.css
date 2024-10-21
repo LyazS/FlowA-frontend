@@ -19,3 +19,20 @@ body,
   -moz-osx-font-smoothing: grayscale;
 }
 
+.vue-flow__node {
+  border: 2px solid rgb(52, 52, 56);
+  background-color: rgb(52, 52, 56);
+  border-radius: 10px;
+  padding: 2px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+}
+.vue-flow__node.selected{
+  border: 2px solid rgb(138, 203, 236);
+}
+
+.vue-flow__node:hover {
+  box-shadow: 0 0 10px rgb(138, 203, 236);
+}

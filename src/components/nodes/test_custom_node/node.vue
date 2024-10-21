@@ -18,32 +18,6 @@ const props = defineProps(['id', 'label', 'data'])
 
 </script>
 
-<style>
-.vue-flow__node-test_custom_node {
-    border: 2px solid rgb(52, 52, 56);
-    background-color: rgb(52, 52, 56);
-    border-radius: 10px;
-    padding: 2px;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.vue-flow__node-test_custom_node.node-name {
-    align-content: left;
-    align-items: left;
-}
-
-.vue-flow__node-test_custom_node.selected {
-    border: 2px solid rgb(138, 203, 236);
-}
-
-.vue-flow__node-test_custom_node:hover {
-    box-shadow: 0 0 10px rgb(138, 203, 236);
-}
-</style>
-
 <style scoped>
 .test_custom_node-handle-com:hover {
     background-color: rgb(255, 255, 255);
