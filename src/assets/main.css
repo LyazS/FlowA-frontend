@@ -41,31 +41,31 @@ body,
 .vue-flow__handle-input {
   background-color: #63e2b7;
   border: 0;
-  border-radius: 2px;
+  border-radius: 5px;
   width: 5px;
-  height: 10px;
+  height: 5px;
 }
 
 .vue-flow__handle-output {
   background-color: #70c0e8;
   border: 0px;
-  border-radius: 2px;
+  border-radius: 5px;
   width: 5px;
-  height: 10px;
+  height: 5px;
 }
 
 .vue-flow__handle-callback-user {
   background-color: #f2c97d;
   border: 0px;
-  border-radius: 2px;
-  width: 10px;
+  border-radius: 5px;
+  width: 5px;
   height: 5px;
 }
 
-.vue-flow__handle-callback-provider {
+.vue-flow__handle-callback-func {
   background-color: #e88080;
   border: 0px;
-  border-radius: 2px;
-  width: 10px;
+  border-radius: 5px;
+  width: 5px;
   height: 5px;
 }

@@ -13,10 +13,13 @@ const props = defineProps({
 </script>
 
 <template>
-    <n-config-provider :theme="darkTheme">
-        <n-message-provider>
-            <nodepanel v-if="!!nodeId" :nodeId="nodeId" />
-        </n-message-provider>
-    </n-config-provider>
+    <Panel position="top-right" :style="{ width: '500px' }">
+        <n-config-provider :theme="darkTheme">
+            <n-message-provider>
+                <n-button type="success">测试按钮</n-button>
+                <nodepanel v-if="!!nodeId" :nodeId="nodeId" />
+            </n-message-provider>
+        </n-config-provider>
+    </Panel>
 </template>
 <style scoped></style>
