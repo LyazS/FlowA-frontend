@@ -169,17 +169,18 @@ const recursiveAddNodeToVFlow = (parentNodeId, nodetype, position) => {
   const parentNode = getVFNodeById(parentNodeId);
 
   const node_init_info = _.cloneDeep(AllNodeInitInfos[nodetype]);
+  const offset_size={width:node_init_info.init_width+8,height:node_init_info.init_height+8};
   let new_node = {
     id: getUuid(),
     type: node_init_info.type,
     data: node_init_info.init_data,
     style: {
-      width: `${node_init_info.init_width}px`,
-      height: `${node_init_info.init_height}px`,
+      width: `${offset_size.width}px`,
+      height: `${offset_size.height}px`,
     },
   };
-  new_node.data._size.width = node_init_info.init_width;
-  new_node.data._size.height = node_init_info.init_height;
+  new_node.data._size.width = offset_size.width;
+  new_node.data._size.height = offset_size.height;
 
   // 设置全局position
   let new_node_position = { x: 0, y: 0 };
@@ -225,8 +226,8 @@ const recursiveAddNodeToVFlow = (parentNodeId, nodetype, position) => {
     }
   }
   // 设置为节点中心
-  new_node_position.x -= node_init_info.init_width / 2;
-  new_node_position.y -= node_init_info.init_height / 2;
+  new_node_position.x -= offset_size.width / 2;
+  new_node_position.y -= offset_size.height / 2;
   new_node.position = new_node_position;
 
   addNodes(new_node);

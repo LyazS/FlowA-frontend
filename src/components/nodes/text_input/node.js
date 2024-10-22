@@ -12,9 +12,9 @@ export const initInfo = {
             width: -1,
             height: -1,
         },
-        input:{},
-        callback:{},
-        output:{},
+        input: {},
+        callback: {},
+        output: {},
         // =================
         // 可选参数
         // =================

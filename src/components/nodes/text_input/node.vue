@@ -1,77 +1,84 @@
 <template>
-    <div :style="{ width: '100%', height: '100%' }">
-        <Handle id="input" type="target" :position="Position.Left" :style="{ top: '6px', left: '4px' }" />
-        <Handle id="callback-func" type="target" :position="Position.Left" :style="{ top: '40px', left: '4px' }" />
-        <Handle id="callback-user" type="source" :position="Position.Right" :style="{ top: '6px', right: '4px' }" />
-        <Handle id="output" type="source" :position="Position.Right" :style="{ top: '40px', right: '4px' }" />
-        <div class="center-flex">
-            <div class="handle-container">
-                <div class="handle-label handle-label-left">INPUT</div>
-                <div class="handle-label handle-label-right">USE-CALLBACK</div>
+    <div :style="{ width: '100%', height: '100%', position: 'relative' }">
+        <n-layout class="layout-container">
+            <div class="corner-text"
+                :style="{ top: `${handle_gap}px`, left: `${corner_gap_left}px`, transform: 'translateY(-50%)' }">
+                INPUT
             </div>
-            <div class="center-flex-div">文本输入</div>
-            <div class="handle-container">
-                <div class="handle-label handle-label-left">CALLBACK-FUNC</div>
-                <div class="handle-label handle-label-right">OUTPUT</div>
+
+            <div class="corner-text"
+                :style="{ top: `${handle_gap}px`, right: `${corner_gap_left}px`, transform: 'translateY(-50%)' }">
+                USE-CALLBACK
             </div>
-        </div>
+
+            <div class="corner-text"
+                :style="{ bottom: `${handle_gap}px`, left: `${corner_gap_left}px`, transform: 'translateY(50%)' }">
+                CALLBACK-FUNC
+            </div>
+
+            <div class="corner-text"
+                :style="{ bottom: `${handle_gap}px`, right: `${corner_gap_left}px`, transform: 'translateY(50%)' }">
+                OUTPUT
+            </div>
+
+            <div class="center-text">
+                文本输入
+            </div>
+        </n-layout>
+        <Handle id="input" type="target" :position="Position.Left"
+            :style="{ top: `${handle_gap}px`, left: `${handle_gap}px` }" />
+        <Handle id="callback-func" type="target" :position="Position.Left"
+            :style="{ top: `${handle_bottom_pos}px`, left: `${handle_gap}px` }" />
+        <Handle id="callback-user" type="source" :position="Position.Right"
+            :style="{ top: `${handle_gap}px`, right: `${handle_gap}px` }" />
+        <Handle id="output" type="source" :position="Position.Right"
+            :style="{ top: `${handle_bottom_pos}px`, right: `${handle_gap}px` }" />
     </div>
 </template>
 
 <script setup>
-import { ref, onMounted, onBeforeUnmount, onUnmounted, watch } from 'vue';
+import { ref, computed, onMounted, onBeforeUnmount, onUnmounted, watch } from 'vue';
 import { Position, Handle } from '@vue-flow/core'
-import { NTag, NText, NH3, NFlex } from 'naive-ui';
+import { NTag, NText, NH3, NFlex, NLayout } from 'naive-ui';
 const props = defineProps(['id', 'label', 'data'])
 
+const corner_gap_left = 10;
+const handle_gap = 6;
+const handle_bottom_pos = computed(() => { return props.data._size.height - (handle_gap + 8); });
 </script>
 
 <style scoped>
-.center-flex {
+.layout-container {
     width: 100%;
     height: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: space-between;
+    position: relative;
+    background-color: transparent;
 }
 
-.center-flex-div {
+.corner-text {
+    font-size: 4px;
     color: white;
-    height: 20px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 12px;
     font-family: 'JetBrains Mono', 'Source Code Pro', 'Consolas', 'Courier New', monospace;
-}
-
-.handle-container {
-    width: 100%;
-    /* height: 100%; */
-    display: flex;
-    flex-direction: row;
-    align-items: space-between;
-    justify-content: space-between;
-}
-
-.handle-label {
-    font-size: 5px;
-    color: white;
-    /* 添加等宽字体 */
-    font-family: 'JetBrains Mono', 'Source Code Pro', 'Consolas', 'Courier New', monospace;
-    /* 可选：添加字母间距使文本更清晰 */
     letter-spacing: 0.1px;
-    /* 可选：使文字更清晰 */
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    position: absolute;
+    display: flex;
+    align-items: flex-end;
+    height: 8px;
+    text-align: center;
 }
 
-.handle-label-left {
-    transform: translateX(7px);
-}
-
-.handle-label-right {
-    transform: translateX(-7px);
+.center-text {
+    font-size: 12px;
+    color: white;
+    font-family: 'JetBrains Mono', 'Source Code Pro', 'Consolas', 'Courier New', monospace;
+    letter-spacing: 0.1px;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
 }
 </style>
