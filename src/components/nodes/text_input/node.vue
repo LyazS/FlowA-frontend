@@ -1,9 +1,9 @@
 <template>
     <div :style="{ width: '100%', height: '100%' }">
-        <Handle id="input" type="target" :position="Position.Left" :style="{ top: '5px', left: '4px' }" />
-        <Handle id="callback-func" type="target" :position="Position.Left" :style="{ top: '41px', left: '4px' }" />
-        <Handle id="callback-user" type="source" :position="Position.Right" :style="{ top: '5px', right: '4px' }" />
-        <Handle id="output" type="source" :position="Position.Right" :style="{ top: '41px', right: '4px' }" />
+        <Handle id="input" type="target" :position="Position.Left" :style="{ top: '6px', left: '4px' }" />
+        <Handle id="callback-func" type="target" :position="Position.Left" :style="{ top: '40px', left: '4px' }" />
+        <Handle id="callback-user" type="source" :position="Position.Right" :style="{ top: '6px', right: '4px' }" />
+        <Handle id="output" type="source" :position="Position.Right" :style="{ top: '40px', right: '4px' }" />
         <div class="center-flex">
             <div class="handle-container">
                 <div class="handle-label handle-label-left">INPUT</div>
