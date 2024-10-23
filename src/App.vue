@@ -232,6 +232,7 @@ const recursiveAddNodeToVFlow = (parentNodeId, nodekey, position) => {
     }
     new_node.data._is_attached = true;
     new_node.data._attached_pos = position.position;
+    new_node.data._attached_type = attached_type;
     new_node.draggable = false;
     new_node.selectable = false;
     console.log("add fixed child node in", new_node.data._attached_pos)
@@ -260,7 +261,7 @@ const recursiveAddNodeToVFlow = (parentNodeId, nodekey, position) => {
   if (node_init_info.init_data._attached_nodes) {
     console.log(`add ${node_init_info.init_data._attached_nodes.length} fixed nested nodes`);
     node_init_info.init_data._attached_nodes.forEach((n_node) => {
-      recursiveAddNodeToVFlow(new_node.id, n_node.type, { type: "attached", position: n_node.pos });
+      recursiveAddNodeToVFlow(new_node.id, n_node.node_type, { type: "attached", position: n_node.pos, attached_type: n_node.attached_type });
     })
   }
 };
@@ -295,7 +296,7 @@ const addEdgeToVFlow = (params) => {
   }
 };
 
-// 右键菜单相关代码
+// 右键菜单相关代码 ========================================================
 const onClickContextMenuRmNode = (event_cm) => {
   console.log('删除节点');
   const node = event_cm.node;
@@ -353,7 +354,8 @@ const showContextMenu = (event_cm) => {
     });
   }
 }
-// 节点选择事件
+
+// 节点选择事件 =================================================
 const lastClickedNodeId = ref(null);
 const selcetNodeEvent = (event) => {
   const node = event.node;
@@ -378,7 +380,7 @@ watch(getSelectedNodes, (nodes) => {
   }
 })
 
-// vueflow事件监听
+// vueflow事件监听 =============================================
 onNodeClick((event) => {
   selcetNodeEvent(event);
 })
@@ -424,26 +426,17 @@ onMounted(async () => {
   buildNestedNodeGraph();
 
   // 快捷键监听
-  // const vueFlowWrapper = document.querySelector('.vue-flow')
-  // if (vueFlowWrapper) {
-  //   vueFlowWrapper.addEventListener('wheel', handleWheel, { passive: false })
-  //   console.log('wheel event listener added')
-  // }
   window.addEventListener('keydown', handleKeyDown)
   window.addEventListener('keyup', handleKeyUp)
   window.addEventListener('mousemove', handleMouseMove)
 })
 onBeforeUnmount(() => {
-  // const vueFlowWrapper = document.querySelector('.vue-flow')
-  // if (vueFlowWrapper) {
-  //   vueFlowWrapper.removeEventListener('wheel', handleWheel)
-  // }
   window.removeEventListener('keydown', handleKeyDown)
   window.removeEventListener('keyup', handleKeyUp)
   window.removeEventListener('mousemove', handleMouseMove)
 })
 
-// 快捷键设置
+// 快捷键设置 ===============================================================
 const isSpacePressed = ref(false);
 const lastMousePosition = ref({ x: 0, y: 0 });
 const currentMousePosition = ref({ x: 0, y: 0 });

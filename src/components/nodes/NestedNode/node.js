@@ -32,9 +32,9 @@ export const initInfo = {
             right: 20,
         },// 嵌套固定节点边距
         _attached_nodes: [
-            { type: "test_attached_node", attached_type: "input", pos: "top-left" },// top|center|bottom-left|center|right
-            { type: "test_attached_node", attached_type: "callback-func", pos: "top-right" },
-            { type: "test_attached_node", attached_type: "output", pos: "bottom-right" },
+            { node_type: "test_attached_node", pos: "top-left" },// top|center|bottom-left|center|right
+            { node_type: "test_attached_node", pos: "top-center" },
+            { node_type: "test_attached_node", pos: "bottom-right" },
         ],// 固定嵌套节点，会自动给子节点data添加"_is_attached=true"，同时设置为不可拖动
 
         // =================
