@@ -1,7 +1,7 @@
 import NodeVue from '../UnifiedNode/node.vue';
 export const initInfo = {
-    name: "文本输入",
-    type: "text_input_node",
+    name: "文本打印输出",
+    type: "text_print",
     init_width: 80,
     init_height: 40,
     init_data: {
@@ -15,10 +15,10 @@ export const initInfo = {
         label: "",
         // =================
         // 可选参数
-        // input: {},
+        input: {},
         // callbackFunc: {},
         // callbackUser: {},
-        output: {},
+        // output: {},
         // =================
     },
 };

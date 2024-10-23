@@ -62,6 +62,7 @@ const {
 const NestedNodeGraph = ref({});
 const AllNodeInitInfos = {};
 const AllVFNodeTypes = reactive({});
+let AddNodeListFromInitInfos = [];
 
 const getVFNodeById = (id) => {
   const node = findNode(id);
@@ -76,15 +77,25 @@ const getNestedNodeById = (id) => {
 
 const initAllNodeInfos = async () => {
   const modules = import.meta.glob('./components/nodes/**/node.js');
-  Object.keys(modules).forEach(async (key) => {
+  const promises = Object.keys(modules).map(async (key) => {
     const module = await modules[key]();
     const initInfo = module.initInfo;
     AllNodeInitInfos[initInfo.type] = initInfo;
     AllVFNodeTypes[initInfo.type] = markRaw(module.NodeVue);
   });
 
+  // 等待所有异步操作完成
+  await Promise.all(promises);
+
   console.log("AllNodeInitInfos", AllNodeInitInfos);
   console.log("all nodeTypes", AllVFNodeTypes);
+
+  // 排序节点列表
+  AddNodeListFromInitInfos = Object.entries(AllNodeInitInfos)
+    .sort((a, b) => a[0].localeCompare(b[0])) // 按key排序
+    .map(([key, item]) => item)
+    .filter(item => !item.init_data._is_attached);
+  console.log("AddNodeListFromInitInfos", AddNodeListFromInitInfos);
 };
 
 const buildNestedNodeGraph = () => {
@@ -169,7 +180,7 @@ const recursiveAddNodeToVFlow = (parentNodeId, nodetype, position) => {
   const parentNode = getVFNodeById(parentNodeId);
 
   const node_init_info = _.cloneDeep(AllNodeInitInfos[nodetype]);
-  const offset_size={width:node_init_info.init_width+8,height:node_init_info.init_height+8};
+  const offset_size = { width: node_init_info.init_width + 8, height: node_init_info.init_height + 8 };
   let new_node = {
     id: getUuid(),
     type: node_init_info.type,
@@ -181,6 +192,7 @@ const recursiveAddNodeToVFlow = (parentNodeId, nodetype, position) => {
   };
   new_node.data._size.width = offset_size.width;
   new_node.data._size.height = offset_size.height;
+  if (new_node.data.label.trim() === '') { new_node.data.label = node_init_info.name; }
 
   // 设置全局position
   let new_node_position = { x: 0, y: 0 };
@@ -285,23 +297,22 @@ const menuOptions = reactive({
   y: 0,
   items: [],
 });
+
 const AddNodeList = (event_cm) => {
-  return Object.values(AllNodeInitInfos)
-    .filter(item => !item.init_data._is_attached)
-    .map(item => ({
-      label: item.name,
-      onClick: () => {
-        console.log("add node", item.type);
-        let node_position = {
-          type: 'client',
-          ...screenToFlowCoordinate({
-            x: event_cm.event.clientX,
-            y: event_cm.event.clientY,
-          })
-        }
-        addNodeToVFlow(event_cm.node?.id, item.type, node_position);
-      },
-    }));
+  return AddNodeListFromInitInfos.map(item => ({
+    label: item.name,
+    onClick: () => {
+      console.log("add node", item.type);
+      let node_position = {
+        type: 'client',
+        ...screenToFlowCoordinate({
+          x: event_cm.event.clientX,
+          y: event_cm.event.clientY,
+        })
+      };
+      addNodeToVFlow(event_cm.node?.id, item.type, node_position);
+    },
+  }));
 };
 
 const showContextMenu = (event_cm) => {

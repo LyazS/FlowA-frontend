@@ -1,7 +1,7 @@
 import NodeVue from '../UnifiedNode/node.vue';
 export const initInfo = {
-    name: "文本输入",
-    type: "text_input_node",
+    name: "LLM推理",
+    type: "LLM_node",
     init_width: 80,
     init_height: 40,
     init_data: {
@@ -15,9 +15,9 @@ export const initInfo = {
         label: "",
         // =================
         // 可选参数
-        // input: {},
-        // callbackFunc: {},
-        // callbackUser: {},
+        input: {},
+        callbackFunc: {},
+        callbackUser: {},
         output: {},
         // =================
     },

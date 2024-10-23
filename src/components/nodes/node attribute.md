@@ -7,12 +7,7 @@
 
 `_size`节点的尺寸，会在创建时自动应用init_width和init_height
 
-`input`输入端口
-
-`output`输出端口
-
-`callback`回调
-
+`label`节点显示的名字。如果为空，则默认使用节点的name属性。
 ## 可选参数
 `_min_size`节点的最小尺寸
 
@@ -23,6 +18,11 @@
 `_attached_nodes`附属节点，需要自动设置附属节点的`_is_attached`为`true`
 
 `_attached_pos`附属节点的位置
+### 统一节点属性
+`input`输入端口
+`callbackFunc`回调函数
+`callbackUser`回调使用者
+`output`输出端口
 
 # 右键菜单
 ## 右击节点

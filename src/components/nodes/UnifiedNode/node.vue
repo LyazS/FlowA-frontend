@@ -1,37 +1,37 @@
 <template>
     <div :style="{ width: '100%', height: '100%', position: 'relative' }">
         <n-layout class="layout-container">
-            <div class="corner-text"
+            <div v-if="showInputHandle" class="corner-text"
                 :style="{ top: `${handle_gap}px`, left: `${corner_gap_left}px`, transform: 'translateY(-50%)' }">
                 INPUT
             </div>
 
-            <div class="corner-text"
+            <div v-if="showCallbackUserHandle" class="corner-text"
                 :style="{ top: `${handle_gap}px`, right: `${corner_gap_left}px`, transform: 'translateY(-50%)' }">
                 USE-CALLBACK
             </div>
 
-            <div class="corner-text"
+            <div v-if="showCallbackFuncHandle" class="corner-text"
                 :style="{ bottom: `${handle_gap}px`, left: `${corner_gap_left}px`, transform: 'translateY(50%)' }">
                 CALLBACK-FUNC
             </div>
 
-            <div class="corner-text"
+            <div v-if="showOutputHandle" class="corner-text"
                 :style="{ bottom: `${handle_gap}px`, right: `${corner_gap_left}px`, transform: 'translateY(50%)' }">
                 OUTPUT
             </div>
 
             <div class="center-text">
-                文本输入
+                {{ data.label }}
             </div>
         </n-layout>
-        <Handle id="input" type="target" :position="Position.Left"
+        <Handle v-if="showInputHandle" id="input" type="target" :position="Position.Left"
             :style="{ top: `${handle_gap}px`, left: `${handle_gap}px` }" />
-        <Handle id="callback-func" type="target" :position="Position.Left"
+        <Handle v-if="showCallbackFuncHandle" id="callback-func" type="target" :position="Position.Left"
             :style="{ top: `${handle_bottom_pos}px`, left: `${handle_gap}px` }" />
-        <Handle id="callback-user" type="source" :position="Position.Right"
+        <Handle v-if="showCallbackUserHandle" id="callback-user" type="source" :position="Position.Right"
             :style="{ top: `${handle_gap}px`, right: `${handle_gap}px` }" />
-        <Handle id="output" type="source" :position="Position.Right"
+        <Handle v-if="showOutputHandle" id="output" type="source" :position="Position.Right"
             :style="{ top: `${handle_bottom_pos}px`, right: `${handle_gap}px` }" />
     </div>
 </template>
@@ -40,11 +40,16 @@
 import { ref, computed, onMounted, onBeforeUnmount, onUnmounted, watch } from 'vue';
 import { Position, Handle } from '@vue-flow/core'
 import { NTag, NText, NH3, NFlex, NLayout } from 'naive-ui';
-const props = defineProps(['id', 'label', 'data'])
+const props = defineProps(['id', 'data'])
 
 const corner_gap_left = 10;
 const handle_gap = 6;
 const handle_bottom_pos = computed(() => { return props.data._size.height - (handle_gap + 8); });
+
+const showInputHandle = !!props.data.input;
+const showCallbackFuncHandle = !!props.data.callbackFunc;
+const showCallbackUserHandle = !!props.data.callbackUser;
+const showOutputHandle = !!props.data.output;
 </script>
 
 <style scoped>
@@ -65,6 +70,7 @@ const handle_bottom_pos = computed(() => { return props.data._size.height - (han
     position: absolute;
     display: flex;
     align-items: flex-end;
+
     height: 8px;
     text-align: center;
 }
@@ -77,6 +83,7 @@ const handle_bottom_pos = computed(() => { return props.data._size.height - (han
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     position: absolute;
+    text-wrap: nowrap;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
