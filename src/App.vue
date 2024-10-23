@@ -292,9 +292,6 @@ const addEdgeToVFlow = (params) => {
     addEdges(params);
   }
 };
-const removeEdgeFromVFlow = (edge) => {
-
-};
 
 // 右键菜单相关代码
 const onClickContextMenuRmNode = (event_cm) => {

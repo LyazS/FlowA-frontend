@@ -20,11 +20,11 @@ defineProps({
 
 // 计算贝塞尔曲线的控制点
 const getControlPoints = (sourceX, sourceY, targetX, targetY) => {
-  const deltaX = Math.abs(targetX - sourceX)
-  const deltaY = Math.abs(targetY - sourceY)
+  const deltaX = Math.abs(targetX - sourceX);
+  const deltaY = Math.abs(targetY - sourceY);
   
   // 控制点的偏移量，可以调整这个值来改变曲线的弧度
-  const offsetX = Math.min(deltaX * 0.5, 150)
+  const offsetX = deltaX * 0.5;
   
   return {
     controlPoint1X: sourceX + offsetX,
