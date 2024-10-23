@@ -1,11 +1,20 @@
 <template>
   <VueFlow class="basic-flow" :connection-mode="ConnectionMode.Strict" :connection-radius="30"
-    :nodeTypes="AllVFNodeTypes" fit-view-on-init elevate-edges-on-select :max-zoom="4" :min-zoom="0.1"
+    :nodeTypes="AllVFNodeTypes" fit-view-on-init :max-zoom="4" :min-zoom="0.1"
     :select-nodes-on-drag="false">
     <Background />
     <miniMap />
     <miniMapCtrl />
     <nuipanel :nodeId="lastClickedNodeId" />
+    <template #edge-closebtn="buttonEdgeProps">
+      <closebtn_edge :id="buttonEdgeProps.id" :source-x="buttonEdgeProps.sourceX" :source-y="buttonEdgeProps.sourceY"
+        :target-x="buttonEdgeProps.targetX" :target-y="buttonEdgeProps.targetY"
+        :source-position="buttonEdgeProps.sourcePosition" :target-position="buttonEdgeProps.targetPosition"
+        :marker-end="buttonEdgeProps.markerEnd" :style="buttonEdgeProps.style" />
+    </template>
+    <template #connection-line="{ sourceX, sourceY, targetX, targetY }">
+      <connect_edge :source-x="sourceX" :source-y="sourceY" :target-x="targetX" :target-y="targetY" />
+    </template>
   </VueFlow>
   <ContextMenu v-model:show="showMenu" :options="menuOptions" />
 </template>
@@ -29,10 +38,12 @@ import { Background } from '@vue-flow/background'
 import { Controls, ControlButton } from '@vue-flow/controls'
 import { NIcon, NTag, useMessage, NButton, NModal, NDrawer, NDrawerContent, NTabs, NTab, NDropdown, NGrid, NGridItem, NH3, NText, NSpin, NFlex } from 'naive-ui';
 import { ContextMenu, ContextMenuGroup, ContextMenuSeparator, ContextMenuItem } from '@imengyu/vue3-context-menu';
+import { getUuid } from './utils/tools.js';
 import miniMap from './components/panelctrls/miniMap.vue'
 import miniMapCtrl from './components/panelctrls/miniMapCtrl.vue'
 import nuipanel from './components/panelctrls/nuipanel.vue'
-import { getUuid } from './utils/tools.js';
+import closebtn_edge from './components/edges/closebtn_edge/edge.vue'
+import connect_edge from './components/edges/connect_edge/edge.vue'
 const {
   getNodes,
   getEdges,
@@ -276,8 +287,10 @@ const addEdgeToVFlow = (params) => {
   if ((params.sourceHandle == "output"
     && params.targetHandle == "input")
     || (params.sourceHandle == "callback-user"
-      && params.targetHandle == "callback-func"))
+      && params.targetHandle == "callback-func")) {
+    params.type = 'closebtn';
     addEdges(params);
+  }
 };
 const removeEdgeFromVFlow = (edge) => {
 
