@@ -1,6 +1,6 @@
 <template>
   <VueFlow class="basic-flow" :connection-mode="ConnectionMode.Strict" :connection-radius="30"
-    :nodeTypes="AllVFNodeTypes" fit-view-on-init :max-zoom="4" :min-zoom="0.1"
+    zoom-activation-key-code="Space" :nodeTypes="AllVFNodeTypes" fit-view-on-init :max-zoom="4" :min-zoom="0.1"
     :select-nodes-on-drag="false">
     <Background />
     <miniMap />
@@ -31,7 +31,7 @@
 
 <script setup>
 import _ from 'lodash';
-import { ref, markRaw, onMounted, reactive, watch } from 'vue'
+import { ref, markRaw, onMounted, onBeforeUnmount, reactive, watch } from 'vue'
 import { darkTheme, NConfigProvider, NMessageProvider } from 'naive-ui'
 import { ConnectionMode, VueFlow, Panel, useVueFlow } from '@vue-flow/core'
 import { Background } from '@vue-flow/background'
@@ -68,6 +68,8 @@ const {
   onPaneContextMenu,
   onEdgeContextMenu,
   screenToFlowCoordinate,
+  getViewport,
+  setViewport,
 } = useVueFlow();
 
 const NestedNodeGraph = ref({});
@@ -420,5 +422,68 @@ onConnect((event) => {
 onMounted(async () => {
   await initAllNodeInfos();
   buildNestedNodeGraph();
+
+  // 快捷键监听
+  // const vueFlowWrapper = document.querySelector('.vue-flow')
+  // if (vueFlowWrapper) {
+  //   vueFlowWrapper.addEventListener('wheel', handleWheel, { passive: false })
+  //   console.log('wheel event listener added')
+  // }
+  window.addEventListener('keydown', handleKeyDown)
+  window.addEventListener('keyup', handleKeyUp)
+  window.addEventListener('mousemove', handleMouseMove)
 })
+onBeforeUnmount(() => {
+  // const vueFlowWrapper = document.querySelector('.vue-flow')
+  // if (vueFlowWrapper) {
+  //   vueFlowWrapper.removeEventListener('wheel', handleWheel)
+  // }
+  window.removeEventListener('keydown', handleKeyDown)
+  window.removeEventListener('keyup', handleKeyUp)
+  window.removeEventListener('mousemove', handleMouseMove)
+})
+
+// 快捷键设置
+const isSpacePressed = ref(false);
+const lastMousePosition = ref({ x: 0, y: 0 });
+const currentMousePosition = ref({ x: 0, y: 0 });
+// 始终跟踪鼠标位置
+const trackMousePosition = (event) => {
+  currentMousePosition.value = { x: event.clientX, y: event.clientY };
+}
+// 监听空格键按下和释放
+const handleKeyDown = (event) => {
+  if (event.code === 'Space') {
+    // 阻止默认行为，防止触发 VueFlow 的内置平移模式
+    event.preventDefault();
+    isSpacePressed.value = true;
+    document.body.style.cursor = 'grabbing';
+    // 使用当前跟踪的鼠标位置作为起始点
+    lastMousePosition.value = { ...currentMousePosition.value };
+  }
+}
+
+const handleKeyUp = (event) => {
+  if (event.code === 'Space') {
+    isSpacePressed.value = false;
+    document.body.style.cursor = 'default';
+  }
+}
+
+// 只需要监听鼠标移动事件
+const handleMouseMove = (event) => {
+  trackMousePosition(event);
+  if (isSpacePressed.value) {
+    const deltaX = event.clientX - lastMousePosition.value.x;
+    const deltaY = event.clientY - lastMousePosition.value.y;
+
+    const cur_viewport = getViewport();
+    setViewport({
+      x: cur_viewport.x + deltaX,
+      y: cur_viewport.y + deltaY,
+      zoom: cur_viewport.zoom
+    });
+    lastMousePosition.value = { x: event.clientX, y: event.clientY };
+  }
+}
 </script>
