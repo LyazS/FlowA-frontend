@@ -1,7 +1,7 @@
 import NodeVue from './node.vue';
 export const initInfo = {
-    name: "测试附属节点",
-    type: "test_attached_node",
+    node_key: "test_attached_node",
+    node_type: "test_attached_node",
     init_width: 30,
     init_height: 30,
     init_data: {
@@ -12,6 +12,7 @@ export const initInfo = {
             width: -1,
             height: -1,
         },
+        label: "测试附属节点",
         // =================
         // 可选参数
         // _attached_pos: "top-left",// 固定子节点在嵌套节点中的位置，会自动添加

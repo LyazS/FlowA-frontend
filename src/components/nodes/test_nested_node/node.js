@@ -1,7 +1,7 @@
 import NodeVue from './node.vue';
 export const initInfo = {
-    name: "测试嵌套节点",
-    type: "test_nested_node",
+    node_key: "test_nested_node",
+    node_type: "test_nested_node",
     init_width: 200,
     init_height: 150,
     init_data: {
@@ -12,6 +12,7 @@ export const initInfo = {
             width: -1,
             height: -1,
         },// 会在创建时自动应用init_width和init_height
+        label: "测试嵌套节点",
         // =================
         // 可选参数
         _min_size: {

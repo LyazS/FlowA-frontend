@@ -80,8 +80,10 @@ const initAllNodeInfos = async () => {
   const promises = Object.keys(modules).map(async (key) => {
     const module = await modules[key]();
     const initInfo = module.initInfo;
-    AllNodeInitInfos[initInfo.type] = initInfo;
-    AllVFNodeTypes[initInfo.type] = markRaw(module.NodeVue);
+    AllNodeInitInfos[initInfo.node_key] = initInfo;
+    if (!AllVFNodeTypes.hasOwnProperty(initInfo.node_type)) {
+      AllVFNodeTypes[initInfo.node_type] = markRaw(module.NodeVue);
+    }
   });
 
   // 等待所有异步操作完成
@@ -175,15 +177,15 @@ const recursiveUpdateNodeSize = (nodeId) => {
   recursiveUpdateNodeSize(nested_node.parentNode);
 }
 
-const recursiveAddNodeToVFlow = (parentNodeId, nodetype, position) => {
-  console.log("addNodeToVFlow", parentNodeId, nodetype, position);
+const recursiveAddNodeToVFlow = (parentNodeId, nodekey, position) => {
+  console.log("addNodeToVFlow", parentNodeId, nodekey, position);
   const parentNode = getVFNodeById(parentNodeId);
 
-  const node_init_info = _.cloneDeep(AllNodeInitInfos[nodetype]);
+  const node_init_info = _.cloneDeep(AllNodeInitInfos[nodekey]);
   const offset_size = { width: node_init_info.init_width + 8, height: node_init_info.init_height + 8 };
   let new_node = {
     id: getUuid(),
-    type: node_init_info.type,
+    type: node_init_info.node_type,
     data: node_init_info.init_data,
     style: {
       width: `${offset_size.width}px`,
@@ -192,7 +194,6 @@ const recursiveAddNodeToVFlow = (parentNodeId, nodetype, position) => {
   };
   new_node.data._size.width = offset_size.width;
   new_node.data._size.height = offset_size.height;
-  if (new_node.data.label.trim() === '') { new_node.data.label = node_init_info.name; }
 
   // 设置全局position
   let new_node_position = { x: 0, y: 0 };
@@ -250,8 +251,8 @@ const recursiveAddNodeToVFlow = (parentNodeId, nodetype, position) => {
     })
   }
 };
-const addNodeToVFlow = (parentNodeId, nodetype, position) => {
-  recursiveAddNodeToVFlow(parentNodeId, nodetype, position);
+const addNodeToVFlow = (parentNodeId, nodekey, position) => {
+  recursiveAddNodeToVFlow(parentNodeId, nodekey, position);
   buildNestedNodeGraph();
   recursiveUpdateNodeSize(parentNodeId);
 };
@@ -300,9 +301,9 @@ const menuOptions = reactive({
 
 const AddNodeList = (event_cm) => {
   return AddNodeListFromInitInfos.map(item => ({
-    label: item.name,
+    label: item.init_data.label,
     onClick: () => {
-      console.log("add node", item.type);
+      console.log("add node", item.node_key);
       let node_position = {
         type: 'client',
         ...screenToFlowCoordinate({
@@ -310,7 +311,7 @@ const AddNodeList = (event_cm) => {
           y: event_cm.event.clientY,
         })
       };
-      addNodeToVFlow(event_cm.node?.id, item.type, node_position);
+      addNodeToVFlow(event_cm.node?.id, item.node_key, node_position);
     },
   }));
 };

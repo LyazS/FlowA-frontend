@@ -1,7 +1,7 @@
 import NodeVue from '../UnifiedNode/node.vue';
 export const initInfo = {
-    name: "LLM推理",
-    type: "LLM_node",
+    node_key: "LLM_node",
+    node_type: "UnifiedNode",
     init_width: 80,
     init_height: 40,
     init_data: {
@@ -12,7 +12,7 @@ export const initInfo = {
             width: -1,
             height: -1,
         },
-        label: "",
+        label: "LLM推理",
         // =================
         // 可选参数
         input: {},

@@ -1,7 +1,7 @@
 import NodeVue from '../UnifiedNode/node.vue';
 export const initInfo = {
-    name: "文本打印输出",
-    type: "text_print",
+    node_key: "text_print",
+    node_type: "UnifiedNode",
     init_width: 80,
     init_height: 40,
     init_data: {
@@ -12,7 +12,7 @@ export const initInfo = {
             width: -1,
             height: -1,
         },
-        label: "",
+        label: "文本打印输出",
         // =================
         // 可选参数
         input: {},

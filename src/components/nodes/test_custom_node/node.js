@@ -1,7 +1,7 @@
 import NodeVue from './node.vue';
 export const initInfo = {
-    name: "测试自定义节点",
-    type: "test_custom_node",
+    node_key: "test_custom_node",
+    node_type: "test_custom_node",
     init_width: 100,
     init_height: 100,
     init_data: {
@@ -12,6 +12,7 @@ export const initInfo = {
             width: -1,
             height: -1,
         },
+        label: "测试自定义节点",
         // =================
         // 可选参数
         // =================

@@ -1,5 +1,8 @@
 # Node Attribute
+`node_key`该节点的唯一标记
+`node_type`该节点使用的节点类型
 
+# Node Data
 ## 必要参数
 `_is_nested`是否可嵌套，可嵌套才可以添加节点
 
@@ -7,7 +10,7 @@
 
 `_size`节点的尺寸，会在创建时自动应用init_width和init_height
 
-`label`节点显示的名字。如果为空，则默认使用节点的name属性。
+`label`节点显示的名字。
 ## 可选参数
 `_min_size`节点的最小尺寸
 
