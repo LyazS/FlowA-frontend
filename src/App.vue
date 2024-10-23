@@ -273,7 +273,11 @@ const removeNodeFromVFlow = (node) => {
   removeNodes(need_del);
 };
 const addEdgeToVFlow = (params) => {
-  addEdges(params);
+  if ((params.sourceHandle == "output"
+    && params.targetHandle == "input")
+    || (params.sourceHandle == "callback-user"
+      && params.targetHandle == "callback-func"))
+    addEdges(params);
 };
 const removeEdgeFromVFlow = (edge) => {
 
@@ -400,7 +404,7 @@ onEdgeContextMenu((event) => {
 })
 
 onConnect((event) => {
-  console.log("连接", event.edge);
+  console.log("连接", event);
   addEdgeToVFlow(event);
 })
 onMounted(async () => {
