@@ -27,9 +27,9 @@
         </n-layout>
         <Handle v-if="showInputHandle" id="input" type="target" :position="Position.Left"
             :style="{ top: `${handle_gap}px`, left: `${handle_gap}px` }" />
-        <Handle v-if="showCallbackFuncHandle" id="callback-func" type="target" :position="Position.Left"
+        <Handle v-if="showCallbackFuncHandle" id="callbackFunc" type="target" :position="Position.Left"
             :style="{ top: `${handle_bottom_pos}px`, left: `${handle_gap}px` }" />
-        <Handle v-if="showCallbackUserHandle" id="callback-user" type="source" :position="Position.Right"
+        <Handle v-if="showCallbackUserHandle" id="callbackUser" type="source" :position="Position.Right"
             :style="{ top: `${handle_gap}px`, right: `${handle_gap}px` }" />
         <Handle v-if="showOutputHandle" id="output" type="source" :position="Position.Right"
             :style="{ top: `${handle_bottom_pos}px`, right: `${handle_gap}px` }" />
@@ -44,7 +44,7 @@ const props = defineProps(['id', 'data'])
 
 const corner_gap_left = 10;
 const handle_gap = 6;
-const handle_bottom_pos = computed(() => { return props.data._size.height - (handle_gap + 8); });
+const handle_bottom_pos = computed(() => { return props.data.size.height - (handle_gap + 8); });
 
 const showInputHandle = !!props.data.input;
 const showCallbackFuncHandle = !!props.data.callbackFunc;

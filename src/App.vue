@@ -144,47 +144,47 @@ const recursiveUpdateNodeSize = (nodeId) => {
     if (!!vf_node_child.data._is_attached) return;
     minX = Math.min(minX, vf_node_child.position.x + vf_node_pos.x);
     minY = Math.min(minY, vf_node_child.position.y + vf_node_pos.y);
-    maxX = Math.max(maxX, vf_node_child.position.x + vf_node_pos.x + vf_node_child.data._size.width);
-    maxY = Math.max(maxY, vf_node_child.position.y + vf_node_pos.y + vf_node_child.data._size.height);
+    maxX = Math.max(maxX, vf_node_child.position.x + vf_node_pos.x + vf_node_child.data.size.width);
+    maxY = Math.max(maxY, vf_node_child.position.y + vf_node_pos.y + vf_node_child.data.size.height);
   })
 
   // 按照最小尺寸更新父节点尺寸
-  let vf_node_tgt_wd = (maxX - minX) + vf_node.data._nested_pad.left + vf_node.data._nested_pad.right;
-  let vf_node_tgt_ht = (maxY - minY) + vf_node.data._nested_pad.top + vf_node.data._nested_pad.bottom;
-  vf_node.data._size.width = Math.max(vf_node_tgt_wd, vf_node.data._min_size.width);
-  vf_node.data._size.height = Math.max(vf_node_tgt_ht, vf_node.data._min_size.height);
-  vf_node.style.width = `${vf_node.data._size.width}px`;
-  vf_node.style.height = `${vf_node.data._size.height}px`;
+  let vf_node_tgt_wd = (maxX - minX) + vf_node.data.nested_pad.left + vf_node.data.nested_pad.right;
+  let vf_node_tgt_ht = (maxY - minY) + vf_node.data.nested_pad.top + vf_node.data.nested_pad.bottom;
+  vf_node.data.size.width = Math.max(vf_node_tgt_wd, vf_node.data.min_size.width);
+  vf_node.data.size.height = Math.max(vf_node_tgt_ht, vf_node.data.min_size.height);
+  vf_node.style.width = `${vf_node.data.size.width}px`;
+  vf_node.style.height = `${vf_node.data.size.height}px`;
 
   // 更新子节点位置
   nested_node.children.forEach(childId => {
     let vf_node_child = getVFNodeById(childId);
     // 固定位置的子节点
     if (!!vf_node_child.data._is_attached) {
-      let [yPart, xPart] = vf_node_child.data._attached_pos.split('-');
+      let [yPart, xPart] = vf_node_child.data.attached_pos.split('-');
       if (yPart == "bottom") {
-        vf_node_child.position.y = vf_node.data._size.height - vf_node.data._attached_pad.bottom;
+        vf_node_child.position.y = vf_node.data.size.height - vf_node.data.attached_pad.bottom;
       }
       else if (yPart == "center") {
-        vf_node_child.position.y = vf_node.data._size.height / 2 - vf_node.data._attached_pad.bottom;
+        vf_node_child.position.y = vf_node.data.size.height / 2 - vf_node.data.attached_pad.bottom;
       }
       if (xPart == "right") {
-        vf_node_child.position.x = vf_node.data._size.width - vf_node.data._attached_pad.right;
+        vf_node_child.position.x = vf_node.data.size.width - vf_node.data.attached_pad.right;
       }
       else if (xPart == "center") {
-        vf_node_child.position.x = vf_node.data._size.width / 2 - vf_node.data._attached_pad.right;
+        vf_node_child.position.x = vf_node.data.size.width / 2 - vf_node.data.attached_pad.right;
       }
-      if (yPart != "top") vf_node_child.position.y -= vf_node_child.data._size.height / 2;
-      if (xPart != "left") vf_node_child.position.x -= vf_node_child.data._size.width / 2;
+      if (yPart != "top") vf_node_child.position.y -= vf_node_child.data.size.height / 2;
+      if (xPart != "left") vf_node_child.position.x -= vf_node_child.data.size.width / 2;
     }
     else {
-      vf_node_child.position.x += vf_node_pos.x - (minX - vf_node.data._nested_pad.left);
-      vf_node_child.position.y += vf_node_pos.y - (minY - vf_node.data._nested_pad.top);
+      vf_node_child.position.x += vf_node_pos.x - (minX - vf_node.data.nested_pad.left);
+      vf_node_child.position.y += vf_node_pos.y - (minY - vf_node.data.nested_pad.top);
     }
   });
 
   // 更新父节点位置
-  vf_node.position = { x: minX - vf_node.data._nested_pad.left, y: minY - vf_node.data._nested_pad.top };
+  vf_node.position = { x: minX - vf_node.data.nested_pad.left, y: minY - vf_node.data.nested_pad.top };
 
   // 递归更新父节点大小
   recursiveUpdateNodeSize(nested_node.parentNode);
@@ -205,37 +205,37 @@ const recursiveAddNodeToVFlow = (parentNodeId, nodekey, position) => {
       height: `${offset_size.height}px`,
     },
   };
-  new_node.data._size.width = offset_size.width;
-  new_node.data._size.height = offset_size.height;
+  new_node.data.size.width = offset_size.width;
+  new_node.data.size.height = offset_size.height;
 
   // 设置全局position
   let new_node_position = { x: 0, y: 0 };
   if (position.type == 'attached' && !!parentNode) {
     const [yPart, xPart] = position.position.split('-');
     if (yPart == "top") {
-      new_node_position.y = parentNode.position.y + parentNode.data._attached_pad.top;
+      new_node_position.y = parentNode.position.y + parentNode.data.attached_pad.top;
     }
     else if (yPart == "bottom") {
-      new_node_position.y = parentNode.position.y + parentNode.data._size.height - parentNode.data._attached_pad.bottom;
+      new_node_position.y = parentNode.position.y + parentNode.data.size.height - parentNode.data.attached_pad.bottom;
     }
     else if (yPart == "center") {
-      new_node_position.y = parentNode.position.y + parentNode.data._size.height / 2 - parentNode.data._attached_pad.bottom;
+      new_node_position.y = parentNode.position.y + parentNode.data.size.height / 2 - parentNode.data.attached_pad.bottom;
     }
     if (xPart == "left") {
-      new_node_position.x = parentNode.position.x + parentNode.data._attached_pad.left;
+      new_node_position.x = parentNode.position.x + parentNode.data.attached_pad.left;
     }
     else if (xPart == "right") {
-      new_node_position.x = parentNode.position.x + parentNode.data._size.width - parentNode.data._attached_pad.right;
+      new_node_position.x = parentNode.position.x + parentNode.data.size.width - parentNode.data.attached_pad.right;
     }
     else if (xPart == "center") {
-      new_node_position.x = parentNode.position.x + parentNode.data._size.width / 2 - parentNode.data._attached_pad.right;
+      new_node_position.x = parentNode.position.x + parentNode.data.size.width / 2 - parentNode.data.attached_pad.right;
     }
     new_node.data._is_attached = true;
-    new_node.data._attached_pos = position.position;
-    new_node.data._attached_type = attached_type;
+    new_node.data.attached_pos = position.position;
+    new_node.data._attached_type = position.attached_type;
     new_node.draggable = false;
     new_node.selectable = false;
-    console.log("add fixed child node in", new_node.data._attached_pos)
+    console.log("add fixed child node in", new_node.data.attached_pos)
   }
   else if (position.type === 'client') {
     new_node_position = { x: position.x, y: position.y };
@@ -258,9 +258,9 @@ const recursiveAddNodeToVFlow = (parentNodeId, nodekey, position) => {
   new_node.position = new_node_position;
 
   addNodes(new_node);
-  if (node_init_info.init_data._attached_nodes) {
-    console.log(`add ${node_init_info.init_data._attached_nodes.length} fixed nested nodes`);
-    node_init_info.init_data._attached_nodes.forEach((n_node) => {
+  if (node_init_info.init_data.attached_nodes) {
+    console.log(`add ${node_init_info.init_data.attached_nodes.length} fixed nested nodes`);
+    node_init_info.init_data.attached_nodes.forEach((n_node) => {
       recursiveAddNodeToVFlow(new_node.id, n_node.node_type, { type: "attached", position: n_node.pos, attached_type: n_node.attached_type });
     })
   }
@@ -289,8 +289,8 @@ const removeNodeFromVFlow = (node) => {
 const addEdgeToVFlow = (params) => {
   if ((params.sourceHandle == "output"
     && params.targetHandle == "input")
-    || (params.sourceHandle == "callback-user"
-      && params.targetHandle == "callback-func")) {
+    || (params.sourceHandle == "callbackUser"
+      && params.targetHandle == "callbackFunc")) {
     params.type = 'closebtn';
     addEdges(params);
   }

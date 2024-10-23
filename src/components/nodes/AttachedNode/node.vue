@@ -7,7 +7,6 @@
 </template>
 
 <script setup>
-import { defineProps } from 'vue';
 import { Icon } from '@vicons/utils'
 import {
     EnterOutline,

@@ -54,7 +54,7 @@ body,
   height: 5px;
 }
 
-.vue-flow__handle-callback-user {
+.vue-flow__handle-callbackUser {
   background-color: #f2c97d;
   border: 0px;
   border-radius: 50%;
@@ -62,7 +62,7 @@ body,
   height: 5px;
 }
 
-.vue-flow__handle-callback-func {
+.vue-flow__handle-callbackFunc {
   background-color: #e88080;
   border: 0px;
   border-radius: 50%;

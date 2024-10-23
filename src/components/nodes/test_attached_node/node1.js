@@ -8,14 +8,14 @@ export const initInfo = {
         // 必要参数 ========
         _is_nested: false,// 是否可嵌套
         _is_attached: true,// 是否为附属节点
-        _size: {
+        size: {
             width: -1,
             height: -1,
         },
         label: "测试附属节点",
         // =================
         // 可选参数
-        // _attached_pos: "top-left",// 固定子节点在嵌套节点中的位置，会自动添加
+        // attached_pos: "top-left",// 固定子节点在嵌套节点中的位置，会自动添加
         // =================
     },
 };

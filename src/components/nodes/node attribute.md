@@ -3,24 +3,27 @@
 `node_type`该节点使用的节点类型
 
 # Node Data
+加下划线的属性是固有属性，不建议修改。
 ## 必要参数
 `_is_nested`是否可嵌套，可嵌套才可以添加节点
 
 `_is_attached`是否为附属节点，附属节点只能作为其他节点的子节点，不能单独存在，也不可以有点击事件
 
-`_size`节点的尺寸，会在创建时自动应用init_width和init_height
+`size`节点的尺寸，会在创建时自动应用init_width和init_height
 
 `label`节点显示的名字。
 ## 可选参数
-`_min_size`节点的最小尺寸
+`min_size`节点的最小尺寸
 
-`_nested_pad`嵌套节点的padding边距
+`nested_pad`嵌套节点的padding边距
 
-`_attached_pad`附属节点的padding边距
+`attached_pad`附属节点的padding边距
 
-`_attached_nodes`附属节点，需要自动设置附属节点的`_is_attached`为`true`
+`attached_nodes`附属节点，需要自动设置附属节点的`_is_attached`为`true`
 
-`_attached_pos`附属节点的位置
+`attached_pos`附属节点的位置
+
+`attached_type`附属节点的类型：`input`、`callbackFunc`、`callbackUser`、`output`
 ### 统一节点属性
 `input`输入端口
 `callbackFunc`回调函数
