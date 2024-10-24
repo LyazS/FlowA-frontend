@@ -26,11 +26,6 @@
 
         </n-layout>
 
-        <!-- <n-flex class="stacked-flex" vertical align="center" justify="center">
-        </n-flex> -->
-        <!-- <div ref="lastDiv" class="dynamic-height-div"></div> -->
-        <div class="dynamic-height-div"></div>
-
         <Handle v-if="showInputHandle" id="input" type="target" :position="Position.Left"
             :style="{ top: `${handle_gap}px`, left: `${handle_gap}px` }" />
         <Handle v-if="showCallbackFuncHandle" id="callbackFunc" type="target" :position="Position.Left"
@@ -93,13 +88,11 @@ onUnmounted(() => {
     position: absolute;
     top: 0;
     left: 0;
-    z-index: 1;
 }
 
 .layout-container {
     width: 100%;
     height: 100%;
-    /* position: relative; */
     background-color: transparent;
     position: absolute;
     top: 0;
@@ -118,7 +111,6 @@ onUnmounted(() => {
     align-items: flex-end;
     height: 8px;
     text-align: center;
-    z-index: 2;
 }
 
 .center-text {
@@ -133,17 +125,5 @@ onUnmounted(() => {
     top: 0;
     left: 50%;
     transform: translate(-50%, 0);
-    z-index: 2;
-}
-
-
-.left-flex {
-    width: 100%;
-    justify-content: flex-start;
-}
-
-.dynamic-height-div {
-    width: 98%;
-    background-color: rgb(32, 32, 32);
 }
 </style>

@@ -1,13 +1,13 @@
 <template>
   <VueFlow class="basic-flow" :connection-mode="ConnectionMode.Strict" :connection-radius="30"
     zoom-activation-key-code="Space" :nodeTypes="AllVFNodeTypes" fit-view-on-init :max-zoom="4" :min-zoom="0.1"
-    :select-nodes-on-drag="false">
+    :select-nodes-on-drag="false" elevate-edges-on-select>
     <Background />
     <miniMap />
     <miniMapCtrl />
     <nuipanel :nodeId="lastClickedNodeId" />
-    <template #edge-closebtn="buttonEdgeProps">
-      <closebtn_edge :id="buttonEdgeProps.id" :source-x="buttonEdgeProps.sourceX" :source-y="buttonEdgeProps.sourceY"
+    <template #edge-normal="buttonEdgeProps">
+      <normal_edge :id="buttonEdgeProps.id" :source-x="buttonEdgeProps.sourceX" :source-y="buttonEdgeProps.sourceY"
         :target-x="buttonEdgeProps.targetX" :target-y="buttonEdgeProps.targetY"
         :source-position="buttonEdgeProps.sourcePosition" :target-position="buttonEdgeProps.targetPosition"
         :marker-end="buttonEdgeProps.markerEnd" :style="buttonEdgeProps.style" />
@@ -42,7 +42,7 @@ import { getUuid } from './utils/tools.js';
 import miniMap from './components/panelctrls/miniMap.vue'
 import miniMapCtrl from './components/panelctrls/miniMapCtrl.vue'
 import nuipanel from './components/panelctrls/nuipanel.vue'
-import closebtn_edge from './components/edges/closebtn_edge/edge.vue'
+import normal_edge from './components/edges/normal_edge/edge.vue'
 import connect_edge from './components/edges/connect_edge/edge.vue'
 const {
   getNodes,
@@ -287,11 +287,14 @@ const removeNodeFromVFlow = (node) => {
   removeNodes(need_del);
 };
 const addEdgeToVFlow = (params) => {
-  if ((params.sourceHandle == "output"
-    && params.targetHandle == "input")
-    || (params.sourceHandle == "callbackUser"
-      && params.targetHandle == "callbackFunc")) {
-    params.type = 'closebtn';
+  let is_match_port = (params.sourceHandle == "output" && params.targetHandle == "input")
+    || (params.sourceHandle == "callbackUser" && params.targetHandle == "callbackFunc");
+  let is_diff_node = (params.source !== params.target);
+  let is_same_parent = (getNestedNodeById(params.source)?.parentNode === getNestedNodeById(params.target)?.parentNode);
+  console.log("is_match_port", is_match_port, "is_diff_node", is_diff_node, "is_same_parent", is_same_parent);
+  if (is_match_port && is_diff_node && !!is_same_parent) {
+    console.log("add edge");
+    params.type = 'normal';
     addEdges(params);
   }
 };
@@ -336,9 +339,10 @@ const AddNodeList = (event_cm) => {
 const showContextMenu = (event_cm) => {
   menuOptions.x = event_cm.event.clientX
   menuOptions.y = event_cm.event.clientY
-  showMenu.value = (event_cm.type === 'node' && !event_cm.node.data._is_attached) || (event_cm.type === 'pane');
+  showMenu.value = (event_cm.type === 'node' && !event_cm.node.data._is_attached) || (event_cm.type === 'pane') || (event_cm.type === 'edge');
   let show_add_node = (event_cm.type === 'node' && event_cm.node.data._is_nested) || (event_cm.type === 'pane');
   let show_rm_node = (event_cm.type === 'node' && !event_cm.node.data._is_attached);
+  let show_rm_edge = (event_cm.type === 'edge');
   menuOptions.items = [];
 
   if (show_add_node) {
@@ -351,6 +355,12 @@ const showContextMenu = (event_cm) => {
     menuOptions.items.push({
       label: '删除节点',
       onClick: () => onClickContextMenuRmNode(event_cm),
+    });
+  }
+  if (show_rm_edge) {
+    menuOptions.items.push({
+      label: '删除边',
+      onClick: () => removeEdges([event_cm.edge]),
     });
   }
 }
@@ -415,6 +425,12 @@ onPaneContextMenu((event) => {
 onEdgeContextMenu((event) => {
   console.log("右键边");
   event.event.preventDefault();
+  let event_cm = {
+    type: 'edge',
+    event: event.event,
+    edge: event.edge,
+  }
+  showContextMenu(event_cm);
 })
 
 onConnect((event) => {
