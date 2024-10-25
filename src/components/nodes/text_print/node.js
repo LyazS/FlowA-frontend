@@ -1,4 +1,4 @@
-import NodeVue from '../UnifiedNode/node.vue';
+import NodeVue from '../CommonNode/UnifiedNode.vue';
 export const initInfo = {
     node_key: "text_print",
     node_type: "UnifiedNode",

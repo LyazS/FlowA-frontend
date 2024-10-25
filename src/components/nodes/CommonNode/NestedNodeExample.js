@@ -1,4 +1,4 @@
-import NodeVue from './node.vue';
+import NodeVue from './NestedNode.vue';
 export const initInfo = {
     node_key: "test_nested_node",
     node_type: "test_nested_node",

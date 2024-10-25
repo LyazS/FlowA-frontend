@@ -1,4 +1,4 @@
-import NodeVue from '../UnifiedNode/node.vue';
+import NodeVue from '../CommonNode/UnifiedNode.vue';
 export const initInfo = {
     node_key: "LLM_node",
     node_type: "UnifiedNode",
