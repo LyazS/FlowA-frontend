@@ -5,7 +5,13 @@
     <Background />
     <miniMap />
     <miniMapCtrl />
-    <nuipanel :nodeId="lastClickedNodeId" />
+    
+    <n-config-provider :theme="darkTheme">
+      <n-message-provider>
+        <nuipanel :nodeId="lastClickedNodeId" />
+      </n-message-provider>
+    </n-config-provider>
+
     <template #edge-normal="buttonEdgeProps">
       <normal_edge :id="buttonEdgeProps.id" :source-x="buttonEdgeProps.sourceX" :source-y="buttonEdgeProps.sourceY"
         :target-x="buttonEdgeProps.targetX" :target-y="buttonEdgeProps.targetY"
@@ -32,11 +38,14 @@
 <script setup>
 import _ from 'lodash';
 import { ref, markRaw, onMounted, onBeforeUnmount, reactive, watch } from 'vue'
-import { darkTheme, NConfigProvider, NMessageProvider } from 'naive-ui'
 import { ConnectionMode, VueFlow, Panel, useVueFlow } from '@vue-flow/core'
 import { Background } from '@vue-flow/background'
 import { Controls, ControlButton } from '@vue-flow/controls'
-import { NIcon, NTag, useMessage, NButton, NModal, NDrawer, NDrawerContent, NTabs, NTab, NDropdown, NGrid, NGridItem, NH3, NText, NSpin, NFlex } from 'naive-ui';
+import {
+  darkTheme,
+  NConfigProvider,
+  NMessageProvider,
+} from 'naive-ui';
 import { ContextMenu, ContextMenuGroup, ContextMenuSeparator, ContextMenuItem } from '@imengyu/vue3-context-menu';
 import { getUuid } from './utils/tools.js';
 import miniMap from './components/panelctrls/miniMap.vue'

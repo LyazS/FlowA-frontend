@@ -26,20 +26,16 @@ const nodetext = computed(() => {
 </script>
 
 <template>
-    <Panel class="nodepanel" position="top-right">
-        <n-card class="nodepanel-card" title="卡片" >
-            {{ nodetext }}
-        </n-card>
-    </Panel>
+    <n-card class="nodepanel-card" title="卡片">
+        {{ nodetext }}
+    </n-card>
 </template>
 <style scoped>
-.nodepanel {
-    transform: translateY(50px);
-}
-
-.nodepanel-card{
+.nodepanel-card {
+    transform: translateY(20px);
     max-width: 500px;
 }
+
 .nodepanel-card:hover {
     box-shadow: 0 0 20px rgb(138, 203, 236);
 }
