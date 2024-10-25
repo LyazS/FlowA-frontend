@@ -287,13 +287,17 @@ const removeNodeFromVFlow = (node) => {
   removeNodes(need_del);
 };
 const addEdgeToVFlow = (params) => {
-  let is_match_port = (params.sourceHandle == "output" && params.targetHandle == "input")
-    || (params.sourceHandle == "callbackUser" && params.targetHandle == "callbackFunc");
+  let is_match_port = (params.sourceHandle.startsWith("output") && params.targetHandle === "input")
+    || (params.sourceHandle === "callbackUser" && params.targetHandle === "callbackFunc");
   let is_diff_node = (params.source !== params.target);
   let is_same_parent = (getNestedNodeById(params.source)?.parentNode === getNestedNodeById(params.target)?.parentNode);
   let is_all_attached = (getVFNodeById(params.source)?.data._is_attached && getVFNodeById(params.target)?.data._is_attached);
   console.log("is_match_port", is_match_port, "is_diff_node", is_diff_node, "is_same_parent", is_same_parent, "is_all_attached", is_all_attached);
-  if (is_match_port && is_diff_node && !!is_same_parent && !is_all_attached) {
+  if (is_match_port
+    && is_diff_node
+    && !!is_same_parent
+    && !is_all_attached
+  ) {
     console.log("add edge");
     params.type = 'normal';
     addEdges(params);
