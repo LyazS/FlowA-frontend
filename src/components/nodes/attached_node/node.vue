@@ -1,28 +1,28 @@
 <template>
     <div class="node-container">
         <template v-if="showInputHandle">
-            <div class="corner-text" :style="{justifyContent: 'flex-end'}">
+            <div class="corner-text" :style="{ justifyContent: justCont }">
                 OUTPUT
             </div>
-            <Handle id="input" type="target" :position="Position.Left" :style="{ left: `2px` }" />
+            <Handle id="input" type="target" :position="posLR" :style="handle_style" />
         </template>
         <template v-if="showCallbackUserHandle">
-            <div class="corner-text" :style="{justifyContent: 'flex-start'}">
+            <div class="corner-text" :style="{ justifyContent: justCont }">
                 CB-FUN
             </div>
-            <Handle id="callbackUser" type="source" :position="Position.Right" :style="{ right: `2px` }" />
+            <Handle id="callbackUser" type="source" :position="posLR" :style="handle_style" />
         </template>
         <template v-if="showCallbackFuncHandle">
-            <div class="corner-text" :style="{justifyContent: 'flex-end'}">
+            <div class="corner-text" :style="{ justifyContent: justCont }">
                 USE-CB
             </div>
-            <Handle id="callbackFunc" type="target" :position="Position.Left" :style="{ left: `2px` }" />
+            <Handle id="callbackFunc" type="target" :position="posLR" :style="handle_style" />
         </template>
         <template v-if="showOutputHandle">
-            <div class="corner-text" :style="{justifyContent: 'flex-start'}">
+            <div class="corner-text" :style="{ justifyContent: justCont }">
                 INPUT
             </div>
-            <Handle id="output" type="source" :position="Position.Right" :style="{ right: `2px` }" />
+            <Handle id="output" type="source" :position="posLR" :style="handle_style" />
         </template>
     </div>
 </template>
@@ -36,6 +36,12 @@ const showOutputHandle = !!(props.data.attached_type === 'input');
 const showCallbackUserHandle = !!(props.data.attached_type === 'callbackFunc');
 const showCallbackFuncHandle = !!(props.data.attached_type === 'callbackUser');
 const showInputHandle = !!(props.data.attached_type === 'output');
+const [yPart, xPart] = props.data.attached_pos.split('-');
+const posLR = xPart === 'left' ? Position.Right : Position.Left;
+const handle_style = xPart === 'left' ? { right: '2px' } : { left: '2px' };
+const justCont = xPart === 'left' ? 'flex-start' : 'flex-end';
+
+console.log(posLR, justCont);
 </script>
 
 <style>
@@ -56,7 +62,7 @@ const showInputHandle = !!(props.data.attached_type === 'output');
     width: 100%;
     height: 100%;
     position: relative;
-    
+
 }
 
 .corner-text {
