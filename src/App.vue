@@ -190,8 +190,8 @@ const recursiveUpdateNodeSize = (nodeId) => {
   recursiveUpdateNodeSize(nested_node.parentNode);
 }
 
-const recursiveAddNodeToVFlow = (parentNodeId, nodekey, position) => {
-  console.log("addNodeToVFlow", parentNodeId, nodekey, position);
+const recursiveAddNodeToVFlow = (parentNodeId, nodekey, nodeinfo) => {
+  console.log("addNodeToVFlow", parentNodeId, nodekey, nodeinfo);
   const parentNode = getVFNodeById(parentNodeId);
 
   const node_init_info = _.cloneDeep(AllNodeInitInfos[nodekey]);
@@ -210,8 +210,8 @@ const recursiveAddNodeToVFlow = (parentNodeId, nodekey, position) => {
 
   // 设置全局position
   let new_node_position = { x: 0, y: 0 };
-  if (position.type == 'attached' && !!parentNode) {
-    const [yPart, xPart] = position.position.split('-');
+  if (nodeinfo.type == 'attached' && !!parentNode) {
+    const [yPart, xPart] = nodeinfo.position.split('-');
     if (yPart == "top") {
       new_node_position.y = parentNode.position.y + parentNode.data.attached_pad.top;
     }
@@ -231,14 +231,14 @@ const recursiveAddNodeToVFlow = (parentNodeId, nodekey, position) => {
       new_node_position.x = parentNode.position.x + parentNode.data.size.width / 2 - parentNode.data.attached_pad.right;
     }
     new_node.data._is_attached = true;
-    new_node.data.attached_pos = position.position;
-    new_node.data._attached_type = position.attached_type;
+    new_node.data.attached_pos = nodeinfo.position;
+    new_node.data.attached_type = nodeinfo.attached_type;
     new_node.draggable = false;
     new_node.selectable = false;
     console.log("add fixed child node in", new_node.data.attached_pos)
   }
-  else if (position.type === 'client') {
-    new_node_position = { x: position.x, y: position.y };
+  else if (nodeinfo.type === 'client') {
+    new_node_position = { x: nodeinfo.x, y: nodeinfo.y };
   }
   // 递归设置局部position
   if (parentNodeId) {
@@ -261,12 +261,12 @@ const recursiveAddNodeToVFlow = (parentNodeId, nodekey, position) => {
   if (node_init_info.init_data.attached_nodes) {
     console.log(`add ${node_init_info.init_data.attached_nodes.length} fixed nested nodes`);
     node_init_info.init_data.attached_nodes.forEach((n_node) => {
-      recursiveAddNodeToVFlow(new_node.id, n_node.node_type, { type: "attached", position: n_node.pos, attached_type: n_node.attached_type });
+      recursiveAddNodeToVFlow(new_node.id, n_node.node_key, { type: "attached", position: n_node.pos, attached_type: n_node.attached_type });
     })
   }
 };
-const addNodeToVFlow = (parentNodeId, nodekey, position) => {
-  recursiveAddNodeToVFlow(parentNodeId, nodekey, position);
+const addNodeToVFlow = (parentNodeId, nodekey, nodeinfo) => {
+  recursiveAddNodeToVFlow(parentNodeId, nodekey, nodeinfo);
   buildNestedNodeGraph();
   recursiveUpdateNodeSize(parentNodeId);
 };
@@ -291,8 +291,9 @@ const addEdgeToVFlow = (params) => {
     || (params.sourceHandle == "callbackUser" && params.targetHandle == "callbackFunc");
   let is_diff_node = (params.source !== params.target);
   let is_same_parent = (getNestedNodeById(params.source)?.parentNode === getNestedNodeById(params.target)?.parentNode);
-  console.log("is_match_port", is_match_port, "is_diff_node", is_diff_node, "is_same_parent", is_same_parent);
-  if (is_match_port && is_diff_node && !!is_same_parent) {
+  let is_all_attached = (getVFNodeById(params.source)?.data._is_attached && getVFNodeById(params.target)?.data._is_attached);
+  console.log("is_match_port", is_match_port, "is_diff_node", is_diff_node, "is_same_parent", is_same_parent, "is_all_attached", is_all_attached);
+  if (is_match_port && is_diff_node && !!is_same_parent && !is_all_attached) {
     console.log("add edge");
     params.type = 'normal';
     addEdges(params);
@@ -324,14 +325,14 @@ const AddNodeList = (event_cm) => {
     label: item.init_data.label,
     onClick: () => {
       console.log("add node", item.node_key);
-      let node_position = {
+      let node_info = {
         type: 'client',
         ...screenToFlowCoordinate({
           x: event_cm.event.clientX,
           y: event_cm.event.clientY,
         })
       };
-      addNodeToVFlow(event_cm.node?.id, item.node_key, node_position);
+      addNodeToVFlow(event_cm.node?.id, item.node_key, node_info);
     },
   }));
 };

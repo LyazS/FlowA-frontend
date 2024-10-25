@@ -70,7 +70,6 @@ const showOutputHandle = !!props.data.output;
     position: absolute;
     display: flex;
     align-items: flex-end;
-
     height: 8px;
     text-align: center;
 }
