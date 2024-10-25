@@ -1,29 +1,9 @@
 <template>
     <div class="node-container">
-        <template v-if="showInputHandle">
-            <div class="corner-text" :style="{ justifyContent: justCont }">
-                OUTPUT
-            </div>
-            <Handle id="input" type="target" :position="posLR" :style="handle_style" />
-        </template>
-        <template v-if="showCallbackUserHandle">
-            <div class="corner-text" :style="{ justifyContent: justCont }">
-                CB-FUN
-            </div>
-            <Handle id="callbackUser" type="source" :position="posLR" :style="handle_style" />
-        </template>
-        <template v-if="showCallbackFuncHandle">
-            <div class="corner-text" :style="{ justifyContent: justCont }">
-                USE-CB
-            </div>
-            <Handle id="callbackFunc" type="target" :position="posLR" :style="handle_style" />
-        </template>
-        <template v-if="showOutputHandle">
-            <div class="corner-text" :style="{ justifyContent: justCont }">
-                INPUT
-            </div>
-            <Handle id="output" type="source" :position="posLR" :style="handle_style" />
-        </template>
+        <div class="corner-text" :style="{ justifyContent: justCont }">
+            {{ node_text }}
+        </div>
+        <Handle :id="data.attached_type" :type="handle_type" :position="posLR" :style="handle_style" />
     </div>
 </template>
 
@@ -32,25 +12,24 @@ import { ref, computed, onMounted, onBeforeUnmount, onUnmounted, watch } from 'v
 import { Position, Handle } from '@vue-flow/core'
 import { NTag, NText, NH3, NFlex, NLayout } from 'naive-ui';
 const props = defineProps(['id', 'data']);
+
 const showOutputHandle = !!(props.data.attached_type === 'input');
 const showCallbackUserHandle = !!(props.data.attached_type === 'callbackFunc');
 const showCallbackFuncHandle = !!(props.data.attached_type === 'callbackUser');
 const showInputHandle = !!(props.data.attached_type === 'output');
+
 const [yPart, xPart] = props.data.attached_pos.split('-');
 const posLR = xPart === 'left' ? Position.Right : Position.Left;
 const handle_style = xPart === 'left' ? { right: '2px' } : { left: '2px' };
 const justCont = xPart === 'left' ? 'flex-start' : 'flex-end';
-
-console.log(posLR, justCont);
+const node_text = showOutputHandle ? 'INPUT' : showCallbackUserHandle ? 'CB-FUN' : showCallbackFuncHandle ? 'USE-CB' : showInputHandle ? 'OUTPUT' : "";
+const handle_type = (showOutputHandle || showCallbackUserHandle) ? 'source' : (showCallbackFuncHandle || showInputHandle) ? 'target' : "";
+// console.log(props.data.attached_type, handle_type, posLR, handle_style, justCont, node_text);
 </script>
 
 <style>
 .vue-flow__node-attached_node {
     pointer-events: none;
-    /* border-top-left-radius: 0px; */
-    /* border-top-right-radius: 0px; */
-    /* border-bottom-left-radius: 0px; */
-    /* border-bottom-right-radius: 0px; */
 }
 
 .vue-flow__node-attached_node:hover {
