@@ -41,7 +41,7 @@ onUnmounted(() => {
 <template>
     <div class="nodepanel">
         <n-scrollbar style="max-height: calc(100vh - 80px);">
-            <n-card>
+            <n-card header-style="height: 70px;">
                 <template #header>
                     <!-- 普通文本模式 -->
                     <n-text v-if="!isEditingTitle" class="card-title" @click="startEditTilte">
