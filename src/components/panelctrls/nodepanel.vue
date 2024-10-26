@@ -1,5 +1,5 @@
 <script setup>
-import { computed, ref, watch, nextTick, inject } from 'vue';
+import { computed, ref, watch, nextTick, inject, onUnmounted } from 'vue';
 import { NCard, NScrollbar, NInput, NText } from 'naive-ui';
 import { Panel, useVueFlow } from '@vue-flow/core'
 import { find } from 'lodash';
@@ -10,22 +10,15 @@ const props = defineProps({
     }
 })
 const {
-    getNodes,
-    getEdges,
-    getSelectedNodes,
-    addNodes,
     findNode,
-    removeNodes,
-    onConnect,
-    addEdges,
-    removeEdges,
 } = useVueFlow();
 const isEditing = inject("isEditing");
 
 const thisnode = computed(() => { return findNode(props.nodeId); });
 const nodedatatext = computed(() => {
-    return thisnode.value.data;
-})
+    if (!thisnode.value?.data) return '';
+    return JSON.stringify(thisnode.value.data, null, 2);
+});
 
 // 标题相关 ======================================
 const isEditingTitle = ref(false);
@@ -38,11 +31,12 @@ const startEditTilte = () => {
 const saveTitle = () => {
     isEditing.value = false;
     isEditingTitle.value = false;
-    thisnode.value.data.label = thisnode.value.data.label.trim();
-    if (thisnode.value.data.label == '') {
-        thisnode.value.data.label = thisnode.value.data.placeholderlabel;
-    }
+    const newLabel = thisnode.value.data.label.trim();
+    thisnode.value.data.label = newLabel || thisnode.value.data.placeholderlabel;
 }
+onUnmounted(() => {
+    isEditing.value = false;
+})
 </script>
 <template>
     <div class="nodepanel">
@@ -57,7 +51,7 @@ const saveTitle = () => {
                     <n-input v-else v-model:value="thisnode.data.label" :placeholder="thisnode.data.placeholderlabel"
                         ref="titleInputRef" :bordered="false" @blur="saveTitle" class="title-input" />
                 </template>
-                {{ nodedatatext }}
+                <pre>{{ nodedatatext }}</pre>
             </n-card>
         </n-scrollbar>
     </div>
