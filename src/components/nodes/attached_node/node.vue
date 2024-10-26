@@ -3,7 +3,7 @@
         <div class="corner-text" :style="{ justifyContent: justCont }">
             {{ node_text }}
         </div>
-        <Handle :id="data.attached_type" :type="handle_type" :position="posLR" :style="handle_style" />
+        <Handle :id="handle_id" :type="handle_type" :position="posLR" :style="handle_style" />
     </div>
 </template>
 
@@ -24,6 +24,7 @@ const handle_style = xPart === 'left' ? { right: '2px' } : { left: '2px' };
 const justCont = xPart === 'left' ? 'flex-start' : 'flex-end';
 const node_text = showOutputHandle ? 'INPUT' : showCallbackUserHandle ? 'CB-FUN' : showCallbackFuncHandle ? 'USE-CB' : showInputHandle ? 'OUTPUT' : "";
 const handle_type = (showOutputHandle || showCallbackUserHandle) ? 'source' : (showCallbackFuncHandle || showInputHandle) ? 'target' : "";
+const handle_id = showOutputHandle ? 'output' : showCallbackUserHandle ? 'callbackUser' : showCallbackFuncHandle ? 'callbackFunc' : showInputHandle ? 'input' : "";
 // console.log(props.data.attached_type, handle_type, posLR, handle_style, justCont, node_text);
 </script>
 
