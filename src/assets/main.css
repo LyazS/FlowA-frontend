@@ -36,6 +36,7 @@ body,
 
 .vue-flow__node:hover {
   box-shadow: 0 0 10px rgb(138, 203, 236);
+  transition: box-shadow 0.2s ease;
 }
 
 .vue-flow__handle-input {

@@ -1,7 +1,8 @@
 <script setup>
-import { computed, ref, watch } from 'vue';
-import { NCard } from 'naive-ui';
+import { computed, ref, watch, nextTick, inject } from 'vue';
+import { NCard, NScrollbar, NInput, NText } from 'naive-ui';
 import { Panel, useVueFlow } from '@vue-flow/core'
+import { find } from 'lodash';
 const props = defineProps({
     nodeId: {
         type: String,
@@ -19,24 +20,67 @@ const {
     addEdges,
     removeEdges,
 } = useVueFlow();
-const nodetext = computed(() => {
-    const node = findNode(props.nodeId)
-    return node?.data;
-})
-</script>
+const isEditing = inject("isEditing");
 
+const thisnode = computed(() => { return findNode(props.nodeId); });
+const nodedatatext = computed(() => {
+    return thisnode.value.data;
+})
+
+// 标题相关 ======================================
+const isEditingTitle = ref(false);
+const titleInputRef = ref(null);
+const startEditTilte = () => {
+    isEditingTitle.value = true;
+    isEditing.value = true;
+    nextTick(() => { titleInputRef.value?.focus(); });
+}
+const saveTitle = () => {
+    isEditing.value = false;
+    isEditingTitle.value = false;
+    thisnode.value.data.label = thisnode.value.data.label.trim();
+    if (thisnode.value.data.label == '') {
+        thisnode.value.data.label = thisnode.value.data.placeholderlabel;
+    }
+}
+</script>
 <template>
-    <n-card class="nodepanel-card" title="卡片">
-        {{ nodetext }}
-    </n-card>
+    <div class="nodepanel">
+        <n-scrollbar style="max-height: calc(100vh - 80px);">
+            <n-card>
+                <template #header>
+                    <!-- 普通文本模式 -->
+                    <n-text v-if="!isEditingTitle" class="card-title" @click="startEditTilte">
+                        {{ thisnode.data.label }}
+                    </n-text>
+                    <!-- 编辑模式 -->
+                    <n-input v-else v-model:value="thisnode.data.label" :placeholder="thisnode.data.placeholderlabel"
+                        ref="titleInputRef" :bordered="false" @blur="saveTitle" class="title-input" />
+                </template>
+                {{ nodedatatext }}
+            </n-card>
+        </n-scrollbar>
+    </div>
 </template>
+
 <style scoped>
-.nodepanel-card {
-    transform: translateY(20px);
+.nodepanel {
+    margin-top: 20px;
     max-width: 500px;
 }
 
-.nodepanel-card:hover {
+.nodepanel:hover {
     box-shadow: 0 0 20px rgb(138, 203, 236);
+    transition: box-shadow 0.2s ease;
+}
+
+.card-title {
+    cursor: pointer;
+    padding: 0;
+    font-weight: 500;
+}
+
+.title-input {
+    font-weight: 500;
 }
 </style>

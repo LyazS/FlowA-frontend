@@ -5,7 +5,7 @@
     <Background />
     <miniMap />
     <miniMapCtrl />
-    
+
     <n-config-provider :theme="darkTheme">
       <n-message-provider>
         <nuipanel :nodeId="lastClickedNodeId" />
@@ -37,7 +37,7 @@
 
 <script setup>
 import _ from 'lodash';
-import { ref, markRaw, onMounted, onBeforeUnmount, reactive, watch } from 'vue'
+import { ref, markRaw, onMounted, onBeforeUnmount, reactive, watch, provide } from 'vue'
 import { ConnectionMode, VueFlow, Panel, useVueFlow } from '@vue-flow/core'
 import { Background } from '@vue-flow/background'
 import { Controls, ControlButton } from '@vue-flow/controls'
@@ -216,6 +216,7 @@ const recursiveAddNodeToVFlow = (parentNodeId, nodekey, nodeinfo) => {
   };
   new_node.data.size.width = offset_size.width;
   new_node.data.size.height = offset_size.height;
+  new_node.data.placeholderlabel = node_init_info.init_data.label;
 
   // 设置全局position
   let new_node_position = { x: 0, y: 0 };
@@ -467,6 +468,11 @@ onBeforeUnmount(() => {
 })
 
 // 快捷键设置 ===============================================================
+const isEditing = ref(false);
+provide('isEditing', isEditing);
+watch(isEditing, (new_val) => {
+  console.log("isEditing", new_val);
+})
 const isSpacePressed = ref(false);
 const lastMousePosition = ref({ x: 0, y: 0 });
 const currentMousePosition = ref({ x: 0, y: 0 });
@@ -476,6 +482,7 @@ const trackMousePosition = (event) => {
 }
 // 监听空格键按下和释放
 const handleKeyDown = (event) => {
+  if (isEditing.value) return;
   if (event.code === 'Space') {
     // 阻止默认行为，防止触发 VueFlow 的内置平移模式
     event.preventDefault();
@@ -487,6 +494,7 @@ const handleKeyDown = (event) => {
 }
 
 const handleKeyUp = (event) => {
+  if (isEditing.value) return;
   if (event.code === 'Space') {
     isSpacePressed.value = false;
     document.body.style.cursor = 'default';
@@ -496,6 +504,7 @@ const handleKeyUp = (event) => {
 // 只需要监听鼠标移动事件
 const handleMouseMove = (event) => {
   trackMousePosition(event);
+  if (isEditing.value) return;
   if (isSpacePressed.value) {
     const deltaX = event.clientX - lastMousePosition.value.x;
     const deltaY = event.clientY - lastMousePosition.value.y;

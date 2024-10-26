@@ -12,6 +12,8 @@
 `size`节点的尺寸，会在创建时自动应用init_width和init_height
 
 `label`节点显示的名字。
+`placeholderlabel`节点原本的名字。自动添加
+
 ## 可选参数
 `min_size`节点的最小尺寸
 
