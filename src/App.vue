@@ -83,6 +83,7 @@ const {
 
 const NestedNodeGraph = ref({});
 const AllNodeInitInfos = {};
+const AllNodeCounters = {};
 const AllVFNodeTypes = reactive({});
 let AddNodeListFromInitInfos = [];
 
@@ -103,6 +104,7 @@ const initAllNodeInfos = async () => {
     const module = await modules[key]();
     const initInfo = module.initInfo;
     AllNodeInitInfos[initInfo.node_key] = initInfo;
+    AllNodeCounters[initInfo.node_key] = 0;
     if (!AllVFNodeTypes.hasOwnProperty(initInfo.node_type)) {
       AllVFNodeTypes[initInfo.node_type] = markRaw(module.NodeVue);
     }
@@ -216,7 +218,10 @@ const recursiveAddNodeToVFlow = (parentNodeId, nodekey, nodeinfo) => {
   };
   new_node.data.size.width = offset_size.width;
   new_node.data.size.height = offset_size.height;
-  new_node.data.placeholderlabel = node_init_info.init_data.label;
+  const new_node_label = AllNodeCounters[nodekey] > 0 ? `${node_init_info.init_data.label} ${AllNodeCounters[nodekey]}` : node_init_info.init_data.label;
+  AllNodeCounters[nodekey]++;
+  new_node.data.placeholderlabel = new_node_label;
+  new_node.data.label = new_node_label;
 
   // 设置全局position
   let new_node_position = { x: 0, y: 0 };
@@ -281,20 +286,7 @@ const addNodeToVFlow = (parentNodeId, nodekey, nodeinfo) => {
   recursiveUpdateNodeSize(parentNodeId);
 };
 const removeNodeFromVFlow = (node) => {
-  let need_del = [];
-  let want_del = [node];
-  while (want_del.length > 0) {
-    let cur_node = want_del.shift();
-    need_del.push(cur_node);
-    let children = NestedNodeGraph.value[cur_node.id].children;
-    children.forEach(child_id => {
-      let child_node = getVFNodeById(child_id);
-      if (child_node) {
-        want_del.push(child_node);
-      }
-    })
-  }
-  removeNodes(need_del);
+  removeNodes(node, true, true);
 };
 const addEdgeToVFlow = (params) => {
   let is_match_port = (params.sourceHandle.startsWith("output") && params.targetHandle === "input")
@@ -449,7 +441,6 @@ onEdgeContextMenu((event) => {
 })
 
 onConnect((event) => {
-  console.log("连接", event);
   addEdgeToVFlow(event);
 })
 onMounted(async () => {
