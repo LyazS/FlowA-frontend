@@ -218,7 +218,7 @@ const recursiveAddNodeToVFlow = (parentNodeId, nodekey, nodeinfo) => {
   };
   new_node.data.size.width = offset_size.width;
   new_node.data.size.height = offset_size.height;
-  const new_node_label = AllNodeCounters[nodekey] > 0 ? `${node_init_info.init_data.label} ${AllNodeCounters[nodekey]}` : node_init_info.init_data.label;
+  const new_node_label = (AllNodeCounters[nodekey] > 0) ? `${node_init_info.init_data.label} ${AllNodeCounters[nodekey]}` : node_init_info.init_data.label;
   AllNodeCounters[nodekey]++;
   new_node.data.placeholderlabel = new_node_label;
   new_node.data.label = new_node_label;
