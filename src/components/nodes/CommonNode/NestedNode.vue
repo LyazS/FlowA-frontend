@@ -1,22 +1,22 @@
 <template>
     <div ref="outerDiv" :style="{ width: '100%', height: '100%', position: 'relative' }">
         <n-layout class="layout-container">
-            <div v-if="showInputHandle" class="corner-text"
+            <div class="corner-text"
                 :style="{ top: `${handle_gap}px`, left: `${corner_gap_left}px`, transform: 'translateY(-50%)' }">
                 INPUT
             </div>
 
-            <div v-if="showCallbackUserHandle" class="corner-text"
+            <div class="corner-text"
                 :style="{ top: `${handle_gap}px`, right: `${corner_gap_left}px`, transform: 'translateY(-50%)' }">
                 USE-CALLBACK
             </div>
 
-            <div v-if="showCallbackFuncHandle" class="corner-text"
+            <div class="corner-text"
                 :style="{ top: `${handle_gap * 1.5}px`, left: `${corner_gap_left}px`, transform: 'translateY(50%)' }">
                 CALLBACK-FUNC
             </div>
 
-            <div v-if="showOutputHandle" class="corner-text"
+            <div class="corner-text"
                 :style="{ top: `${handle_gap * 1.5}px`, right: `${corner_gap_left}px`, transform: 'translateY(50%)' }">
                 OUTPUT
             </div>
@@ -26,13 +26,13 @@
 
         </n-layout>
 
-        <Handle v-if="showInputHandle" id="input" type="target" :position="Position.Left"
+        <Handle id="input" type="target" :position="Position.Left"
             :style="{ top: `${handle_gap}px`, left: `${handle_gap}px` }" />
-        <Handle v-if="showCallbackFuncHandle" id="callbackFunc" type="target" :position="Position.Left"
+        <Handle id="callbackFunc" type="target" :position="Position.Left"
             :style="{ top: `${handle_gap * 2.9}px`, left: `${handle_gap}px` }" />
-        <Handle v-if="showCallbackUserHandle" id="callbackUser" type="source" :position="Position.Right"
+        <Handle id="callbackUser" type="source" :position="Position.Right"
             :style="{ top: `${handle_gap}px`, right: `${handle_gap}px` }" />
-        <Handle v-if="showOutputHandle" id="output" type="source" :position="Position.Right"
+        <Handle id="output" type="source" :position="Position.Right"
             :style="{ top: `${handle_gap * 2.9}px`, right: `${handle_gap}px` }" />
 
     </div>
@@ -45,12 +45,7 @@ import { NTag, NText, NH3, NFlex, NLayout } from 'naive-ui';
 const props = defineProps(['id', 'label', 'data'])
 const corner_gap_left = 10;
 const handle_gap = 6;
-const handle_bottom_pos = computed(() => { return props.data.size.height - (handle_gap + 8); });
 
-const showInputHandle = !!props.data.input;
-const showCallbackFuncHandle = !!props.data.callbackFunc;
-const showCallbackUserHandle = !!props.data.callbackUser;
-const showOutputHandle = !!props.data.output;
 const outerDiv = ref(null)
 const lastDiv = ref(null)
 
