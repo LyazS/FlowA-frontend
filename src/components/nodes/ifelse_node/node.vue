@@ -39,7 +39,7 @@ const handle_gap = 10;
 const corner_text_gap_left = 15;
 
 const handles = computed(() => {
-    return props.data.output.map((condition, index) => {
+    return props.data.connections.output.map((condition, index) => {
         return {
             id: condition.id,
             condition: condition.condition,
@@ -51,7 +51,7 @@ const handles = computed(() => {
 
 watch(() => props.data.output, () => {
     const node = findNode(props.id);
-    const node_ht = 40 + props.data.output.length * handle_gap;
+    const node_ht = 40 + props.data.connections.output.length * handle_gap;
     node.style.height = `${node_ht}px`;
     node.data.size.height = node_ht;
 }, { immediate: true })
