@@ -18,13 +18,13 @@ export const initInfo = {
             // callbackFunc: [],
             // callbackUser: [],
             output: [
-                { name: "text", type: "FromPayload", path: [0, "text"] },
+                { id: "output", path: ["payloads", 0] },
             ],
         },
         payloads: [
-            { label: "内容", type: "String", text: "", uitype: "textcontent" },
-            { label: "输出", uitype: "output" },
+            { id: "text", label: "内容", type: "String", data: "", uitype: "textcontent" },
         ],
+        results: {},
         // =================
         // 可选参数
         // =================

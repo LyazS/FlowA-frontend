@@ -1,6 +1,6 @@
 <script setup>
 import { computed, ref, watch, nextTick, inject, onUnmounted, h } from 'vue';
-import { NFlex, NCard, NScrollbar, NInput, NText } from 'naive-ui';
+import { NFlex, NH2, NCard, NScrollbar, NInput, NText } from 'naive-ui';
 import { Panel, useVueFlow, useHandleConnections } from '@vue-flow/core'
 import editable_output from './editables/output.vue';
 import editable_textcontent from './editables/textcontent.vue';
@@ -71,9 +71,11 @@ const saveTitle = () => {
     thisnode.value.data.label = newLabel || thisnode.value.data.placeholderlabel;
 }
 // 渲染节点payload数据 =======================================
-const nodepayloads = thisnode.value.data.payloads;
-const renderComponent = (payload, payloadidx) => {
-    const type = payload.type;
+const nodepayloads = computed(() => {
+    if (!thisnode.value?.data) return [];
+    return thisnode.value.data.payloads || [];
+});
+const renderPayloads = (payload, payloadidx) => {
     if (payload.uitype === 'textcontent') {
         return h(editable_textcontent, { nodeId: props.nodeId, payloadidx: payloadidx });
     }
@@ -81,6 +83,7 @@ const renderComponent = (payload, payloadidx) => {
         return h(editable_output, { nodeId: props.nodeId });
     }
 };
+// 渲染输出的连接 =============================================
 
 onUnmounted(() => {
     isEditing.value = false;
@@ -92,25 +95,26 @@ onUnmounted(() => {
         <n-scrollbar style="max-height: calc(100vh - 80px);">
             <n-card header-style="height: 70px;">
                 <template #header>
-                    <!-- 普通文本模式 -->
-                    <n-text v-if="!isEditingTitle" class="card-title" @click="startEditTilte">
-                        {{ thisnode.data.label }}
-                    </n-text>
-                    <!-- 编辑模式 -->
+                    <n-h2 prefix="bar" align-text v-if="!isEditingTitle" class="card-title" @click="startEditTilte">
+                        <n-text type="success" strong>{{ thisnode.data.label }}</n-text>
+                    </n-h2>
                     <n-input v-else v-model:value="thisnode.data.label" :placeholder="thisnode.data.placeholderlabel"
                         ref="titleInputRef" :bordered="false" @blur="saveTitle" class="title-input" />
                 </template>
 
+                <!-- 渲染输入的连接 -->
+                <!-- 渲染负载数据 -->
                 <n-flex vertical>
                     <component v-for="(payload, payloadidx) in nodepayloads" :key="`${payloadidx}`"
-                        :is="renderComponent(payload, payloadidx)" />
+                        :is="renderPayloads(payload, payloadidx)" />
                 </n-flex>
+                <!-- 渲染输出的连接 -->
+                <editable_output :nodeId="nodeId" />
 
                 <!-- <editable_textcontent :nodeId="nodeId" :payloadidx="0" /> -->
-                <!-- <editable_output /> -->
                 <!-- <div>{{ sourceConnections }}</div> -->
                 <!-- <pre>{{ inputConnections }}</pre> -->
-                <!-- <pre>{{ nodedatatext }}</pre> -->
+                <pre>{{ nodedatatext }}</pre>
             </n-card>
         </n-scrollbar>
     </div>

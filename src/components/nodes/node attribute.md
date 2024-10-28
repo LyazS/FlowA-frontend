@@ -24,7 +24,10 @@
 
 `output`输出端口
 
-`payload`节点实际负载
+`payloads`节点实际负载
+
+`results`节点运行结果
+
 ## 可选参数
 `min_size`节点的最小尺寸
 
