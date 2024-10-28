@@ -13,12 +13,15 @@ export const initInfo = {
             height: -1,
         },
         label: "LLM推理",
+        connections: {
+            input: [],
+            // callbackFunc: [],
+            callbackUser: [],
+            output: [],
+        },
+        payload: {},
         // =================
         // 可选参数
-        input: {},
-        callbackFunc: {},
-        callbackUser: {},
-        output: {},
         // =================
     },
 };

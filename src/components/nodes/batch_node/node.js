@@ -13,6 +13,13 @@ export const initInfo = {
             height: -1,
         },// 会在创建时自动应用init_width和init_height
         label: "批量运行",
+        connections: {
+            input: [],
+            callbackFunc: [],
+            callbackUser: [],
+            output: [],
+        },
+        payload: {},
         // =================
         // 可选参数
         min_size: {
@@ -37,10 +44,6 @@ export const initInfo = {
             { node_key: "attached_node", attached_type: "output", pos: "bottom-right" },
             { node_key: "attached_node", attached_type: "callbackFunc", pos: "bottom-left" },
         ],// 固定嵌套节点，会自动给子节点data添加"_is_attached=true"，同时设置为不可拖动
-        input: {},
-        callbackFunc: {},
-        callbackUser: {},
-        output: {},
         // =================
     },
 };

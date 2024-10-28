@@ -2,7 +2,7 @@
 import { computed, ref, watch, nextTick, inject, onUnmounted } from 'vue';
 import { NCard, NScrollbar, NInput, NText } from 'naive-ui';
 import { Panel, useVueFlow, useHandleConnections } from '@vue-flow/core'
-import { find } from 'lodash';
+import output_editable from './editables/output.vue';
 const props = defineProps({
     nodeId: {
         type: String,
@@ -89,6 +89,7 @@ onUnmounted(() => {
                     <n-input v-else v-model:value="thisnode.data.label" :placeholder="thisnode.data.placeholderlabel"
                         ref="titleInputRef" :bordered="false" @blur="saveTitle" class="title-input" />
                 </template>
+                <output_editable />
                 <!-- <div>{{ sourceConnections }}</div> -->
                 <pre>{{ inputConnections }}</pre>
                 <pre>{{ nodedatatext }}</pre>

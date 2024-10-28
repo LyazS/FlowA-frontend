@@ -46,10 +46,10 @@ const corner_gap_left = 10;
 const handle_gap = 6;
 const handle_bottom_pos = computed(() => { return props.data.size.height - (handle_gap + 8); });
 
-const showInputHandle = !!props.data.input;
-const showCallbackFuncHandle = !!props.data.callbackFunc;
-const showCallbackUserHandle = !!props.data.callbackUser;
-const showOutputHandle = !!props.data.output;
+const showInputHandle = !!props.data.connections.input;
+const showCallbackFuncHandle = !!props.data.connections.callbackFunc;
+const showCallbackUserHandle = !!props.data.connections.callbackUser;
+const showOutputHandle = !!props.data.connections.output;
 </script>
 
 <style scoped>

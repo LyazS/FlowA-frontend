@@ -13,6 +13,13 @@ export const initInfo = {
             height: -1,
         },// 会在创建时自动应用init_width和init_height
         label: "测试嵌套节点",
+        connections: {
+            input: [],
+            callbackFunc: [],
+            callbackUser: [],
+            output: [],
+        },
+        payload: {},
         // =================
         // 可选参数
         min_size: {

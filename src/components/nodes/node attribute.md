@@ -14,6 +14,17 @@
 `label`节点显示的名字。
 `placeholderlabel`节点原本的名字。自动添加
 
+`connections`节点链接端口信息
+
+`input`输入端口
+
+`callbackFunc`回调函数
+
+`callbackUser`回调使用者
+
+`output`输出端口
+
+`payload`节点实际负载
 ## 可选参数
 `min_size`节点的最小尺寸
 
@@ -26,11 +37,7 @@
 `attached_pos`附属节点的位置
 
 `attached_type`附属节点的类型：`input`、`callbackFunc`、`callbackUser`、`output`
-### 统一节点属性
-`input`输入端口
-`callbackFunc`回调函数
-`callbackUser`回调使用者
-`output`输出端口
+
 
 # 右键菜单
 ## 右击节点

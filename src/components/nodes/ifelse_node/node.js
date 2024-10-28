@@ -13,20 +13,23 @@ export const initInfo = {
             height: -1,
         },
         label: "条件分支",
+        connections: {
+            input: [],
+            // callbackFunc: [],
+            callbackUser: [],
+            output: [
+                { id: "output-1", condition: "是" },
+                { id: "output-2", condition: "不是" },
+                { id: "output-3", condition: "包含" },
+                { id: "output-4", condition: "不包含" },
+                { id: "output-5", condition: "不包含" },
+                { id: "output-6", condition: "不包含" },
+                { id: "output-7", condition: "不包含" },
+            ],
+        },
+        payload: {},
         // =================
         // 可选参数
-        input: {},
-        // callbackFunc: {},
-        // callbackUser: {},
-        output: [
-            { id: "output-1", condition: "是" },
-            { id: "output-2", condition: "不是" },
-            { id: "output-3", condition: "包含" },
-            { id: "output-4", condition: "不包含" },
-            { id: "output-5", condition: "不包含" },
-            { id: "output-6", condition: "不包含" },
-            { id: "output-7", condition: "不包含" },
-        ],
         // =================
     },
 };
