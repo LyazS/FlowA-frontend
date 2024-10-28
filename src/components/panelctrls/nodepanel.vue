@@ -1,8 +1,9 @@
 <script setup>
-import { computed, ref, watch, nextTick, inject, onUnmounted } from 'vue';
-import { NCard, NScrollbar, NInput, NText } from 'naive-ui';
+import { computed, ref, watch, nextTick, inject, onUnmounted, h } from 'vue';
+import { NFlex, NCard, NScrollbar, NInput, NText } from 'naive-ui';
 import { Panel, useVueFlow, useHandleConnections } from '@vue-flow/core'
-import output_editable from './editables/output.vue';
+import editable_output from './editables/output.vue';
+import editable_textcontent from './editables/textcontent.vue';
 const props = defineProps({
     nodeId: {
         type: String,
@@ -15,7 +16,7 @@ const {
 } = useVueFlow();
 const isEditing = inject("isEditing");
 
-// 获取节点数据
+// 获取节点
 const thisnode = computed(() => {
     return findNode(props.nodeId);
 });
@@ -69,7 +70,17 @@ const saveTitle = () => {
     const newLabel = thisnode.value.data.label.trim();
     thisnode.value.data.label = newLabel || thisnode.value.data.placeholderlabel;
 }
-// 监听节点数据变化
+// 渲染节点payload数据 =======================================
+const nodepayloads = thisnode.value.data.payloads;
+const renderComponent = (payload, payloadidx) => {
+    const type = payload.type;
+    if (payload.uitype === 'textcontent') {
+        return h(editable_textcontent, { nodeId: props.nodeId, payloadidx: payloadidx });
+    }
+    else if (payload.uitype === 'output') {
+        return h(editable_output, { nodeId: props.nodeId });
+    }
+};
 
 onUnmounted(() => {
     isEditing.value = false;
@@ -89,10 +100,17 @@ onUnmounted(() => {
                     <n-input v-else v-model:value="thisnode.data.label" :placeholder="thisnode.data.placeholderlabel"
                         ref="titleInputRef" :bordered="false" @blur="saveTitle" class="title-input" />
                 </template>
-                <output_editable />
+
+                <n-flex vertical>
+                    <component v-for="(payload, payloadidx) in nodepayloads" :key="`${payloadidx}`"
+                        :is="renderComponent(payload, payloadidx)" />
+                </n-flex>
+
+                <!-- <editable_textcontent :nodeId="nodeId" :payloadidx="0" /> -->
+                <!-- <editable_output /> -->
                 <!-- <div>{{ sourceConnections }}</div> -->
-                <pre>{{ inputConnections }}</pre>
-                <pre>{{ nodedatatext }}</pre>
+                <!-- <pre>{{ inputConnections }}</pre> -->
+                <!-- <pre>{{ nodedatatext }}</pre> -->
             </n-card>
         </n-scrollbar>
     </div>

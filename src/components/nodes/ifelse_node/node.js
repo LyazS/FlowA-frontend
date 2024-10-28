@@ -27,7 +27,7 @@ export const initInfo = {
                 { id: "output-7", condition: "不包含" },
             ],
         },
-        payload: {},
+        payloads: [],
         // =================
         // 可选参数
         // =================

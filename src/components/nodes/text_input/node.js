@@ -17,9 +17,14 @@ export const initInfo = {
             // input: [],
             // callbackFunc: [],
             // callbackUser: [],
-            output: [],
+            output: [
+                { name: "text", type: "FromPayload", path: [0, "text"] },
+            ],
         },
-        payload: {},
+        payloads: [
+            { label: "内容", type: "String", text: "", uitype: "textcontent" },
+            { label: "输出", uitype: "output" },
+        ],
         // =================
         // 可选参数
         // =================

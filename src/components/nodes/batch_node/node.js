@@ -19,7 +19,7 @@ export const initInfo = {
             callbackUser: [],
             output: [],
         },
-        payload: {},
+        payloads: [],
         // =================
         // 可选参数
         min_size: {

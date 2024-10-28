@@ -1,29 +1,8 @@
 # cyberflow
 
-This template should help get you started developing with Vue 3 in Vite.
+## 设计思路
 
-## Recommended IDE Setup
+前端通过connections.input来获取输入，然后展示输入内容
+节点其他设置用payloads来承担，并根据payloads来展示设置
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
-
-## Customize configuration
-
-See [Vite Configuration Reference](https://vite.dev/config/).
-
-## Project Setup
-
-```sh
-npm install
-```
-
-### Compile and Hot-Reload for Development
-
-```sh
-npm run dev
-```
-
-### Compile and Minify for Production
-
-```sh
-npm run build
-```
+后端通过connections来构建图，并根据输入输出来运行这个图
