@@ -1,10 +1,10 @@
-import { BaseNodeInfo, addNestedAttribute, addConnectionsAttribute, addPayloadsAttribute, addStateAttribute } from '../CommonNode/BaseNode.js'
+import { BaseNodeInfo, addNestedAttribute, addConnectionsAttribute, addRunningAttribute, addStateAttribute } from '../CommonNode/BaseNode.js'
 import { cloneDeep } from 'lodash';
 import NodeVue from './node.vue';
 
 let _initInfo = cloneDeep(BaseNodeInfo);
 _initInfo = addConnectionsAttribute(_initInfo);
-_initInfo = addPayloadsAttribute(_initInfo);
+_initInfo = addRunningAttribute(_initInfo);
 _initInfo = addStateAttribute(_initInfo);
 _initInfo.id = "ifelse_node";
 _initInfo.type = "ifelse_node";

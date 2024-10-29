@@ -1,11 +1,11 @@
-import { BaseNodeInfo, addNestedAttribute, addConnectionsAttribute, addPayloadsAttribute, addStateAttribute } from '../CommonNode/BaseNode.js'
+import { BaseNodeInfo, addNestedAttribute, addConnectionsAttribute, addRunningAttribute, addStateAttribute } from '../CommonNode/BaseNode.js'
 import { cloneDeep } from 'lodash';
 import NodeVue from '../CommonNode/NestedNode.vue';
 
 let _initInfo = cloneDeep(BaseNodeInfo);
 _initInfo = addNestedAttribute(_initInfo);
 _initInfo = addConnectionsAttribute(_initInfo);
-_initInfo = addPayloadsAttribute(_initInfo);
+_initInfo = addRunningAttribute(_initInfo);
 _initInfo = addStateAttribute(_initInfo);
 _initInfo.id = "batch_node";
 _initInfo.type = "NestedNode";

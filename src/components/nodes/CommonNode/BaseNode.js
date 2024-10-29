@@ -39,9 +39,9 @@ const FullNodeInfo = {
             ],
         },
         // ========================================================
-        attachment: {
-            attached_type: "input",
-            attached_pos: "top-left",
+        attaching: {
+            type: "input",
+            pos: "top-left",
         },
         // ========================================================
         connections: {
@@ -100,9 +100,9 @@ export const BaseNodeInfo = {
     }
 };
 const AttachedAttribute = {
-    attachment: {
-        attached_type: "",
-        attached_pos: "",
+    attaching: {
+        type: "",
+        pos: "",
     },
 };
 const NestedAttribute = {
@@ -133,24 +133,31 @@ const ConnectionsAttribute = {
         // 单一个输入handle，数组里每个元素表示使用哪些输入
         // 用filter来搜索出符合条件的第一个输入
         inputs: [
-            // { id: "input", data: [] },
-            // { type:"FromOuter", nid: "节点id", oid: "节点的输出id" }
+            // {
+            //     id: "input", data: [
+            //         { type:"FromOuter", nid: "节点id", oid: "节点的outputs数组的id", useid: ["节点id"] }
+            //     ]
+            // },
         ],
         callbackUsers: [],
         // 多个输出handle，数组里每个元素都是一个输出handle
         callbackFuncs: [],
         outputs: [
-            // { id: "output", data: [] },
-            // { type:"FromInner", path: ["payloads", 0] },
+            // {
+            //     id: "output", data: [
+            //         { type:"FromInner", path: ["payloads", 0], useid: ["节点id"] },
+            //         { type:"FromInner", path: ["results", 0], useid: ["节点id"] },
+            //     ]
+            // },
         ],
     }
 }
-const PayloadsAttribute = {
+const RunningAttribute = {
     payloads: [
         // { id: "text", label: "内容", type: "String", data: "", uitype: "textcontent" },
     ],
     results: [
-        // { id: "text", label: "内容", type: "String", data: "", uitype: "textcontent" },
+        // { id: "text", label: "内容", type: "String", data: "" },
     ],
 }
 const StateAttribute = {
@@ -177,8 +184,8 @@ export const addNestedAttribute = (nodeInfo) => {
 export const addConnectionsAttribute = (nodeInfo) => {
     Object.assign(nodeInfo.data, ConnectionsAttribute);
 };
-export const addPayloadsAttribute = (nodeInfo) => {
-    Object.assign(nodeInfo.data, PayloadsAttribute);
+export const addRunningAttribute = (nodeInfo) => {
+    Object.assign(nodeInfo.data, RunningAttribute);
 };
 export const addStateAttribute = (nodeInfo) => {
     Object.assign(nodeInfo.data, StateAttribute);

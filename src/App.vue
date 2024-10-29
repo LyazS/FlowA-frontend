@@ -52,7 +52,7 @@ import {
   addAttachedAttribute,
   addNestedAttribute,
   addConnectionsAttribute,
-  addPayloadsAttribute,
+  addRunningAttribute,
   addStateAttribute,
 } from './components/nodes/CommonNode/BaseNode.js'
 
