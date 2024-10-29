@@ -40,7 +40,6 @@ import _ from 'lodash';
 import { ref, markRaw, onMounted, onBeforeUnmount, reactive, watch, provide } from 'vue'
 import { ConnectionMode, VueFlow, Panel, useVueFlow } from '@vue-flow/core'
 import { Background } from '@vue-flow/background'
-import { Controls, ControlButton } from '@vue-flow/controls'
 import {
   darkTheme,
   NConfigProvider,
@@ -48,6 +47,15 @@ import {
 } from 'naive-ui';
 import { ContextMenu, ContextMenuGroup, ContextMenuSeparator, ContextMenuItem } from '@imengyu/vue3-context-menu';
 import { getUuid } from './utils/tools.js';
+import {
+  BaseNodeInfo,
+  addAttachedAttribute,
+  addNestedAttribute,
+  addConnectionsAttribute,
+  addPayloadsAttribute,
+  addStateAttribute,
+} from './components/nodes/CommonNode/BaseNode.js'
+
 import miniMap from './components/panelctrls/miniMap.vue'
 import miniMapCtrl from './components/panelctrls/miniMapCtrl.vue'
 import nuipanel from './components/panelctrls/nuipanel.vue'
@@ -103,13 +111,12 @@ const initAllNodeInfos = async () => {
   const promises = Object.keys(modules).map(async (key) => {
     const module = await modules[key]();
     const initInfo = module.initInfo;
-    AllNodeInitInfos[initInfo.node_key] = initInfo;
-    AllNodeCounters[initInfo.node_key] = 0;
-    if (!AllVFNodeTypes.hasOwnProperty(initInfo.node_type)) {
-      AllVFNodeTypes[initInfo.node_type] = markRaw(module.NodeVue);
+    AllNodeInitInfos[initInfo.id] = initInfo;
+    AllNodeCounters[initInfo.id] = 0;
+    if (!AllVFNodeTypes.hasOwnProperty(initInfo.type)) {
+      AllVFNodeTypes[initInfo.type] = markRaw(module.NodeVue);
     }
   });
-
   // 等待所有异步操作完成
   await Promise.all(promises);
 
@@ -120,7 +127,7 @@ const initAllNodeInfos = async () => {
   AddNodeListFromInitInfos = Object.entries(AllNodeInitInfos)
     .sort((a, b) => a[0].localeCompare(b[0])) // 按key排序
     .map(([key, item]) => item)
-    .filter(item => !item.init_data._is_attached);
+    .filter(item => !item.data.flags.isAttached);
   console.log("AddNodeListFromInitInfos", AddNodeListFromInitInfos);
 };
 

@@ -2,6 +2,7 @@
 import { computed, ref, watch, nextTick, inject, onUnmounted, h } from 'vue';
 import { NFlex, NH2, NCard, NScrollbar, NInput, NText } from 'naive-ui';
 import { Panel, useVueFlow, useHandleConnections } from '@vue-flow/core'
+import editable_input from './editables/input.vue';
 import editable_output from './editables/output.vue';
 import editable_textcontent from './editables/textcontent.vue';
 const props = defineProps({
@@ -79,11 +80,17 @@ const renderPayloads = (payload, payloadidx) => {
     if (payload.uitype === 'textcontent') {
         return h(editable_textcontent, { nodeId: props.nodeId, payloadidx: payloadidx });
     }
-    else if (payload.uitype === 'output') {
+};
+// 渲染输出的连接 =============================================
+const rederConnections = (connection, type) => {
+    if (type === 'input') {
+        return h(editable_input, {});
+    }
+    else if (type === 'output') {
         return h(editable_output, { nodeId: props.nodeId });
     }
 };
-// 渲染输出的连接 =============================================
+
 
 onUnmounted(() => {
     isEditing.value = false;
@@ -109,11 +116,12 @@ onUnmounted(() => {
                         :is="renderPayloads(payload, payloadidx)" />
                 </n-flex>
                 <!-- 渲染输出的连接 -->
-                <editable_output :nodeId="nodeId" />
+                <component v-if="thisnode.data.connections.output" :key="`rd-output`"
+                    :is="rederConnections(thisnode.data.connections.output, 'output')" />
 
                 <!-- <editable_textcontent :nodeId="nodeId" :payloadidx="0" /> -->
                 <!-- <div>{{ sourceConnections }}</div> -->
-                <!-- <pre>{{ inputConnections }}</pre> -->
+                <pre>{{ inputConnections }}</pre>
                 <pre>{{ nodedatatext }}</pre>
             </n-card>
         </n-scrollbar>

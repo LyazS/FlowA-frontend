@@ -1,24 +1,21 @@
+import { BaseNodeInfo, addAttachedAttribute } from '../CommonNode/BaseNode.js'
+import { cloneDeep } from 'lodash';
 import NodeVue from './node.vue';
-export const initInfo = {
-    node_key: "attached_node",
-    node_type: "attached_node",
-    init_width: 20,
-    init_height: 6,
-    init_data: {
-        // 必要参数 ========
-        _is_nested: false,// 是否可嵌套
-        _is_attached: true,// 是否为附属节点
-        size: {
-            width: -1,
-            height: -1,
-        },
-        label: "附属节点",
-        // =================
-        // 可选参数
-        // attached_pos: "top-left",// 固定子节点在嵌套节点中的位置，会自动添加
-        // attached_type: "callbackUser",// 附属节点类型，会自动添加
-        // =================
-    },
-};
 
+let _initInfo = cloneDeep(BaseNodeInfo);
+_initInfo = addAttachedAttribute(_initInfo);
+_initInfo.id = "attached_node"
+_initInfo.type = "attached_node"
+_overwriteInfo = {
+    flags: {
+        isAttached: true,
+    },
+    size: {
+        width: 20,
+        height: 6,
+    },
+}
+Object.assign(_initInfo.data, _overwriteInfo);
+
+export const initInfo = cloneDeep(_initInfo);
 export { NodeVue };
