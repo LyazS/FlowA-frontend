@@ -1,4 +1,4 @@
-import { BaseNodeInfo, addNestedAttribute, addConnectionsAttribute, addRunningAttribute, addStateAttribute } from '../CommonNode/BaseNode.js'
+import { BaseNodeInfo, addNestedAttribute, addConnectionsAttribute, addRunningAttribute, addStateAttribute } from '../NodeOperator.js'
 import { cloneDeep } from 'lodash';
 import NodeVue from '../CommonNode/UnifiedNode.vue';
 
@@ -6,9 +6,9 @@ let _initInfo = cloneDeep(BaseNodeInfo);
 _initInfo = addConnectionsAttribute(_initInfo);
 _initInfo = addRunningAttribute(_initInfo);
 _initInfo = addStateAttribute(_initInfo);
-_initInfo.id = "text_steam_output";
-_initInfo.type = "UnifiedNode";
-_overwriteInfo = {
+_initInfo.ntype = "text_steam_output";
+_initInfo.vtype = "UnifiedNode";
+let _overwriteInfo = {
     size: {
         width: 80,
         height: 40,

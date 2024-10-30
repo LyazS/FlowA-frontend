@@ -54,7 +54,7 @@ import {
   addConnectionsAttribute,
   addRunningAttribute,
   addStateAttribute,
-} from './components/nodes/CommonNode/BaseNode.js'
+} from './components/nodes/NodeOperator.js'
 
 import miniMap from './components/panelctrls/miniMap.vue'
 import miniMapCtrl from './components/panelctrls/miniMapCtrl.vue'

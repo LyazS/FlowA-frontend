@@ -1,4 +1,4 @@
-import { BaseNodeInfo, addNestedAttribute, addConnectionsAttribute, addRunningAttribute, addStateAttribute } from '../CommonNode/BaseNode.js'
+import { BaseNodeInfo, addNestedAttribute, addConnectionsAttribute, addRunningAttribute, addStateAttribute } from '../NodeOperator.js'
 import { cloneDeep } from 'lodash';
 import NodeVue from '../CommonNode/NestedNode.vue';
 
@@ -7,9 +7,9 @@ _initInfo = addNestedAttribute(_initInfo);
 _initInfo = addConnectionsAttribute(_initInfo);
 _initInfo = addRunningAttribute(_initInfo);
 _initInfo = addStateAttribute(_initInfo);
-_initInfo.id = "batch_node";
-_initInfo.type = "NestedNode";
-_overwriteInfo = {
+_initInfo.ntype = "batch_node";
+_initInfo.vtype = "NestedNode";
+let _overwriteInfo = {
     flags: {
         isNested: true,
     },
@@ -18,19 +18,15 @@ _overwriteInfo = {
         height: 200,
     },
     connections: {
-        input: [
-            { id: "input", data: [] },
-        ],
-        output: [
-            { id: "output", data: [] },
-        ],
+        inputs: { input: {} },
+        outputs: { output: {} },
     },
     nesting: {
         attached_nodes: [
-            { node_key: "attached_node", attached_type: "input", pos: "top-left" },// top|center|bottom-left|center|right
-            { node_key: "attached_node", attached_type: "callbackUser", pos: "top-right" },
-            { node_key: "attached_node", attached_type: "output", pos: "bottom-right" },
-            { node_key: "attached_node", attached_type: "callbackFunc", pos: "bottom-left" },
+            { ntype: "attached_node", atype: "input", apos: "top-left" },// top|center|bottom-left|center|right
+            { ntype: "attached_node", atype: "callbackUser", apos: "top-right" },
+            { ntype: "attached_node", atype: "output", apos: "bottom-right" },
+            { ntype: "attached_node", atype: "callbackFunc", apos: "bottom-left" },
         ]
     }
 }

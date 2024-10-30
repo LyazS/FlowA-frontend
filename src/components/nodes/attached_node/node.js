@@ -1,12 +1,12 @@
-import { BaseNodeInfo, addAttachedAttribute } from '../CommonNode/BaseNode.js'
+import { BaseNodeInfo, addAttachedAttribute } from '../NodeOperator.js'
 import { cloneDeep } from 'lodash';
 import NodeVue from './node.vue';
 
 let _initInfo = cloneDeep(BaseNodeInfo);
 _initInfo = addAttachedAttribute(_initInfo);
-_initInfo.id = "attached_node"
-_initInfo.type = "attached_node"
-_overwriteInfo = {
+_initInfo.ntype = "attached_node"
+_initInfo.vtype = "attached_node"
+let _overwriteInfo = {
     flags: {
         isAttached: true,
     },

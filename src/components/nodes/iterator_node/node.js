@@ -1,4 +1,4 @@
-import { BaseNodeInfo, addNestedAttribute, addConnectionsAttribute, addRunningAttribute, addStateAttribute } from '../CommonNode/BaseNode.js'
+import { BaseNodeInfo, addNestedAttribute, addConnectionsAttribute, addRunningAttribute, addStateAttribute } from '../NodeOperator.js'
 import { cloneDeep } from 'lodash';
 import NodeVue from '../CommonNode/NestedNode.vue';
 
@@ -7,9 +7,9 @@ _initInfo = addNestedAttribute(_initInfo);
 _initInfo = addConnectionsAttribute(_initInfo);
 _initInfo = addRunningAttribute(_initInfo);
 _initInfo = addStateAttribute(_initInfo);
-_initInfo.id = "iterator_node";
-_initInfo.type = "NestedNode";
-_overwriteInfo = {
+_initInfo.ntype = "iterator_node";
+_initInfo.vtype = "NestedNode";
+let _overwriteInfo = {
     flags: {
         isNested: true,
     },
