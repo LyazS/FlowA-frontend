@@ -1,3 +1,4 @@
+import { getUuid } from "../../utils/tools.js"
 export const BaseNodeInfo = {
     // 节点元数据 ==========
     ntype: "#TODO",  // 节点类型
@@ -128,7 +129,7 @@ export const setNodeType = (_BaseNodeInfo, ntype) => {
 export const setVueType = (_BaseNodeInfo, vtype) => {
     _BaseNodeInfo.vtype = vtype;
 };
-export const addLabel = (_BaseNodeInfo, label) => {
+export const setLabel = (_BaseNodeInfo, label) => {
     _BaseNodeInfo.data.label = label;
     _BaseNodeInfo.data.placeholderlabel = label;
 };
@@ -146,45 +147,41 @@ export const setSize = (_Node, width, height) => {
     _Node.style.width = width;
     _Node.style.height = height;
 };
-
-export const setLabel = (_Node, label) => {
-    label = label.trim();
-    _Node.data.label = label || _Node.data.placeholderlabel;
+export const getSize = (_Node) => {
+    return {
+        width: _Node.data.size.width,
+        height: _Node.data.size.height
+    };
 };
+
 export const setAttachedAttribute = (_Node, type, pos) => {
     _Node.data.attaching.type = type;
     _Node.data.attaching.pos = pos;
 };
-export const addInputConnection = (_Node, handleId, cid, ConnectData) => {
-    if (!_Node.data.connections.inputs.hasOwnProperty(handleId)) {
-        _Node.data.connections.inputs[handleId] = {};
+export const addConnection = (_Node, handletype, handleId, ConnectData) => {
+    const cid = getUuid();
+    if (!_Node.data.connections[handletype].hasOwnProperty(handleId)) {
+        _Node.data.connections[handletype][handleId] = {};
     }
-    _Node.data.connections.inputs[handleId][cid] = ConnectData;
+    _Node.data.connections[handletype][handleId][cid] = ConnectData;
+    return cid;
 };
-export const addOutputConnection = (_Node, handleId, cid, ConnectData) => {
-    if (!_Node.data.connections.outputs.hasOwnProperty(handleId)) {
-        _Node.data.connections.outputs[handleId] = {};
-    }
-    _Node.data.connections.outputs[handleId][cid] = ConnectData;
-};
-export const rmInputConnection = (_Node, handleId, cid) => {
-    if (_Node.data.connections.inputs.hasOwnProperty(handleId)
-        && _Node.data.connections.inputs[handleId].hasOwnProperty(cid)) {
-        delete _Node.data.connections.inputs[handleId][cid];
+export const rmConnection = (_Node, handletype, handleId, cid) => {
+    if (_Node.data.connections[handletype].hasOwnProperty(handleId)
+        && _Node.data.connections[handletype][handleId].hasOwnProperty(cid)) {
+        delete _Node.data.connections[handletype][handleId][cid];
     }
 };
-export const rmOutputConnection = (_Node, handleId, cid) => {
-    if (_Node.data.connections.outputs.hasOwnProperty(handleId)
-        && _Node.data.connections.outputs[handleId].hasOwnProperty(cid)) {
-        delete _Node.data.connections.outputs[handleId][cid];
-    }
-};
-export const addPayload = (_Node, pid, payload) => {
+export const addPayload = (_Node, payload) => {
+    const pid = getUuid();
     _Node.data.payloads.byId[pid] = payload;
     _Node.data.payloads.order.push(pid);
+    return pid;
 };
-export const addResult = (_Node, rid, result) => {
-    _Node.data.results.byId[rid] = result;
+export const addResult = (_Node, result, hid) => {
+    const rid = getUuid();
+    const oid = addConnection(_Node, "outputs", hid, { type: "FromInner", path: ["results", rid], useid: [] });
+    _Node.data.results.byId[rid] = { ...result, oid: oid };
     _Node.data.results.order.push(rid);
 };
 export const rmPayload = (_Node, pid) => {
@@ -195,6 +192,8 @@ export const rmPayload = (_Node, pid) => {
 };
 export const rmResult = (_Node, rid) => {
     if (_Node.data.results.byId.hasOwnProperty(rid)) {
+        const oid = _Node.data.results.byId[rid].oid;
+        rmConnection(_Node, "outputs", oid, rid);
         delete _Node.data.results.byId[rid];
         _Node.data.results.order.splice(_Node.data.results.order.indexOf(rid), 1);
     }
