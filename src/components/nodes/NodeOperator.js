@@ -1,3 +1,4 @@
+import { cloneDeep } from "lodash";
 import { getUuid } from "../../utils/tools.js"
 export const BaseNodeInfo = {
     // 节点元数据 ==========
@@ -52,9 +53,12 @@ const ConnectionsAttribute = {
         // 单一个输入handle，数组里每个元素表示使用哪些输入
         inputs: {
             // input: {// 输入handle的id
-            //     "idxxx-ot": { type: "FromOuter", nid: "节点id", oid: "节点的输出id" },
-            //     "idxxx-ot": { type: "FromInner", path: ["payloads", "idxxx-pr"], useid: ["使用节点id"] },
-            //     "idxxx-ot": { type: "FromInner", path: ["results", "idxxx-pr"], useid: ["使用节点id"] },
+            //     label: "输入1",
+            //     data: {
+            //         "idxxx-ot": { type: "FromOuter", nid: "节点id", oid: "节点的输出id" },
+            //         "idxxx-ot": { type: "FromInner", path: ["payloads", "idxxx-pr"], useid: ["使用节点id"] },
+            //         "idxxx-ot": { type: "FromInner", path: ["results", "idxxx-pr"], useid: ["使用节点id"] },
+            //     }
             // }
         },
         callbackUsers: {},
@@ -62,9 +66,12 @@ const ConnectionsAttribute = {
         callbackFuncs: {},
         outputs: {
             // output: {// 输出handle的id
-            //     "idxxx-ot": { type: "FromOuter", nid: "节点id", oid: "节点的输出id" },
-            //     "idxxx-ot": { type: "FromInner", path: ["payloads", "idxxx-pr"], useid: ["使用节点id"] },
-            //     "idxxx-ot": { type: "FromInner", path: ["results", "idxxx-pr"], useid: ["使用节点id"] },
+            //     label: "",
+            //     data: {
+            //         "idxxx-ot": { type: "FromOuter", nid: "节点id", oid: "节点的输出id" },
+            //         "idxxx-ot": { type: "FromInner", path: ["payloads", "idxxx-pr"], useid: ["使用节点id"] },
+            //         "idxxx-ot": { type: "FromInner", path: ["results", "idxxx-pr"], useid: ["使用节点id"] },
+            //     }
             // }
         },
     }
@@ -108,20 +115,28 @@ const StateAttribute = {
 // 初始化函数
 export const initAttachedAttribute = (_BaseNodeInfo) => {
     _BaseNodeInfo.data.flags.isAttached = true;
-    Object.assign(_BaseNodeInfo.data, AttachedAttribute);
+    Object.assign(_BaseNodeInfo.data, cloneDeep(AttachedAttribute));
 };
 export const initNestedAttribute = (_BaseNodeInfo) => {
     _BaseNodeInfo.data.flags.isNested = true;
-    Object.assign(_BaseNodeInfo.data, NestedAttribute);
+    Object.assign(_BaseNodeInfo.data, cloneDeep(NestedAttribute));
 };
 export const initConnectionsAttribute = (_BaseNodeInfo) => {
-    Object.assign(_BaseNodeInfo.data, ConnectionsAttribute);
+    Object.assign(_BaseNodeInfo.data, cloneDeep(ConnectionsAttribute));
 };
 export const initRunningAttribute = (_BaseNodeInfo) => {
-    Object.assign(_BaseNodeInfo.data, RunningAttribute);
+    Object.assign(_BaseNodeInfo.data, cloneDeep(RunningAttribute));
 };
 export const initStateAttribute = (_BaseNodeInfo) => {
-    Object.assign(_BaseNodeInfo.data, StateAttribute);
+    Object.assign(_BaseNodeInfo.data, cloneDeep(StateAttribute));
+};
+export const initMinSize = (_BaseNodeInfo, width, height) => {
+    _BaseNodeInfo.data.min_size.width = width;
+    _BaseNodeInfo.data.min_size.height = height;
+};
+export const initSize = (_Node, width, height) => {
+    _Node.data.size.width = width;
+    _Node.data.size.height = height;
 };
 export const setNodeType = (_BaseNodeInfo, ntype) => {
     _BaseNodeInfo.ntype = ntype;
@@ -136,10 +151,7 @@ export const setLabel = (_BaseNodeInfo, label) => {
 export const addAttachedNode = (_BaseNodeInfo, ntype, atype, apos) => {
     _BaseNodeInfo.data.nesting.attached_nodes.push({ ntype, atype, apos });
 };
-export const setMinSize = (_BaseNodeInfo, width, height) => {
-    _BaseNodeInfo.data.min_size.width = width;
-    _BaseNodeInfo.data.min_size.height = height;
-};
+
 // 节点数据操作函数 ==========
 export const setSize = (_Node, width, height) => {
     _Node.data.size.width = width;
@@ -158,18 +170,21 @@ export const setAttachedAttribute = (_Node, type, pos) => {
     _Node.data.attaching.type = type;
     _Node.data.attaching.pos = pos;
 };
+export const addHandle = (_Node, handletype, handleId, label = null) => {
+    _Node.data.connections[handletype][handleId] = { label: label || handleId, data: {} };
+};
 export const addConnection = (_Node, handletype, handleId, ConnectData) => {
     const cid = getUuid();
     if (!_Node.data.connections[handletype].hasOwnProperty(handleId)) {
-        _Node.data.connections[handletype][handleId] = {};
+        addHandle(_Node, handletype, handleId);
     }
-    _Node.data.connections[handletype][handleId][cid] = ConnectData;
+    _Node.data.connections[handletype][handleId].data[cid] = ConnectData;
     return cid;
 };
 export const rmConnection = (_Node, handletype, handleId, cid) => {
     if (_Node.data.connections[handletype].hasOwnProperty(handleId)
-        && _Node.data.connections[handletype][handleId].hasOwnProperty(cid)) {
-        delete _Node.data.connections[handletype][handleId][cid];
+        && _Node.data.connections[handletype][handleId].data.hasOwnProperty(cid)) {
+        delete _Node.data.connections[handletype][handleId].data[cid];
     }
 };
 export const addPayload = (_Node, payload) => {

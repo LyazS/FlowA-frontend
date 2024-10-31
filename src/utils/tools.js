@@ -25,3 +25,5 @@ export const getUuid = () => {
         return (c === 'x' ? random : (random & 0x3) | 0x8).toString(16);
     });
 };
+
+export const sortKeys = (obj) => Object.keys(obj).sort((a, b) => a.localeCompare(b));
