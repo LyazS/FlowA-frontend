@@ -32,9 +32,10 @@
             </div>
         </template>
         <template v-for="(handle, index) in cbfuncHandles" :key="handle.key">
-            <Handle :id="handle.key" class="vue-flow__handle-callbackFunc" type="target" :position="Position.Left" :style="{
-                top: 'auto', bottom: `${handle_h_pad + index * handle_h_gap}px`, left: `${handle_h_pad}px`, transform: 'translateY(0)'
-            }" />
+            <Handle :id="handle.key" class="vue-flow__handle-callbackFunc" type="target" :position="Position.Left"
+                :style="{
+                    top: 'auto', bottom: `${handle_h_pad + index * handle_h_gap}px`, left: `${handle_h_pad}px`, transform: 'translateY(0)'
+                }" />
             <div class="corner-text" :style="{
                 top: 'auto', bottom: `${handle_h_pad + index * handle_h_gap - 1}px`, left: `${handle_h_pad + handle_text_edge_pad}px`, transform: 'translateY(0)'
             }">
@@ -42,7 +43,8 @@
             </div>
         </template>
 
-        <div class="center-text" :style="{ top: `${handle_h_pad + max_handles_top * handle_h_gap + 10}px` }">
+        <div class="center-text"
+            :style="{ top: `${center_text_pos.top}px`, transform: `translate(-50%, ${center_text_pos.trfY}%)` }">
             {{ data.label }}
         </div>
     </div>
@@ -57,7 +59,6 @@ const props = defineProps(['id', 'data'])
 const handle_h_pad = 1;
 const handle_h_gap = 7;
 const handle_text_edge_pad = 6;
-
 
 const inputHandles = computed(() => {
     return Object.entries(props.data.connections.inputs)
@@ -89,14 +90,24 @@ const max_handles_top = computed(() => {
 const max_handles_bottom = computed(() => {
     return Math.max(outputHandles.value.length, cbfuncHandles.value.length);
 });
-
-watch(() => [max_handles_top.value, max_handles_bottom.value], (newValues) => {
-    const [newtop, newbottom] = newValues;
-    const node = findNode(props.id);
-    const node_ht = 30 + (newtop + newbottom) * handle_h_gap;
-    node.style.height = `${node_ht}px`;
-    node.data.size.height = node_ht;
-}, { immediate: true })
+const center_text_pos = computed(() => {
+    if (props.data.flags.isNested)
+        return { top: 0, trfY: 0 }
+    else
+        return { top: handle_h_pad + max_handles_top.value * handle_h_gap + 10, trfY: -50 };
+});
+console.log(center_text_pos.value);
+onMounted(() => {
+    if (!props.data.flags.isNested) {
+        watch(() => [max_handles_top.value, max_handles_bottom.value], (newValues) => {
+            const [newtop, newbottom] = newValues;
+            const node = findNode(props.id);
+            const node_ht = 30 + (newtop + newbottom) * handle_h_gap;
+            node.style.height = `${node_ht}px`;
+            node.data.size.height = node_ht;
+        }, { immediate: true })
+    }
+});
 </script>
 
 <style scoped>
@@ -131,6 +142,5 @@ watch(() => [max_handles_top.value, max_handles_bottom.value], (newValues) => {
     position: absolute;
     text-wrap: nowrap;
     left: 50%;
-    transform: translate(-50%, -50%);
 }
 </style>
