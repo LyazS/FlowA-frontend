@@ -21,8 +21,8 @@ export const BaseNodeInfo = {
 };
 const AttachedAttribute = {
     attaching: {
-        type: "",
-        pos: "",
+        type: "",// input/output/callbackFunc/callbackUser
+        pos: "",// top|center|bottom-left|center|right
     },
 };
 const NestedAttribute = {
