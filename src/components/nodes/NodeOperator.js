@@ -32,16 +32,16 @@ const NestedAttribute = {
     },
     nesting: {
         pad: {
-            top: 70,
+            top: 60,
             bottom: 40,
             left: 60,
             right: 60,
         },
         attached_pad: {
-            top: 35,
+            top: 30,
             bottom: 10,
-            left: 16,
-            right: 16,
+            left: 17,
+            right: 17,
         },// 嵌套固定节点边距
         attached_nodes: [
             // { ntype: "attached_node", atype: "input", apos: "top-left" },// top|center|bottom-left|center|right

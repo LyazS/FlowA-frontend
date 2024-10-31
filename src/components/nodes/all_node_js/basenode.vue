@@ -89,7 +89,7 @@ const { getNodes, findNode } = useVueFlow();
 const props = defineProps(['id', 'data'])
 
 const handle_h_pad = 1;
-const handle_h_gap = 7;
+const handle_h_gap = 8;
 const handle_text_edge_pad = 6;
 
 const inputHandles = computed(() => {
