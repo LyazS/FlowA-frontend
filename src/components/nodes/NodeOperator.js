@@ -173,8 +173,8 @@ export const setAttachedAttribute = (_Node, type, pos) => {
 export const addHandle = (_Node, handletype, handleId, label = null) => {
     _Node.data.connections[handletype][handleId] = { label: label || handleId, data: {} };
 };
-export const addConnection = (_Node, handletype, handleId, ConnectData) => {
-    const cid = getUuid();
+export const addConnection = (_Node, handletype, handleId, ConnectData, _cid = null) => {
+    const cid = _cid || getUuid();
     if (!_Node.data.connections[handletype].hasOwnProperty(handleId)) {
         addHandle(_Node, handletype, handleId);
     }
@@ -195,9 +195,10 @@ export const addPayload = (_Node, payload) => {
 };
 export const addResult = (_Node, result, hid) => {
     const rid = getUuid();
-    const oid = addConnection(_Node, "outputs", hid, { type: "FromInner", path: ["results", rid], useid: [] });
-    _Node.data.results.byId[rid] = { ...result, oid: oid };
+    const oid = addConnection(_Node, "outputs", hid, { type: "FromInner", path: ["results", rid], useid: [] }, rid);
+    _Node.data.results.byId[rid] = { ...result, hid, oid };
     _Node.data.results.order.push(rid);
+    return rid;
 };
 export const rmPayload = (_Node, pid) => {
     if (_Node.data.payloads.byId.hasOwnProperty(pid)) {
@@ -207,8 +208,9 @@ export const rmPayload = (_Node, pid) => {
 };
 export const rmResult = (_Node, rid) => {
     if (_Node.data.results.byId.hasOwnProperty(rid)) {
+        const hid = _Node.data.results.byId[rid].hid;
         const oid = _Node.data.results.byId[rid].oid;
-        rmConnection(_Node, "outputs", oid, rid);
+        rmConnection(_Node, "outputs", hid, oid);
         delete _Node.data.results.byId[rid];
         _Node.data.results.order.splice(_Node.data.results.order.indexOf(rid), 1);
     }

@@ -65,10 +65,10 @@
             <template v-for="(handle, index) in cbfuncHandles" :key="handle.key">
                 <Handle :id="handle.key" class="vue-flow__handle-callbackFunc" type="target" :position="Position.Left"
                     :style="{
-                        top: `${handle_h_pad + (index + max_handles_top) * handle_h_gap}px`, left: `${handle_h_pad}px`, transform: 'translateY(0)'
+                        top: 'auto', bottom: `${handle_h_pad + index * handle_h_gap}px`, left: `${handle_h_pad}px`, transform: 'translateY(0)'
                     }" />
                 <div class="corner-text" :style="{
-                    top: `${handle_h_pad + (index + max_handles_top) * handle_h_gap}px`, left: `${handle_h_pad + handle_text_edge_pad}px`, transform: 'translateY(0)'
+                    top: 'auto', bottom: `${handle_h_pad + index * handle_h_gap - 1}px`, left: `${handle_h_pad + handle_text_edge_pad}px`, transform: 'translateY(0)'
                 }">
                     {{ handle.label }}
                 </div>
