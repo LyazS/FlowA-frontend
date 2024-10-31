@@ -30,7 +30,7 @@
                         top: 'auto', bottom: `${handle_h_pad + index * handle_h_gap}px`, right: `${handle_h_pad}px`, transform: 'translateY(0)'
                     }" />
                 <div class="corner-text" :style="{
-                    top: 'auto', bottom: `${handle_h_pad + index * handle_h_gap - 1}px`, right: `${handle_h_pad + handle_text_edge_pad}px`, transform: 'translateY(0)'
+                    top: 'auto', bottom: `${handle_h_pad + index * handle_h_gap - 1.5}px`, right: `${handle_h_pad + handle_text_edge_pad}px`, transform: 'translateY(0)'
                 }">
                     {{ handle.label }}
                 </div>
@@ -68,7 +68,7 @@
                         top: 'auto', bottom: `${handle_h_pad + index * handle_h_gap}px`, left: `${handle_h_pad}px`, transform: 'translateY(0)'
                     }" />
                 <div class="corner-text" :style="{
-                    top: 'auto', bottom: `${handle_h_pad + index * handle_h_gap - 1}px`, left: `${handle_h_pad + handle_text_edge_pad}px`, transform: 'translateY(0)'
+                    top: 'auto', bottom: `${handle_h_pad + index * handle_h_gap - 1.5}px`, left: `${handle_h_pad + handle_text_edge_pad}px`, transform: 'translateY(0)'
                 }">
                     {{ handle.label }}
                 </div>

@@ -48,13 +48,15 @@ addHandle(_initInfo, "callbackFuncs", "callbackFunc-1");
 addHandle(_initInfo, "callbackFuncs", "callbackFunc-2");
 addHandle(_initInfo, "callbackFuncs", "callbackFunc-3");
 
-const pid = addPayload(_initInfo, { id: 123 });
-const rid = addResult(_initInfo, { id: 321 }, "output-1");
+let pid = addPayload(_initInfo, { id: 123 });
+let rid = addResult(_initInfo, { id: 321 }, "output-1");
 console.log("add payload and result", JSON.stringify(_initInfo, null, 2));
 rmResult(_initInfo, rid);
 rmPayload(_initInfo, pid);
 console.log("remove payload and result", JSON.stringify(_initInfo, null, 2));
 
+pid = addPayload(_initInfo, { label: "内容", type: "String", key: "text", data: "", uitype: "textcontent" });
+addConnection(_initInfo, "outputs", "output-1", { type: "FromInner", path: ["payloads", pid], useid: [] })
 export const initInfo = cloneDeep(_initInfo);
 export { NodeVue };
 // 该节点需要实现，动态的handle和文字

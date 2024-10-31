@@ -49,7 +49,13 @@ const getHandleConnectInfos = (id, type, nodeId) => {
     }, {});
 }
 const inputConnections = computed(() => {
-    return getHandleConnectInfos("input", "target", props.nodeId);
+    const inputIds = Object.keys(thisnode.value?.data?.connections?.inputs);
+    const connections = inputIds.reduce((acc, id) => {
+        const handleConnectInfos = getHandleConnections({ id: id, type: "target", nodeId: props.nodeId });
+        acc = [...acc, ...handleConnectInfos];
+        return acc;
+    }, []);
+    return connections;
 });
 
 const nodedatatext = computed(() => {
@@ -72,17 +78,24 @@ const saveTitle = () => {
     thisnode.value.data.label = newLabel || thisnode.value.data.placeholderlabel;
 }
 // 渲染节点payload数据 =======================================
-const nodepayloads = computed(() => {
-    if (!thisnode.value?.data) return [];
-    return thisnode.value.data.payloads || [];
-});
-const renderPayloads = (payload, payloadidx) => {
+const renderPayload = (payload, pid) => {
     if (payload.uitype === 'textcontent') {
-        return h(editable_textcontent, { nodeId: props.nodeId, payloadidx: payloadidx });
+        return h(editable_textcontent, { nodeId: props.nodeId, pid });
     }
+    else return null;
 };
+const payloadsComp = computed(() => {
+    return thisnode.value.data.payloads.order
+        .map((pid) => {
+            return renderPayload(
+                thisnode.value.data.payloads.byId[pid],
+                pid,
+            );
+        })
+        .filter((vue_h) => vue_h !== null);
+});
 // 渲染输出的连接 =============================================
-const rederConnections = (connection, type) => {
+const renderConnections = (connection, type) => {
     if (type === 'input') {
         return h(editable_input, {});
     }
@@ -94,7 +107,7 @@ const rederConnections = (connection, type) => {
 
 onUnmounted(() => {
     isEditing.value = false;
-})
+});
 </script>
 
 <template>
@@ -112,8 +125,7 @@ onUnmounted(() => {
                 <!-- 渲染输入的连接 -->
                 <!-- 渲染负载数据 -->
                 <n-flex vertical>
-                    <component v-for="(payload, payloadidx) in nodepayloads" :key="`${payloadidx}`"
-                        :is="renderPayloads(payload, payloadidx)" />
+                    <component v-for="(comp, compidx) in payloadsComp" :key="`${compidx}`" :is="comp" />
                 </n-flex>
                 <!-- 渲染输出的连接 -->
                 <component v-if="thisnode.data.connections.output" :key="`rd-output`"
@@ -121,7 +133,7 @@ onUnmounted(() => {
 
                 <!-- <editable_textcontent :nodeId="nodeId" :payloadidx="0" /> -->
                 <!-- <div>{{ sourceConnections }}</div> -->
-                <pre>{{ inputConnections }}</pre>
+                <pre>edge count: {{ inputConnections.length }}</pre>
                 <pre>{{ nodedatatext }}</pre>
             </n-card>
         </n-scrollbar>

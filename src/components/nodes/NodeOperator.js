@@ -1,4 +1,4 @@
-import { cloneDeep } from "lodash";
+import { clone, cloneDeep } from "lodash";
 import { getUuid } from "../../utils/tools.js"
 export const BaseNodeInfo = {
     // 节点元数据 ==========
@@ -178,7 +178,7 @@ export const addConnection = (_Node, handletype, handleId, ConnectData, _cid = n
     if (!_Node.data.connections[handletype].hasOwnProperty(handleId)) {
         addHandle(_Node, handletype, handleId);
     }
-    _Node.data.connections[handletype][handleId].data[cid] = ConnectData;
+    _Node.data.connections[handletype][handleId].data[cid] = cloneDeep(ConnectData);
     return cid;
 };
 export const rmConnection = (_Node, handletype, handleId, cid) => {
@@ -189,14 +189,14 @@ export const rmConnection = (_Node, handletype, handleId, cid) => {
 };
 export const addPayload = (_Node, payload) => {
     const pid = getUuid();
-    _Node.data.payloads.byId[pid] = payload;
+    _Node.data.payloads.byId[pid] = cloneDeep(payload);
     _Node.data.payloads.order.push(pid);
     return pid;
 };
 export const addResult = (_Node, result, hid) => {
     const rid = getUuid();
     const oid = addConnection(_Node, "outputs", hid, { type: "FromInner", path: ["results", rid], useid: [] }, rid);
-    _Node.data.results.byId[rid] = { ...result, hid, oid };
+    _Node.data.results.byId[rid] = { ...cloneDeep(result), hid, oid };
     _Node.data.results.order.push(rid);
     return rid;
 };
