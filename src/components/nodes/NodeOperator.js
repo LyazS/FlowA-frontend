@@ -1,6 +1,6 @@
 import { clone, cloneDeep } from "lodash";
 import { getUuid } from "../../utils/tools.js"
-export const BaseNodeInfo = {
+const BaseNodeInfo = {
     // 节点元数据 ==========
     ntype: "#TODO",  // 节点类型
     vtype: "#TODO",    // 节点使用的vue组件类型
@@ -55,9 +55,9 @@ const ConnectionsAttribute = {
             // input: {// 输入handle的id
             //     label: "输入1",
             //     data: {
-            //         "idxxx-ot": { type: "FromOuter", nid: "节点id", oid: "节点的输出id" },
-            //         "idxxx-ot": { type: "FromInner", path: ["payloads", "idxxx-pr"], useid: ["使用节点id"] },
-            //         "idxxx-ot": { type: "FromInner", path: ["results", "idxxx-pr"], useid: ["使用节点id"] },
+            //         "idxxx-it": { type: "FromOuter", nid: "节点id", oid: "节点的输出id" },
+            //         "idxxx-it": { type: "FromInner", path: ["payloads", "idxxx-pr"], useid: ["使用节点id"] },
+            //         "idxxx-it": { type: "FromInner", path: ["results", "idxxx-pr"], useid: ["使用节点id"] },
             //     }
             // }
         },
@@ -79,8 +79,8 @@ const ConnectionsAttribute = {
 const RunningAttribute = {
     payloads: {
         byId: {
-            // "idxxx1-p": { label: "内容", type: "String", key: "text", data: "", uitype: "textcontent", outputId: "idxxx1-ot" },
-            // "idxxx2-p": { label: "内容", type: "String", key: "text", data: "", uitype: "textcontent", outputId: "idxxx2-ot" },
+            // "idxxx1-p": { label: "内容", type: "String", key: "text", data: "", uitype: "textcontent" },
+            // "idxxx2-p": { label: "内容", type: "String", key: "text", data: "", uitype: "textcontent" },
         },
         order: [
             // "idxxx1-p",
@@ -89,8 +89,8 @@ const RunningAttribute = {
     },
     results: {
         byId: {
-            // "idxxx1-r": { type: "String", key: "text", data: "", outputId: "idxxx1-ot" },
-            // "idxxx2-r": { type: "String", key: "text", data: "", outputId: "idxxx2-ot" },
+            // "idxxx1-r": { type: "String", key: "text", data: "", hid: "output-1", oid: "idxxx1-ot" },
+            // "idxxx2-r": { type: "String", key: "text", data: "", hid: "output-1", oid: "idxxx2-ot" },
         },
         order: [
             // "idxxx1-r",
@@ -113,6 +113,9 @@ const StateAttribute = {
 };
 
 // 初始化函数
+export const createBaseNodeInfo = () => {
+    return cloneDeep(BaseNodeInfo);
+};
 export const initAttachedAttribute = (_BaseNodeInfo) => {
     _BaseNodeInfo.data.flags.isAttached = true;
     Object.assign(_BaseNodeInfo.data, cloneDeep(AttachedAttribute));
@@ -173,13 +176,13 @@ export const setAttachedAttribute = (_Node, type, pos) => {
 export const addHandle = (_Node, handletype, handleId, label = null) => {
     _Node.data.connections[handletype][handleId] = { label: label || handleId, data: {} };
 };
-export const addConnection = (_Node, handletype, handleId, ConnectData, _cid = null) => {
-    const cid = _cid || getUuid();
+export const addConnection = (_Node, handletype, handleId, ConnectData, cid = null) => {
+    const _cid = cid || getUuid();
     if (!_Node.data.connections[handletype].hasOwnProperty(handleId)) {
         addHandle(_Node, handletype, handleId);
     }
-    _Node.data.connections[handletype][handleId].data[cid] = cloneDeep(ConnectData);
-    return cid;
+    _Node.data.connections[handletype][handleId].data[_cid] = cloneDeep(ConnectData);
+    return _cid;
 };
 export const rmConnection = (_Node, handletype, handleId, cid) => {
     if (_Node.data.connections[handletype].hasOwnProperty(handleId)
@@ -193,12 +196,12 @@ export const addPayload = (_Node, payload) => {
     _Node.data.payloads.order.push(pid);
     return pid;
 };
-export const addResult = (_Node, result, hid) => {
-    const rid = getUuid();
-    const oid = addConnection(_Node, "outputs", hid, { type: "FromInner", path: ["results", rid], useid: [] }, rid);
-    _Node.data.results.byId[rid] = { ...cloneDeep(result), hid, oid };
-    _Node.data.results.order.push(rid);
-    return rid;
+export const addResult = (_Node, result, hid, rid = null) => {
+    const _rid = cloneDeep(rid) || getUuid();
+    const oid = addConnection(_Node, "outputs", hid, { type: "FromInner", path: ["results", _rid], useid: [] });
+    _Node.data.results.byId[_rid] = { ...cloneDeep(result), hid, oid };
+    _Node.data.results.order.push(_rid);
+    return _rid;
 };
 export const rmPayload = (_Node, pid) => {
     if (_Node.data.payloads.byId.hasOwnProperty(pid)) {

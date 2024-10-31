@@ -47,29 +47,6 @@ import {
 } from 'naive-ui';
 import { ContextMenu, ContextMenuGroup, ContextMenuSeparator, ContextMenuItem } from '@imengyu/vue3-context-menu';
 import { getUuid } from './utils/tools.js';
-import {
-  BaseNodeInfo,
-  initAttachedAttribute,
-  initNestedAttribute,
-  initConnectionsAttribute,
-  initRunningAttribute,
-  initStateAttribute,
-  setNodeType,
-  setVueType,
-  setLabel,
-  addAttachedNode,
-  initMinSize,
-  setSize,
-  getSize,
-  setAttachedAttribute,
-  addConnection,
-  rmConnection,
-  addPayload,
-  addResult,
-  rmPayload,
-  rmResult,
-} from './components/nodes/NodeOperator.js'
-
 import miniMap from './components/panelctrls/miniMap.vue'
 import miniMapCtrl from './components/panelctrls/miniMapCtrl.vue'
 import nuipanel from './components/panelctrls/nuipanel.vue'

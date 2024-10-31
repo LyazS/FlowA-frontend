@@ -1,16 +1,16 @@
 import {
-    BaseNodeInfo,
+    createBaseNodeInfo,
     initAttachedAttribute,
     initNestedAttribute,
     initConnectionsAttribute,
     initRunningAttribute,
     initStateAttribute,
+    initMinSize,
+    initSize,
     setNodeType,
     setVueType,
     setLabel,
     addAttachedNode,
-    initMinSize,
-    initSize,
     setSize,
     getSize,
     setAttachedAttribute,
@@ -26,7 +26,7 @@ import {
 import { cloneDeep } from 'lodash';
 import NodeVue from './attached_node.vue';
 
-const _initInfo = cloneDeep(BaseNodeInfo);
+const _initInfo = createBaseNodeInfo();
 initAttachedAttribute(_initInfo);
 setNodeType(_initInfo, "attached_node");
 setVueType(_initInfo, "attached_node");

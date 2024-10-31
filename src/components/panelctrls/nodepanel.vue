@@ -95,11 +95,11 @@ const payloadsComp = computed(() => {
         .filter((vue_h) => vue_h !== null);
 });
 // 渲染输出的连接 =============================================
-const renderConnections = (connection, type) => {
-    if (type === 'input') {
+const renderConnections = (ctype) => {
+    if (ctype === 'inputs') {
         return h(editable_input, {});
     }
-    else if (type === 'output') {
+    else if (ctype === 'outputs') {
         return h(editable_output, { nodeId: props.nodeId });
     }
 };
@@ -132,6 +132,7 @@ onUnmounted(() => {
                     :is="rederConnections(thisnode.data.connections.output, 'output')" />
 
                 <!-- <editable_textcontent :nodeId="nodeId" :payloadidx="0" /> -->
+                <editable_output :nodeId="nodeId" />
                 <!-- <div>{{ sourceConnections }}</div> -->
                 <pre>edge count: {{ inputConnections.length }}</pre>
                 <pre>{{ nodedatatext }}</pre>
