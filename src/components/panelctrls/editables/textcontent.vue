@@ -1,8 +1,10 @@
 <template>
     <n-flex vertical>
-        <editable_header>{{ text_label }}</editable_header>
-        <n-input type="textarea" :autosize="{ minRows: 3, maxRows: 20 }" v-model:value="text_value" @blur="isEditing = false"
-            @focus="isEditing = true" placeholder="输入点内容吧" />
+        <editable_header>
+            {{ thisnode.data.payloads.byId[pid].label }}
+        </editable_header>
+        <n-input type="textarea" :autosize="{ minRows: 3, maxRows: 20 }" v-model:value="text_value"
+            @blur="isEditing = false" @focus="isEditing = true" placeholder="输入点内容吧" />
     </n-flex>
 </template>
 <style scoped></style>
@@ -16,8 +18,8 @@ const props = defineProps({
         type: String,
         required: true
     },
-    payloadidx: {
-        type: Number,
+    pid: {
+        type: String,
         required: true
     }
 })
@@ -28,20 +30,12 @@ const thisnode = computed(() => {
     return findNode(props.nodeId);
 });
 
-const text_label = computed({
-    get() {
-        return thisnode.value.data.payloads[props.payloadidx].label;
-    },
-    set(new_val) {
-        thisnode.value.data.payloads[props.payloadidx].label = new_val;
-    }
-})
 const text_value = computed({
     get() {
-        return thisnode.value.data.payloads[props.payloadidx].data;
+        return thisnode.value.data.payloads.byId[props.pid].data;
     },
     set(new_val) {
-        thisnode.value.data.payloads[props.payloadidx].data = new_val;
+        thisnode.value.data.payloads.byId[props.pid].data = new_val;
     }
 })
 </script>

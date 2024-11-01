@@ -23,9 +23,11 @@
 `callbackUser`回调使用者
 
 `output`输出端口
-
+    { id: "output", path: ["payloads", 0] },
+    id是端口的id，path是寻找路径
 `payloads`节点实际负载
-
+    { id: "text", label: "内容", type: "String", data: "", uitype: "textcontent" },
+    id是负载id，label是显示的名字，type是数据类型，data是实际数据，uitype是用户界面类型
 `results`节点运行结果
 
 ## 可选参数

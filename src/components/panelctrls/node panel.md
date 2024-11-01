@@ -1,5 +1,6 @@
 # 节点属性操作框
-
+用connections来指示节点去哪里找内容
+要么payloads，要么results
 ## 输出
 固定的变量名字
 

@@ -1,34 +1,33 @@
+import { BaseNodeInfo, addNestedAttribute, addConnectionsAttribute, addRunningAttribute, addStateAttribute } from '../NodeOperator.js'
+import { cloneDeep } from 'lodash';
 import NodeVue from '../CommonNode/UnifiedNode.vue';
-export const initInfo = {
-    node_key: "text_input_node",
-    node_type: "UnifiedNode",
-    init_width: 80,
-    init_height: 40,
-    init_data: {
-        // 必要参数 ========
-        _is_nested: false,// 是否可嵌套
-        _is_attached: false,// 是否为附属节点
-        size: {
-            width: -1,
-            height: -1,
-        },
-        label: "文本输入",
-        connections: {
-            // input: [],
-            // callbackFunc: [],
-            // callbackUser: [],
-            output: [
-                { id: "output", path: ["payloads", 0] },
-            ],
-        },
-        payloads: [
-            { id: "text", label: "内容", type: "String", data: "", uitype: "textcontent" },
-        ],
-        results: {},
-        // =================
-        // 可选参数
-        // =================
-    },
-};
 
+let _initInfo = cloneDeep(BaseNodeInfo);
+_initInfo = addConnectionsAttribute(_initInfo);
+_initInfo = addRunningAttribute(_initInfo);
+_initInfo = addStateAttribute(_initInfo);
+_initInfo.ntype = "text_input_node";
+_initInfo.vtype = "UnifiedNode";
+let _overwriteInfo = {
+    size: {
+        width: 80,
+        height: 40,
+    },
+    connections: {
+        output: [
+            {
+                id: "output",
+                data: [
+                    { type: "FromInner", path: ["payloads", 0] },
+                ]
+            },
+        ],
+    },
+    payloads: [
+        { id: "text", label: "内容", type: "String", data: "", uitype: "textcontent" },
+    ],
+}
+Object.assign(_initInfo.data, _overwriteInfo);
+
+export const initInfo = cloneDeep(_initInfo);
 export { NodeVue };

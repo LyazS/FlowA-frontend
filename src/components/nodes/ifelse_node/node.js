@@ -1,37 +1,45 @@
+import { BaseNodeInfo, addNestedAttribute, addConnectionsAttribute, addRunningAttribute, addStateAttribute } from '../NodeOperator.js'
+import { cloneDeep } from 'lodash';
 import NodeVue from './node.vue';
-export const initInfo = {
-    node_key: "ifelse_node",
-    node_type: "ifelse_node",
-    init_width: 80,
-    init_height: 70,
-    init_data: {
-        // 必要参数 ========
-        _is_nested: false,// 是否可嵌套
-        _is_attached: false,// 是否为附属节点
-        size: {
-            width: -1,
-            height: -1,
+
+let _initInfo = cloneDeep(BaseNodeInfo);
+_initInfo = addConnectionsAttribute(_initInfo);
+_initInfo = addRunningAttribute(_initInfo);
+_initInfo = addStateAttribute(_initInfo);
+_initInfo.ntype = "ifelse_node";
+_initInfo.vtype = "ifelse_node";
+let _overwriteInfo = {
+    size: {
+        width: 80,
+        height: 80,
+    },
+    connections: {
+        inputs: { input: {} },
+        outputs: {
+            "output-1": { "condition-1": { type: "FromOuter" } },
+            "output-2": {},
+            "output-3": {},
+            "output-4": {},
+            "output-5": {},
+            "output-6": {},
         },
-        label: "条件分支",
-        connections: {
-            input: [],
-            // callbackFunc: [],
-            callbackUser: [],
-            output: [
-                { id: "output-1", condition: "是" },
-                { id: "output-2", condition: "不是" },
-                { id: "output-3", condition: "包含" },
-                { id: "output-4", condition: "不包含" },
-                { id: "output-5", condition: "不包含" },
-                { id: "output-6", condition: "不包含" },
-                { id: "output-7", condition: "不包含" },
-            ],
+    },
+    payloads: {
+        byId: {
+            "condition-1": { label: "是", type: "Condition", key: "Condition1", data: "func(==)", uitype: "select", outputId: "output-1" },
+            "condition-2": { label: "不是", type: "Condition", key: "Condition2", data: "func(!=)", uitype: "select", outputId: "output-2" },
+            "condition-3": { label: "大于", type: "Condition", key: "Condition3", data: "func(>)", uitype: "select", outputId: "output-3" },
+            "condition-4": { label: "小于", type: "Condition", key: "Condition4", data: "func(<)", uitype: "select", outputId: "output-4" },
+            "condition-5": { label: "大于等于", type: "Condition", key: "Condition5", data: "func(>=)", uitype: "select", outputId: "output-5" },
+            "condition-6": { label: "小于等于", type: "Condition", key: "Condition6", data: "func(<=)", uitype: "select", outputId: "output-6" },
         },
-        payloads: [],
-        // =================
-        // 可选参数
-        // =================
+        order: [
+            // "idxxx1-p",
+            // "idxxx2-p"
+        ]
     },
 };
+Object.assign(_initInfo.data, _overwriteInfo);
 
+export const initInfo = cloneDeep(_initInfo);
 export { NodeVue };
