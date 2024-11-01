@@ -37,7 +37,7 @@ initSize(_initInfo, 80, 80);
 
 addHandle(_initInfo, "outputs", "output");
 
-let pid = addPayload(_initInfo, { label: "内容", type: "String", key: "text", data: "", uitype: "textcontent" });
+let pid = addPayload(_initInfo, { label: "内容", type: "String", key: "text", data: "", uitype: "textinput" });
 addConnection(_initInfo, "outputs", "output", { type: "FromInner", path: ["payloads", pid], useid: [] })
 
 export const initInfo = cloneDeep(_initInfo);

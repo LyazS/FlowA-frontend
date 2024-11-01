@@ -4,7 +4,8 @@ import { NFlex, NH2, NCard, NScrollbar, NInput, NText } from 'naive-ui';
 import { Panel, useVueFlow, useHandleConnections } from '@vue-flow/core'
 import editable_input from './editables/input.vue';
 import editable_output from './editables/output.vue';
-import editable_textcontent from './editables/textcontent.vue';
+import editable_textinput from './editables/textinput.vue';
+import editable_textprint from './editables/textprint.vue';
 const props = defineProps({
     nodeId: {
         type: String,
@@ -41,8 +42,11 @@ const payloadComponents = computed(() => {
         const payload = thisnode.value.data.payloads.byId[pid];
         // 只追踪需要的属性
         const { uitype } = payload;
-        if (uitype === 'textcontent') {
-            acc[pid] = h(editable_textcontent, { nodeId: props.nodeId, pid });
+        if (uitype === 'textinput') {
+            acc[pid] = h(editable_textinput, { nodeId: props.nodeId, pid });
+        }
+        else if (uitype === 'textprint') {
+            acc[pid] = h(editable_textprint, { nodeId: props.nodeId, pid, inputConnections: inputConnections.value });
         }
         return acc;
     }, {});
@@ -134,7 +138,8 @@ onUnmounted(() => {
                 <!-- <editable_textcontent :nodeId="nodeId" :payloadidx="0" /> -->
                 <!-- <div>{{ sourceConnections }}</div> -->
                 <pre>edge count: {{ inputConnections.length }}</pre>
-                <pre>{{ nodedatatext }}</pre>
+                <pre>edge: {{ inputConnections }}</pre>
+                <!-- <pre>{{ nodedatatext }}</pre> -->
             </n-card>
         </n-scrollbar>
     </div>
