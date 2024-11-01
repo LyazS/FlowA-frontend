@@ -30,16 +30,16 @@ const _initInfo = createBaseNodeInfo();
 initConnectionsAttribute(_initInfo);
 initRunningAttribute(_initInfo);
 initStateAttribute(_initInfo);
-setNodeType(_initInfo, "test_cond");
+setNodeType(_initInfo, "text_input");
 setVueType(_initInfo, "basenode");
-setLabel(_initInfo, "测试条件分支");
+setLabel(_initInfo, "文本输入");
 initSize(_initInfo, 80, 80);
 
-addHandle(_initInfo, "inputs", "input9");
-addHandle(_initInfo, "outputs", "output-1", "条件1");
-addHandle(_initInfo, "outputs", "output-2", "条件2");
-addHandle(_initInfo, "outputs", "output-3", "条件3");
+addHandle(_initInfo, "outputs", "output");
+
+let pid = addPayload(_initInfo, { label: "内容", type: "String", key: "text", data: "", uitype: "textcontent" });
+addConnection(_initInfo, "outputs", "output", { type: "FromInner", path: ["payloads", pid], useid: [] })
 
 export const initInfo = cloneDeep(_initInfo);
-export { NodeVue };
 // 该节点需要实现，动态的handle和文字
+export { NodeVue };

@@ -24,15 +24,21 @@ import {
 } from '../NodeOperator.js'
 
 import { cloneDeep } from 'lodash';
-import NodeVue from './attached_node.vue';
+import NodeVue from '../all_node_vue/basenode.vue';
 
 const _initInfo = createBaseNodeInfo();
-initAttachedAttribute(_initInfo);
-setNodeType(_initInfo, "attached_node");
-setVueType(_initInfo, "attached_node");
-setLabel(_initInfo, "附属节点");
-initSize(_initInfo, 20, 6);
+initConnectionsAttribute(_initInfo);
+initRunningAttribute(_initInfo);
+initStateAttribute(_initInfo);
+setNodeType(_initInfo, "text_print");
+setVueType(_initInfo, "basenode");
+setLabel(_initInfo, "文本输出");
+initSize(_initInfo, 80, 80);
+
+addHandle(_initInfo, "inputs", "input");
+
+let pid = addPayload(_initInfo, { label: "输入", type: "VarOption", key: "inputtext", data: "", uitype: "varselect" });
 
 export const initInfo = cloneDeep(_initInfo);
-export { NodeVue };
 // 该节点需要实现，动态的handle和文字
+export { NodeVue };

@@ -21,6 +21,46 @@ const isEditing = inject("isEditing");
 const thisnode = computed(() => {
     return findNode(props.nodeId);
 });
+// 标题相关 ======================================
+const isEditingTitle = ref(false);
+const titleInputRef = ref(null);
+const startEditTilte = () => {
+    isEditingTitle.value = true;
+    isEditing.value = true;
+    nextTick(() => { titleInputRef.value?.focus(); });
+}
+const saveTitle = () => {
+    isEditing.value = false;
+    isEditingTitle.value = false;
+    const newLabel = thisnode.value.data.label.trim();
+    thisnode.value.data.label = newLabel || thisnode.value.data.placeholderlabel;
+}
+// 渲染节点payload数据 =======================================
+const payloadComponents = computed(() => {
+    return thisnode.value.data.payloads.order.reduce((acc, pid) => {
+        const payload = thisnode.value.data.payloads.byId[pid];
+        // 只追踪需要的属性
+        const { uitype } = payload;
+        if (uitype === 'textcontent') {
+            acc[pid] = h(editable_textcontent, { nodeId: props.nodeId, pid });
+        }
+        return acc;
+    }, {});
+});
+// 渲染输出的连接 =============================================
+const isShowOutput = computed(() => {
+    return Object.keys(thisnode.value.data.connections.outputs).length > 0;
+});
+const renderConnections = (ctype) => {
+    if (ctype === 'inputs') {
+        return h(editable_input, {});
+    }
+    else if (ctype === 'outputs') {
+        return h(editable_output, { nodeId: props.nodeId });
+    }
+};
+
+// 待用信息 ==================================================
 const getHandleConnectInfos = (id, type, nodeId) => {
     const connections = getHandleConnections({
         type,
@@ -63,47 +103,6 @@ const nodedatatext = computed(() => {
     return JSON.stringify(thisnode.value.data, null, 2);
 });
 
-// 标题相关 ======================================
-const isEditingTitle = ref(false);
-const titleInputRef = ref(null);
-const startEditTilte = () => {
-    isEditingTitle.value = true;
-    isEditing.value = true;
-    nextTick(() => { titleInputRef.value?.focus(); });
-}
-const saveTitle = () => {
-    isEditing.value = false;
-    isEditingTitle.value = false;
-    const newLabel = thisnode.value.data.label.trim();
-    thisnode.value.data.label = newLabel || thisnode.value.data.placeholderlabel;
-}
-// 渲染节点payload数据 =======================================
-const renderPayload = (payload, pid) => {
-    if (payload.uitype === 'textcontent') {
-        return h(editable_textcontent, { nodeId: props.nodeId, pid });
-    }
-    else return null;
-};
-const payloadsComp = computed(() => {
-    return thisnode.value.data.payloads.order
-        .map((pid) => {
-            return renderPayload(
-                thisnode.value.data.payloads.byId[pid],
-                pid,
-            );
-        })
-        .filter((vue_h) => vue_h !== null);
-});
-// 渲染输出的连接 =============================================
-const renderConnections = (ctype) => {
-    if (ctype === 'inputs') {
-        return h(editable_input, {});
-    }
-    else if (ctype === 'outputs') {
-        return h(editable_output, { nodeId: props.nodeId });
-    }
-};
-
 
 onUnmounted(() => {
     isEditing.value = false;
@@ -125,14 +124,14 @@ onUnmounted(() => {
                 <!-- 渲染输入的连接 -->
                 <!-- 渲染负载数据 -->
                 <n-flex vertical>
-                    <component v-for="(comp, compidx) in payloadsComp" :key="`${compidx}`" :is="comp" />
+                    <template v-for="pid in thisnode.data.payloads.order" :key="pid">
+                        <component v-if="payloadComponents[pid]" :is="payloadComponents[pid]" />
+                    </template>
                 </n-flex>
                 <!-- 渲染输出的连接 -->
-                <component v-if="thisnode.data.connections.output" :key="`rd-output`"
-                    :is="rederConnections(thisnode.data.connections.output, 'output')" />
+                <editable_output v-if="isShowOutput" :nodeId="nodeId" :key="`${nodeId}-outputs`" />
 
                 <!-- <editable_textcontent :nodeId="nodeId" :payloadidx="0" /> -->
-                <editable_output :nodeId="nodeId" />
                 <!-- <div>{{ sourceConnections }}</div> -->
                 <pre>edge count: {{ inputConnections.length }}</pre>
                 <pre>{{ nodedatatext }}</pre>

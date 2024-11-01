@@ -1,57 +1,75 @@
 <template>
     <n-flex vertical>
         <editable_header type="info">输出</editable_header>
-        <n-flex :warp="false" v-for="(item, index) in nodeOutput">
-            <n-text v-if="isShowHandleName">{{ item.label }}</n-text>
-            <n-text>{{ item.id }}</n-text>
-            <n-text>{{ item.type }}</n-text>
+        <n-flex v-for="item in nodeOutput" :key="item.id" :wrap="false" class="output-item">
+            <n-text v-if="hasMultipleOutputs" class="handle-label">
+                {{ item.label }}
+            </n-text>
+            <n-text class="output-id">{{ item.id }}</n-text>
+            <n-text class="output-type">{{ item.type }}</n-text>
         </n-flex>
     </n-flex>
 </template>
 
-<style scoped></style>
+<style scoped>
+.output-item {
+    gap: 8px;
+    padding: 4px 0;
+}
+
+.handle-label {
+    min-width: 80px;
+}
+
+.output-id,
+.output-type {
+    color: var(--text-color-secondary);
+}
+</style>
 
 <script setup>
-import { ref, computed } from 'vue'
-import { NText, NH6, NInput, NSelect, NInputGroup, NFlex } from 'naive-ui'
+import { computed } from 'vue'
+import { NText, NFlex } from 'naive-ui'
 import { useVueFlow } from '@vue-flow/core'
 import editable_header from './header.vue'
-import { getValueByPath } from './utils.js'
+
 const props = defineProps({
     nodeId: {
         type: String,
         required: true
     }
 })
-const { findNode } = useVueFlow();
-const thisnode = computed(() => {
-    return findNode(props.nodeId);
-});
-const isShowHandleName = computed(() => {
-    const otlen = Object.keys(thisnode.value.data.connections.outputs).length
-    return otlen > 1;
-});
-function transformInputs(connections) {
-    const cdata = Object.values(connections).reduce((acc, cur) => {
-        Object.entries(cur.data).forEach(([cid, value]) => {
-            if (value.type === 'FromInner') {
-                acc.push({ label: cur.label, path: value.path });
-            }
-        });
-        return acc;
-    }, []);
 
-    return cdata.map(item => {
-        const pvalue = thisnode.value.data[item.path[0]].byId[item.path[1]]
-        return {
-            label: item.label,
-            id: pvalue.key,
-            type: pvalue.type,
-        }
-    });
-}
+// 获取节点数据
+const { findNode } = useVueFlow()
+const thisnode = computed(() => findNode(props.nodeId))
+
+// 判断是否有多个输出
+const hasMultipleOutputs = computed(() =>
+    Object.keys(thisnode.value.data.connections.outputs).length > 1
+)
+
+// 转换输出数据
 const nodeOutput = computed(() => {
-    return transformInputs(thisnode.value.data.connections.outputs);
-});
+    const connections = thisnode.value.data.connections.outputs
+    const nodeData = thisnode.value.data
 
+    return Object.values(connections)
+        .flatMap(connection =>
+            Object.entries(connection.data)
+                .filter(([_, value]) => value.type === 'FromInner')
+                .map(([_, value]) => ({
+                    label: connection.label,
+                    path: value.path
+                }))
+        )
+        .map(({ label, path: [pathKey, pathId] }) => {
+            const payload = nodeData[pathKey].byId[pathId]
+            return {
+                label,
+                id: payload.key,
+                type: payload.type
+            }
+        })
+})
 </script>

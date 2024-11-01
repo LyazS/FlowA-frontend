@@ -24,21 +24,14 @@ import {
 } from '../NodeOperator.js'
 
 import { cloneDeep } from 'lodash';
-import NodeVue from '../all_node_vue/basenode.vue';
+import NodeVue from '../all_node_vue/attached_node.vue';
 
 const _initInfo = createBaseNodeInfo();
-initConnectionsAttribute(_initInfo);
-initRunningAttribute(_initInfo);
-initStateAttribute(_initInfo);
-setNodeType(_initInfo, "test_cond");
-setVueType(_initInfo, "basenode");
-setLabel(_initInfo, "测试条件分支");
-initSize(_initInfo, 80, 80);
-
-addHandle(_initInfo, "inputs", "input9");
-addHandle(_initInfo, "outputs", "output-1", "条件1");
-addHandle(_initInfo, "outputs", "output-2", "条件2");
-addHandle(_initInfo, "outputs", "output-3", "条件3");
+initAttachedAttribute(_initInfo);
+setNodeType(_initInfo, "attached_node");
+setVueType(_initInfo, "attached_node");
+setLabel(_initInfo, "附属节点");
+initSize(_initInfo, 20, 6);
 
 export const initInfo = cloneDeep(_initInfo);
 export { NodeVue };

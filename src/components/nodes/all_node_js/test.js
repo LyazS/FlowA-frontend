@@ -24,7 +24,7 @@ import {
 } from '../NodeOperator.js'
 
 import { cloneDeep } from 'lodash';
-import NodeVue from './basenode.vue';
+import NodeVue from '../all_node_vue/basenode.vue';
 
 const _initInfo = createBaseNodeInfo();
 initConnectionsAttribute(_initInfo);
