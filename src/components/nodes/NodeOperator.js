@@ -55,7 +55,6 @@ const ConnectionsAttribute = {
             // input: {// 输入handle的id
             //     label: "输入1",
             //     data: {
-            //         "idxxx-it": { type: "FromOuter", nid: "节点id", oid: "节点的输出id" },
             //         "idxxx-it": { type: "FromInner", path: ["payloads", "idxxx-pr"], useid: ["使用节点id"] },
             //         "idxxx-it": { type: "FromInner", path: ["results", "idxxx-pr"], useid: ["使用节点id"] },
             //     }

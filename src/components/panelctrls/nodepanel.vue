@@ -71,6 +71,19 @@ const recursiveFindNodeData = (nid) => {
     const thenode = findNode(nid);
     for (const [hid, connection] of Object.entries(thenode.data.connections.inputs)) {
         const c_label = connection.label;
+        // 添加该节点的变量
+        for (const c_data of Object.values(connection.data)) {
+            if (c_data.type === 'FromInner') {
+                result.push({
+                    nodeId: nid,
+                    nlabel: thenode.data.label,
+                    dpath: c_data.path,
+                    dlabel: thenode.data[c_data.path[0]].byId[c_data.path[1]].label,
+                    dtype: thenode.data[c_data.path[0]].byId[c_data.path[1]].type,
+                });
+            }
+        }
+        // 添加边连接的其他节点的变量
         const edges = getHandleConnections({ id: hid, type: "target", nodeId: nid });
         console.log("handle id: ", hid);
         // console.log(hid, "connection: ", connection, "edges: ", edges);
@@ -79,19 +92,24 @@ const recursiveFindNodeData = (nid) => {
             const src_hid = edge.sourceHandle;
             console.log("snid: ", src_nid, "shid: ", src_hid);
             const src_node = findNode(src_nid);
-            const src_ots = src_node.data.connections.outputs[src_hid];
-            for (const [src_otid, src_ot] of Object.entries(src_ots.data)) {
-                if (src_ot.type === 'FromInner') {
-                    result.push({
-                        nodeId: src_nid,
-                        nlabel: src_node.data.label,
-                        dpath: src_ot.path,
-                        dlabel: src_node.data[src_ot.path[0]].byId[src_ot.path[1]].label,
-                        dtype: src_node.data[src_ot.path[0]].byId[src_ot.path[1]].type,
-                    });
-                }
-                else if (src_ot.type === 'FromOuter') {
-                    result.push(...recursiveFindNodeData(src_nid));
+            if (src_node.data.flags.isAttached) {
+                result.push(...recursiveFindNodeData(src_node.parentNode));
+            }
+            else {
+                const src_ots = src_node.data.connections.outputs[src_hid];
+                for (const [src_otid, src_ot] of Object.entries(src_ots.data)) {
+                    if (src_ot.type === 'FromInner') {
+                        result.push({
+                            nodeId: src_nid,
+                            nlabel: src_node.data.label,
+                            dpath: src_ot.path,
+                            dlabel: src_node.data[src_ot.path[0]].byId[src_ot.path[1]].label,
+                            dtype: src_node.data[src_ot.path[0]].byId[src_ot.path[1]].type,
+                        });
+                    }
+                    else if (src_ot.type === 'FromOuter') {
+                        result.push(...recursiveFindNodeData(src_nid));
+                    }
                 }
             }
         }
