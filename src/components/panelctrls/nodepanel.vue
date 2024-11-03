@@ -1,11 +1,12 @@
 <script setup>
-import { computed, ref, watch, nextTick, inject, onUnmounted, h } from 'vue';
+import { computed, ref, watch, nextTick, inject, onUnmounted, onMounted, h } from 'vue';
 import { NFlex, NH2, NCard, NScrollbar, NInput, NText } from 'naive-ui';
 import { Panel, useVueFlow, useHandleConnections } from '@vue-flow/core'
 import editable_input from './editables/input.vue';
 import editable_output from './editables/output.vue';
 import editable_textinput from './editables/textinput.vue';
 import editable_textprint from './editables/textprint.vue';
+import { find } from 'lodash';
 const props = defineProps({
     nodeId: {
         type: String,
@@ -46,7 +47,7 @@ const payloadComponents = computed(() => {
             acc[pid] = h(editable_textinput, { nodeId: props.nodeId, pid });
         }
         else if (uitype === 'textprint') {
-            acc[pid] = h(editable_textprint, { nodeId: props.nodeId, pid, inputConnections: inputConnections.value });
+            acc[pid] = h(editable_textprint, { nodeId: props.nodeId, pid, inputSelections: inputSelections.value });
         }
         return acc;
     }, {});
@@ -65,49 +66,55 @@ const renderConnections = (ctype) => {
 };
 
 // 待用信息 ==================================================
-const getHandleConnectInfos = (id, type, nodeId) => {
-    const connections = getHandleConnections({
-        type,
-        nodeId,
-        id,
-    });
-
-    return connections.reduce((acc, c) => {
-        const c_node = findNode(c.source);
-        let src_node = c_node;
-        let src_id = c.source;
-        let handleid = c.sourceHandle;
-
-        if (c_node.data._is_attached) {
-            src_id = c_node.parentNode;
-            src_node = findNode(src_id);
-            handleid = id;
+const recursiveFindNodeData = (nid) => {
+    const result = [];
+    const thenode = findNode(nid);
+    for (const [hid, connection] of Object.entries(thenode.data.connections.inputs)) {
+        const c_label = connection.label;
+        const edges = getHandleConnections({ id: hid, type: "target", nodeId: nid });
+        console.log("handle id: ", hid);
+        // console.log(hid, "connection: ", connection, "edges: ", edges);
+        for (const [eidx, edge] of Object.entries(edges)) {
+            const src_nid = edge.source;
+            const src_hid = edge.sourceHandle;
+            console.log("snid: ", src_nid, "shid: ", src_hid);
+            const src_node = findNode(src_nid);
+            const src_ots = src_node.data.connections.outputs[src_hid];
+            for (const [src_otid, src_ot] of Object.entries(src_ots.data)) {
+                if (src_ot.type === 'FromInner') {
+                    result.push({
+                        nodeId: src_nid,
+                        nlabel: src_node.data.label,
+                        dpath: src_ot.path,
+                        dlabel: src_node.data[src_ot.path[0]].byId[src_ot.path[1]].label,
+                        dtype: src_node.data[src_ot.path[0]].byId[src_ot.path[1]].type,
+                    });
+                }
+                else if (src_ot.type === 'FromOuter') {
+                    result.push(...recursiveFindNodeData(src_nid));
+                }
+            }
         }
-
-        acc[src_id] = {
-            srcid: src_id,
-            handleid: handleid,
-        };
-
-        return acc;
-    }, {});
-}
+    }
+    return result;
+};
 const inputConnections = computed(() => {
-    const inputIds = Object.keys(thisnode.value?.data?.connections?.inputs);
-    const connections = inputIds.reduce((acc, id) => {
-        const handleConnectInfos = getHandleConnections({ id: id, type: "target", nodeId: props.nodeId });
-        acc = [...acc, ...handleConnectInfos];
-        return acc;
-    }, []);
-    return connections;
+    return recursiveFindNodeData(props.nodeId);
 });
-
+const inputSelections = computed(() => {
+    return inputConnections.value.map((item) => {
+        return {
+            label: `${item.nlabel}/${item.dlabel}[${item.dtype}]`,
+            value: `${item.nodeId}/${item.dpath[0]}/${item.dpath[1]}`,
+        }
+    });
+})
 const nodedatatext = computed(() => {
     if (!thisnode.value?.data) return '';
     return JSON.stringify(thisnode.value.data, null, 2);
 });
 
-
+onMounted(() => { });
 onUnmounted(() => {
     isEditing.value = false;
 });
@@ -137,9 +144,9 @@ onUnmounted(() => {
 
                 <!-- <editable_textcontent :nodeId="nodeId" :payloadidx="0" /> -->
                 <!-- <div>{{ sourceConnections }}</div> -->
-                <pre>edge count: {{ inputConnections.length }}</pre>
-                <pre>edge: {{ inputConnections }}</pre>
-                <!-- <pre>{{ nodedatatext }}</pre> -->
+                <!-- <pre>edge count: {{ inputConnections.length }}</pre> -->
+                <!-- <pre>inputConnections: {{ inputConnections }}</pre> -->
+                <pre>{{ nodedatatext }}</pre>
             </n-card>
         </n-scrollbar>
     </div>

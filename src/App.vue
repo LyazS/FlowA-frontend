@@ -259,8 +259,8 @@ const recursiveAddNodeToVFlow = (parentNodeId, nodetype, nodeinfo) => {
     }
   }
   // 设置为节点中心
-  new_node_position.x -= offset_size.width / 2;
-  new_node_position.y -= offset_size.height / 2;
+  // new_node_position.x -= offset_size.width / 2;
+  // new_node_position.y -= offset_size.height / 2;
   new_node.position = new_node_position;
 
   addNodes(new_node);

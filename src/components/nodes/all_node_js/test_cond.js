@@ -40,6 +40,10 @@ addHandle(_initInfo, "outputs", "output-1", "条件1");
 addHandle(_initInfo, "outputs", "output-2", "条件2");
 addHandle(_initInfo, "outputs", "output-3", "条件3");
 
+addConnection(_initInfo, "outputs", "output-1", { type: "FromOuter" })
+addConnection(_initInfo, "outputs", "output-2", { type: "FromOuter" })
+addConnection(_initInfo, "outputs", "output-3", { type: "FromOuter" })
+
 export const initInfo = cloneDeep(_initInfo);
 export { NodeVue };
 // 该节点需要实现，动态的handle和文字
