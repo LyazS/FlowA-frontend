@@ -122,7 +122,7 @@ const inputConnections = computed(() => {
 const inputSelections = computed(() => {
     return inputConnections.value.map((item) => {
         return {
-            label: `${item.nlabel}/${item.dlabel}[${item.dtype}]`,
+            label: `${item.nlabel} / ${item.dlabel}[${item.dtype}]`,
             value: `${item.nodeId}/${item.dpath[0]}/${item.dpath[1]}`,
         }
     });
