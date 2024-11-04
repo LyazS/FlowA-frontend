@@ -64,13 +64,13 @@ const renderTag = ({ option, handleClose }) => {
                 handleClose();
             }
         },
-        { default: () => option.label }
+        { default: () => `❓${option.label}` }
     );
 };
 const printtexts = computed(() => {
     return thisnode.value.data.payloads.byId[props.pid].data.map(item => {
         if (!props.inputSelections.some(select => select.value === item)) {
-            return `❌错误变量：【${item}】`;
+            return `❓错误变量：【${item}】`;
         }
         else {
             const [nid, dpath, did] = item.split("/");
