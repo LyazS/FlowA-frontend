@@ -47,7 +47,7 @@ addAttachedNode(_initInfo, "attached_node", "callbackUser", "top-right");
 addAttachedNode(_initInfo, "attached_node", "output", "bottom-right");
 addAttachedNode(_initInfo, "attached_node", "callbackFunc", "bottom-left");
 
-let pid = addPayload(_initInfo, { label: "迭代索引", type: "IterIndex", key: "iter_index", data: null, uitype: "TODO" });
+let pid = addPayload(_initInfo, { label: "迭代索引", type: "IterIndex", key: "iter_index", data: null, uitype: "texttag" });
 addConnection(_initInfo, "inputs", "input", { type: "FromInner", path: ["payloads", pid], useid: [] });
 export const initInfo = cloneDeep(_initInfo);
 // 该节点需要实现，动态的handle和文字

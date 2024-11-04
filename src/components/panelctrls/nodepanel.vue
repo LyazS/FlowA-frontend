@@ -1,12 +1,14 @@
 <script setup>
 import { computed, ref, watch, nextTick, inject, onUnmounted, onMounted, h } from 'vue';
-import { NFlex, NH2, NCard, NScrollbar, NInput, NText } from 'naive-ui';
+import { NFlex, NH2, NCard, NScrollbar, NInput, NText, NDivider } from 'naive-ui';
 import { Panel, useVueFlow, useHandleConnections } from '@vue-flow/core'
 import editable_input from './editables/input.vue';
 import editable_output from './editables/output.vue';
 import editable_textinput from './editables/textinput.vue';
 import editable_textprint from './editables/textprint.vue';
-import { find } from 'lodash';
+import editable_texttag from './editables/texttag.vue';
+import editable_header from './editables/header.vue';
+
 const props = defineProps({
     nodeId: {
         type: String,
@@ -23,7 +25,7 @@ const isEditing = inject("isEditing");
 const thisnode = computed(() => {
     return findNode(props.nodeId);
 });
-// 标题相关 ======================================
+// 节点标题相关 ======================================
 const isEditingTitle = ref(false);
 const titleInputRef = ref(null);
 const startEditTilte = () => {
@@ -37,6 +39,17 @@ const saveTitle = () => {
     const newLabel = thisnode.value.data.label.trim();
     thisnode.value.data.label = newLabel || thisnode.value.data.placeholderlabel;
 }
+// 渲染节点payload的内置变量 =======================================
+const payloadInnerComponents = computed(() => {
+    return thisnode.value.data.payloads.order.reduce((acc, pid) => {
+        const payload = thisnode.value.data.payloads.byId[pid];
+        // 只追踪需要的属性
+        const { uitype } = payload; if (uitype === 'texttag') {
+            acc[pid] = h(editable_texttag, { nodeId: props.nodeId, pid });
+        }
+        return acc;
+    }, {});
+});
 // 渲染节点payload数据 =======================================
 const payloadComponents = computed(() => {
     return thisnode.value.data.payloads.order.reduce((acc, pid) => {
@@ -56,16 +69,8 @@ const payloadComponents = computed(() => {
 const isShowOutput = computed(() => {
     return Object.keys(thisnode.value.data.connections.outputs).length > 0;
 });
-const renderConnections = (ctype) => {
-    if (ctype === 'inputs') {
-        return h(editable_input, {});
-    }
-    else if (ctype === 'outputs') {
-        return h(editable_output, { nodeId: props.nodeId });
-    }
-};
 
-// 待用信息 ==================================================
+// 可供该节点使用的变量 ==================================================
 const recursiveFindNodeData = (nid) => {
     const result = [];
     const thenode = findNode(nid);
@@ -116,17 +121,16 @@ const recursiveFindNodeData = (nid) => {
     }
     return result;
 };
-const inputConnections = computed(() => {
-    return recursiveFindNodeData(props.nodeId);
-});
+
 const inputSelections = computed(() => {
-    return inputConnections.value.map((item) => {
+    return recursiveFindNodeData(props.nodeId).map((item) => {
         return {
             label: `${item.nlabel} / ${item.dlabel}[${item.dtype}]`,
             value: `${item.nodeId}/${item.dpath[0]}/${item.dpath[1]}`,
         }
     });
 })
+// 节点数据文本 ================================================================================================
 const nodedatatext = computed(() => {
     if (!thisnode.value?.data) return '';
     return JSON.stringify(thisnode.value.data, null, 2);
@@ -151,6 +155,15 @@ onUnmounted(() => {
                 </template>
 
                 <!-- 渲染输入的连接 -->
+                <!-- 渲染内置变量 -->
+                <n-flex vertical v-if="Object.keys(payloadInnerComponents).length > 0">
+                    <editable_header type="default">内置变量</editable_header>
+                    <n-flex vertical>
+                        <template v-for="pid in thisnode.data.payloads.order" :key="pid">
+                            <component v-if="payloadInnerComponents[pid]" :is="payloadInnerComponents[pid]" />
+                        </template>
+                    </n-flex>
+                </n-flex>
                 <!-- 渲染负载数据 -->
                 <n-flex vertical>
                     <template v-for="pid in thisnode.data.payloads.order" :key="pid">
@@ -164,6 +177,7 @@ onUnmounted(() => {
                 <!-- <div>{{ sourceConnections }}</div> -->
                 <!-- <pre>edge count: {{ inputConnections.length }}</pre> -->
                 <!-- <pre>inputConnections: {{ inputConnections }}</pre> -->
+                <n-divider />
                 <pre>{{ nodedatatext }}</pre>
             </n-card>
         </n-scrollbar>

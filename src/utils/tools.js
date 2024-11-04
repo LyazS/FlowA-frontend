@@ -1,4 +1,4 @@
-export const getUuid = () => {
+const getFullUuid = () => {
     if (typeof crypto === 'object') {
         if (typeof crypto.randomUUID === 'function') {
             return crypto.randomUUID();
@@ -24,6 +24,11 @@ export const getUuid = () => {
         }
         return (c === 'x' ? random : (random & 0x3) | 0x8).toString(16);
     });
+};
+
+export const getUuid = () => {
+    // 替换掉-
+    return getFullUuid().replace(/-/g, '');
 };
 
 export const sortKeys = (obj) => Object.keys(obj).sort((a, b) => a.localeCompare(b));
