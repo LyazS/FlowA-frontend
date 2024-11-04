@@ -48,8 +48,10 @@ watch(selectValue, (newVal) => {
 
 const renderTag = ({ option, handleClose }) => {
     let tagtype = "default";
+    let label = option.label;
     if (!props.inputSelections.some(select => select.value === option.value)) {
         tagtype = "error";
+        label = `❓${option.label}`;
     }
     return h(
         NTag,
@@ -64,7 +66,7 @@ const renderTag = ({ option, handleClose }) => {
                 handleClose();
             }
         },
-        { default: () => `❓${option.label}` }
+        { default: () => label }
     );
 };
 const printtexts = computed(() => {

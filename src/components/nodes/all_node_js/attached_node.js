@@ -33,6 +33,9 @@ setVueType(_initInfo, "attached_node");
 setLabel(_initInfo, "附属节点");
 initSize(_initInfo, 20, 6);
 
+initConnectionsAttribute(_initInfo);
+addHandle(_initInfo, "inputs", "input");
+
 export const initInfo = cloneDeep(_initInfo);
 export { NodeVue };
 // 该节点需要实现，动态的handle和文字

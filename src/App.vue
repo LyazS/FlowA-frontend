@@ -36,7 +36,7 @@
 </style>
 
 <script setup>
-import _ from 'lodash';
+import {cloneDeep} from 'lodash';
 import { ref, markRaw, onMounted, onBeforeUnmount, reactive, watch, provide } from 'vue'
 import { ConnectionMode, VueFlow, Panel, useVueFlow } from '@vue-flow/core'
 import { Background } from '@vue-flow/background'
@@ -192,14 +192,15 @@ const recursiveUpdateNodeSize = (nodeId) => {
   recursiveUpdateNodeSize(nested_node.parentNode);
 }
 
-const recursiveAddNodeToVFlow = (parentNodeId, nodetype, nodeinfo) => {
+const recursiveAddNodeToVFlow = (parentNodeId, nodeinfo) => {
+  const nodetype = nodeinfo.ntype;
   console.log("addNodeToVFlow parent:", parentNodeId, " nodetype:", nodetype, " nodeinfo:", nodeinfo);
   const parentNode = findNode(parentNodeId);
 
-  const node_init_info = _.cloneDeep(AllNodeInitInfos[nodetype]);
+  const node_init_info = cloneDeep(AllNodeInitInfos[nodetype]);
   const offset_size = { width: node_init_info.data.size.width + 8, height: node_init_info.data.size.height + 8 };
   const new_node = {
-    id: getUuid(),
+    id: nodeinfo.nid || getUuid(),
     type: node_init_info.vtype,
     data: node_init_info.data,
     style: {
@@ -266,14 +267,22 @@ const recursiveAddNodeToVFlow = (parentNodeId, nodetype, nodeinfo) => {
 
   addNodes(new_node);
   if (node_init_info.data.nesting?.attached_nodes) {
-    console.log(`add ${node_init_info.data.nesting.attached_nodes.length} fixed nested nodes`);
-    node_init_info.data.nesting.attached_nodes.forEach((n_node) => {
-      recursiveAddNodeToVFlow(new_node.id, n_node.ntype, { type: "attached", position: n_node.apos, attached_type: n_node.atype });
-    })
+    console.log(`add ${Object.keys(node_init_info.data.nesting.attached_nodes).length} fixed nested nodes`);
+    for (const [atype, anode] of Object.entries(node_init_info.data.nesting.attached_nodes)) {
+      const anid = getUuid();
+      recursiveAddNodeToVFlow(new_node.id, {
+        ntype: anode.ntype,
+        type: "attached",
+        position: anode.apos,
+        attached_type: atype,
+        nid: anid,
+      });
+      node_init_info.data.nesting.attached_nodes[atype].nid = anid;
+    }
   }
 };
-const addNodeToVFlow = (parentNodeId, nodetype, nodeinfo) => {
-  recursiveAddNodeToVFlow(parentNodeId, nodetype, nodeinfo);
+const addNodeToVFlow = (parentNodeId, nodeinfo) => {
+  recursiveAddNodeToVFlow(parentNodeId, nodeinfo);
   buildNestedNodeGraph();
   recursiveUpdateNodeSize(parentNodeId);
 };
@@ -324,13 +333,14 @@ const AddNodeList = (event_cm) => {
     onClick: () => {
       console.log("add node", item.ntype);
       let node_info = {
+        ntype: item.ntype,
         type: 'client',
         ...screenToFlowCoordinate({
           x: event_cm.event.clientX,
           y: event_cm.event.clientY,
         })
       };
-      addNodeToVFlow(event_cm.node?.id, item.ntype, node_info);
+      addNodeToVFlow(event_cm.node?.id, node_info);
     },
   }));
 };

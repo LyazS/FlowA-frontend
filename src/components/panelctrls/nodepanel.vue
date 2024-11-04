@@ -71,7 +71,7 @@ const isShowOutput = computed(() => {
 });
 
 // 可供该节点使用的变量 ==================================================
-const recursiveFindNodeData = (nid) => {
+const recursiveFindInputVar = (nid) => {
     const result = [];
     const thenode = findNode(nid);
     for (const [hid, connection] of Object.entries(thenode.data.connections.inputs)) {
@@ -97,8 +97,9 @@ const recursiveFindNodeData = (nid) => {
             const src_hid = edge.sourceHandle;
             console.log("snid: ", src_nid, "shid: ", src_hid);
             const src_node = findNode(src_nid);
-            if (src_node.data.flags.isAttached) {
-                result.push(...recursiveFindNodeData(src_node.parentNode));
+            if (src_node.data.flags.isAttached
+                && src_node.data.attaching.type === 'input') {
+                result.push(...recursiveFindInputVar(src_node.parentNode));
             }
             else {
                 const src_ots = src_node.data.connections.outputs[src_hid];
@@ -113,7 +114,12 @@ const recursiveFindNodeData = (nid) => {
                         });
                     }
                     else if (src_ot.type === 'FromOuter') {
-                        result.push(...recursiveFindNodeData(src_nid));
+                        result.push(...recursiveFindInputVar(src_nid));
+                    }
+                    else if (src_ot.type === 'FromAttached') {
+                        result.push(...recursiveFindInputVar(
+                            src_node.data.nesting.attached_nodes[src_ot.atype].nid
+                        ));
                     }
                 }
             }
@@ -123,7 +129,7 @@ const recursiveFindNodeData = (nid) => {
 };
 
 const inputSelections = computed(() => {
-    return recursiveFindNodeData(props.nodeId).map((item) => {
+    return recursiveFindInputVar(props.nodeId).map((item) => {
         return {
             label: `${item.nlabel} / ${item.dlabel}[${item.dtype}]`,
             value: `${item.nodeId}/${item.dpath[0]}/${item.dpath[1]}`,

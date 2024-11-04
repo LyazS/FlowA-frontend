@@ -43,9 +43,9 @@ const NestedAttribute = {
             left: 17,
             right: 17,
         },// 嵌套固定节点边距
-        attached_nodes: [
-            // { ntype: "attached_node", atype: "input", apos: "top-left" },// top|center|bottom-left|center|right
-        ],
+        attached_nodes: {
+            // <atype>: { ntype: "attached_node", nid: "", apos: "top-left" },// top|center|bottom-left|center|right
+        },
     }
 }
 const ConnectionsAttribute = {
@@ -67,9 +67,10 @@ const ConnectionsAttribute = {
             // output: {// 输出handle的id
             //     label: "",
             //     data: {
-            //         "idxxx-ot": { type: "FromOuter", nid: "节点id", oid: "节点的输出id" },
+            //         "idxxx-ot": { type: "FromOuter" },
             //         "idxxx-ot": { type: "FromInner", path: ["payloads", "idxxx-pr"], useid: ["使用节点id"] },
             //         "idxxx-ot": { type: "FromInner", path: ["results", "idxxx-pr"], useid: ["使用节点id"] },
+            //         "idxxx-ot": { type: "FromAttached", atype: "output", useid: [] }
             //     }
             // }
         },
@@ -151,7 +152,7 @@ export const setLabel = (_BaseNodeInfo, label) => {
     _BaseNodeInfo.data.placeholderlabel = label;
 };
 export const addAttachedNode = (_BaseNodeInfo, ntype, atype, apos) => {
-    _BaseNodeInfo.data.nesting.attached_nodes.push({ ntype, atype, apos });
+    _BaseNodeInfo.data.nesting.attached_nodes[atype] = { ntype, nid: null, apos };
 };
 
 // 节点数据操作函数 ==========

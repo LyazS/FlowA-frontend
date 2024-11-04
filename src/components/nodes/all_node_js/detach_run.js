@@ -47,6 +47,8 @@ addAttachedNode(_initInfo, "attached_node", "callbackUser", "top-right");
 addAttachedNode(_initInfo, "attached_node", "output", "bottom-right");
 addAttachedNode(_initInfo, "attached_node", "callbackFunc", "bottom-left");
 
+addConnection(_initInfo, "outputs", "output", { type: "FromAttached", atype: "output", useid: [] });
+
 export const initInfo = cloneDeep(_initInfo);
 // 该节点需要实现，动态的handle和文字
 export { NodeVue };
