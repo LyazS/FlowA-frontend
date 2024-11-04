@@ -1,35 +1,26 @@
 <template>
     <n-flex vertical>
         <editable_header type="info">输出</editable_header>
-        <n-flex v-for="item in nodeOutput" :key="item.id" :wrap="false" class="output-item">
-            <n-text v-if="hasMultipleOutputs" class="handle-label">
+        <n-flex class="flexctitem" v-for="item in nodeOutput" :key="item.id" :wrap="false">
+            <n-text v-if="hasMultipleOutputs">
                 {{ item.label }}
             </n-text>
-            <n-text class="output-id">{{ item.id }}</n-text>
-            <n-text class="output-type">{{ item.type }}</n-text>
+            <n-tag type="info">{{ item.id }}</n-tag>
+            <n-text>{{ item.type }}</n-text>
         </n-flex>
     </n-flex>
 </template>
 
 <style scoped>
-.output-item {
-    gap: 8px;
-    padding: 4px 0;
-}
-
-.handle-label {
-    min-width: 80px;
-}
-
-.output-id,
-.output-type {
-    color: var(--text-color-secondary);
+.flexctitem {
+    align-content: center;
+    align-items: center;
 }
 </style>
 
 <script setup>
 import { computed } from 'vue'
-import { NText, NFlex } from 'naive-ui'
+import { NText, NFlex, NTag } from 'naive-ui'
 import { useVueFlow } from '@vue-flow/core'
 import editable_header from './header.vue'
 

@@ -12,7 +12,7 @@ const BaseNodeInfo = {
         label: "#TODO",
         placeholderlabel: "#TODO",
         // 节点特性标记 ========
-        flags: {              // 重构: 将独立的标记整合到flags对象
+        flags: {              // 将独立的标记整合到flags对象
             isNested: false,    // 是否可嵌套
             isAttached: false,  // 是否为附属节点
             isDisabled: false,  // 是否禁用
