@@ -35,14 +35,14 @@ setVueType(_initInfo, "basenode");
 setLabel(_initInfo, "测试条件分支");
 initSize(_initInfo, 80, 80);
 
-addHandle(_initInfo, "inputs", "input9");
+addHandle(_initInfo, "inputs", "input");
 addHandle(_initInfo, "outputs", "output-1", "条件1");
 addHandle(_initInfo, "outputs", "output-2", "条件2");
 addHandle(_initInfo, "outputs", "output-3", "条件3");
 
-addConnection(_initInfo, "outputs", "output-1", { type: "FromOuter" })
-addConnection(_initInfo, "outputs", "output-2", { type: "FromOuter" })
-addConnection(_initInfo, "outputs", "output-3", { type: "FromOuter" })
+addConnection(_initInfo, "outputs", "output-1", { type: "FromOuter", inputKey: "input" })
+addConnection(_initInfo, "outputs", "output-2", { type: "FromOuter", inputKey: "input" })
+addConnection(_initInfo, "outputs", "output-3", { type: "FromOuter", inputKey: "input" })
 
 export const initInfo = cloneDeep(_initInfo);
 export { NodeVue };

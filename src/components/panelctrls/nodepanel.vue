@@ -71,62 +71,80 @@ const isShowOutput = computed(() => {
 });
 
 // 可供该节点使用的变量 ==================================================
-const recursiveFindVariables = (nid, findInput) => {
+const findFromXXX = (nid, hid, findtype = 'input') => {
     const result = [];
     const thenode = findNode(nid);
-    for (const [hid, connection] of Object.entries(thenode.data.connections.inputs)) {
-        // 添加该节点的变量
-        if (findInput) {
-            for (const c_data of Object.values(connection.data)) {
-                if (c_data.type === 'FromInner') {
-                    result.push({
-                        nodeId: nid,
-                        nlabel: thenode.data.label,
-                        dpath: c_data.path,
-                        dlabel: thenode.data[c_data.path[0]].byId[c_data.path[1]].label,
-                        dtype: thenode.data[c_data.path[0]].byId[c_data.path[1]].type,
-                    });
-                }
+    const connection = findtype === 'input' ? thenode.data.connections.inputs[hid] : thenode.data.connections.outputs[hid];
+    for (const c_data of Object.values(connection.data)) {
+        if (c_data.type === 'FromInner') {
+            result.push({
+                nodeId: nid,
+                nlabel: thenode.data.label,
+                dpath: c_data.path,
+                dlabel: thenode.data[c_data.path[0]].byId[c_data.path[1]].label,
+                dtype: thenode.data[c_data.path[0]].byId[c_data.path[1]].type,
+            });
+        }
+        else if (c_data.type === 'FromOuter') {
+            // 对于上一个节点，则递归搜索上个节点的对应输出handle
+            const in_hid = c_data.inputKey;
+            const edges = getHandleConnections({ id: in_hid, type: "target", nodeId: nid });
+            console.log("handle id: ", in_hid, "edges count: ", Object.keys(edges).length);
+            for (const [eidx, edge] of Object.entries(edges)) {
+                const src_nid = edge.source;
+                const src_hid = edge.sourceHandle;
+                result.push(...recursiveFindVariables(src_nid, false, [], false, [src_hid]));
             }
         }
-        // 添加边连接的其他节点的输出变量
-        const edges = getHandleConnections({ id: hid, type: "target", nodeId: nid });
-        console.log("handle id: ", hid, "edges count: ", Object.keys(edges).length);
-        for (const [eidx, edge] of Object.entries(edges)) {
-            const src_nid = edge.source;
-            const src_hid = edge.sourceHandle;
-            console.log("snid: ", src_nid, "shid: ", src_hid);
-            const src_node = findNode(src_nid);
-            const src_ots = src_node.data.connections.outputs[src_hid];
-            for (const [src_otid, src_ot] of Object.entries(src_ots.data)) {
-                if (src_ot.type === 'FromInner') {
-                    result.push({
-                        nodeId: src_nid,
-                        nlabel: src_node.data.label,
-                        dpath: src_ot.path,
-                        dlabel: src_node.data[src_ot.path[0]].byId[src_ot.path[1]].label,
-                        dtype: src_node.data[src_ot.path[0]].byId[src_ot.path[1]].type,
-                    });
-                }
-                else if (src_ot.type === 'FromOuter') {
-                    result.push(...recursiveFindVariables(src_nid, false));
-                }
-                else if (src_ot.type === 'FromAttached') {
-                    result.push(...recursiveFindVariables(
-                        src_node.data.nesting.attached_nodes[src_ot.atype].nid, false
-                    ));
-                }
-                else if (src_ot.type === 'FromParent') {
-                    result.push(...recursiveFindVariables(src_node.parentNode, true));
-                }
-            }
+        else if (c_data.type === 'FromAttached') {
+            // 对于子节点，
+            // 如果是输入节点，则搜索它的输出handle
+            // 如果是输出节点，则搜索它的输入handle
+            let find_ainput = false;
+            let find_aoutput = false;
+            if (c_data.atype === 'intput') { find_aoutput = true; }
+            else if (c_data.atype === 'output') { find_ainput = true; }
+            result.push(...recursiveFindVariables(
+                thenode.data.nesting.attached_nodes[c_data.atype].nid,
+                find_ainput,
+                [],
+                find_aoutput,
+                [],
+            ));
         }
+        else if (c_data.type === 'FromParent') {
+            // 如果是父节点，则递归搜索父节点的所有输入handle
+            result.push(...recursiveFindVariables(thenode.parentNode, true, [], false, []));
+        }
+    }
+    return result;
+}
+
+
+const recursiveFindVariables = (
+    nid,
+    findAllInput = false,
+    findInput = [],
+    findAllOutput = false,
+    findOutput = [],
+) => {
+    const result = [];
+    const thenode = findNode(nid);
+    if (findAllInput) { findInput = Object.keys(thenode.data.connections.inputs); }
+    if (findAllOutput) { findOutput = Object.keys(thenode.data.connections.outputs); }
+
+    for (const hid of findInput) {
+        result.push(...findFromXXX(nid, hid, 'input'));
+    }
+    for (const hid of findOutput) {
+        result.push(...findFromXXX(nid, hid, 'output'));
     }
     return result;
 };
 
+
 const inputSelections = computed(() => {
-    return recursiveFindVariables(props.nodeId, true).map((item) => {
+    return recursiveFindVariables(props.nodeId, true, [], false, []).map((item) => {
         return {
             label: `${item.nlabel} / ${item.dlabel}[${item.dtype}]`,
             value: `${item.nodeId}/${item.dpath[0]}/${item.dpath[1]}`,

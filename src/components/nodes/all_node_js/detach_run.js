@@ -47,6 +47,7 @@ addAttachedNode(_initInfo, "attached_node_callbackUser", "callbackUser", "top-ri
 addAttachedNode(_initInfo, "attached_node_output", "output", "bottom-right");
 addAttachedNode(_initInfo, "attached_node_callbackFunc", "callbackFunc", "bottom-left");
 
+addConnection(_initInfo, "inputs", "input", { type: "FromOuter", inputKey: "input" });
 addConnection(_initInfo, "outputs", "output", { type: "FromAttached", atype: "output", useid: [] });
 
 export const initInfo = cloneDeep(_initInfo);

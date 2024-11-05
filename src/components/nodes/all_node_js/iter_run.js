@@ -47,6 +47,8 @@ addAttachedNode(_initInfo, "attached_node_callbackUser", "callbackUser", "top-ri
 addAttachedNode(_initInfo, "attached_node_output", "output", "bottom-right");
 addAttachedNode(_initInfo, "attached_node_callbackFunc", "callbackFunc", "bottom-left");
 
+addConnection(_initInfo, "inputs", "input", { type: "FromOuter", inputKey: "input" });
+
 let pid = addPayload(_initInfo, { label: "迭代索引", type: "IterIndex", key: "iter_index", data: null, uitype: "texttag" });
 addConnection(_initInfo, "inputs", "input", { type: "FromInner", path: ["payloads", pid], useid: [] });
 
