@@ -42,13 +42,16 @@ addHandle(_initInfo, "outputs", "output");
 addHandle(_initInfo, "callbackUsers", "callbackUser");
 addHandle(_initInfo, "callbackFuncs", "callbackFunc");
 
-addAttachedNode(_initInfo, "attached_node", "input", "top-left");
-addAttachedNode(_initInfo, "attached_node", "callbackUser", "top-right");
-addAttachedNode(_initInfo, "attached_node", "output", "bottom-right");
-addAttachedNode(_initInfo, "attached_node", "callbackFunc", "bottom-left");
+addAttachedNode(_initInfo, "attached_node_input", "input", "top-left");
+addAttachedNode(_initInfo, "attached_node_callbackUser", "callbackUser", "top-right");
+addAttachedNode(_initInfo, "attached_node_output", "output", "bottom-right");
+addAttachedNode(_initInfo, "attached_node_callbackFunc", "callbackFunc", "bottom-left");
 
 let pid = addPayload(_initInfo, { label: "迭代索引", type: "IterIndex", key: "iter_index", data: null, uitype: "texttag" });
 addConnection(_initInfo, "inputs", "input", { type: "FromInner", path: ["payloads", pid], useid: [] });
+
+addResult(_initInfo, { label: "结果", type: "Array[String]", key: "testtext", data: [], uitype: "texttag" }, "output");
+
 export const initInfo = cloneDeep(_initInfo);
 // 该节点需要实现，动态的handle和文字
 export { NodeVue };

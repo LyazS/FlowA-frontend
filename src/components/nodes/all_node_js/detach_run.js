@@ -42,10 +42,10 @@ addHandle(_initInfo, "outputs", "output");
 addHandle(_initInfo, "callbackUsers", "callbackUser");
 addHandle(_initInfo, "callbackFuncs", "callbackFunc");
 
-addAttachedNode(_initInfo, "attached_node", "input", "top-left");
-addAttachedNode(_initInfo, "attached_node", "callbackUser", "top-right");
-addAttachedNode(_initInfo, "attached_node", "output", "bottom-right");
-addAttachedNode(_initInfo, "attached_node", "callbackFunc", "bottom-left");
+addAttachedNode(_initInfo, "attached_node_input", "input", "top-left");
+addAttachedNode(_initInfo, "attached_node_callbackUser", "callbackUser", "top-right");
+addAttachedNode(_initInfo, "attached_node_output", "output", "bottom-right");
+addAttachedNode(_initInfo, "attached_node_callbackFunc", "callbackFunc", "bottom-left");
 
 addConnection(_initInfo, "outputs", "output", { type: "FromAttached", atype: "output", useid: [] });
 

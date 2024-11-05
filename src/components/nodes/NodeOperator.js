@@ -39,7 +39,7 @@ const NestedAttribute = {
         },
         attached_pad: {
             top: 30,
-            bottom: 10,
+            bottom: 25,
             left: 17,
             right: 17,
         },// 嵌套固定节点边距
@@ -63,14 +63,14 @@ const ConnectionsAttribute = {
         callbackUsers: {},
         // 多个输出handle，数组里每个元素都是一个输出handle
         callbackFuncs: {},
-        outputs: {
+        outputs: {// 透传外部、内部变量、附属节点的链接
             // output: {// 输出handle的id
             //     label: "",
             //     data: {
             //         "idxxx-ot": { type: "FromOuter" },
+            //         "idxxx-ot": { type: "FromAttached", atype: "output", useid: [] },
             //         "idxxx-ot": { type: "FromInner", path: ["payloads", "idxxx-pr"], useid: ["使用节点id"] },
             //         "idxxx-ot": { type: "FromInner", path: ["results", "idxxx-pr"], useid: ["使用节点id"] },
-            //         "idxxx-ot": { type: "FromAttached", atype: "output", useid: [] }
             //     }
             // }
         },

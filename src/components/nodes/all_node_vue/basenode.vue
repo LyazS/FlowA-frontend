@@ -10,32 +10,18 @@
                 {{ handle.label }}
             </div>
         </template>
-        <template v-if="data.flags.isNested">
-            <template v-for="(handle, index) in outputHandles" :key="handle.key">
-                <Handle :id="handle.key" class="vue-flow__handle-output" type="source" :position="Position.Right"
-                    :style="{
-                        top: `${handle_h_pad + (index + max_handles_top) * handle_h_gap}px`, right: `${handle_h_pad}px`, transform: 'translateY(0)'
-                    }" />
-                <div class="corner-text" :style="{
-                    top: `${handle_h_pad + (index + max_handles_top) * handle_h_gap}px`, right: `${handle_h_pad + handle_text_edge_pad}px`, transform: 'translateY(0)'
-                }">
-                    {{ handle.label }}
-                </div>
-            </template>
+
+        <template v-for="(handle, index) in outputHandles" :key="handle.key">
+            <Handle :id="handle.key" class="vue-flow__handle-output" type="source" :position="Position.Right" :style="{
+                top: 'auto', bottom: `${handle_h_pad + index * handle_h_gap}px`, right: `${handle_h_pad}px`, transform: 'translateY(0)'
+            }" />
+            <div class="corner-text" :style="{
+                top: 'auto', bottom: `${handle_h_pad + index * handle_h_gap - 1.5}px`, right: `${handle_h_pad + handle_text_edge_pad}px`, transform: 'translateY(0)'
+            }">
+                {{ handle.label }}
+            </div>
         </template>
-        <template v-else>
-            <template v-for="(handle, index) in outputHandles" :key="handle.key">
-                <Handle :id="handle.key" class="vue-flow__handle-output" type="source" :position="Position.Right"
-                    :style="{
-                        top: 'auto', bottom: `${handle_h_pad + index * handle_h_gap}px`, right: `${handle_h_pad}px`, transform: 'translateY(0)'
-                    }" />
-                <div class="corner-text" :style="{
-                    top: 'auto', bottom: `${handle_h_pad + index * handle_h_gap - 1.5}px`, right: `${handle_h_pad + handle_text_edge_pad}px`, transform: 'translateY(0)'
-                }">
-                    {{ handle.label }}
-                </div>
-            </template>
-        </template>
+
         <template v-for="(handle, index) in cbuserHandles" :key="handle.key">
             <Handle :id="handle.key" class="vue-flow__handle-callbackUser" type="source" :position="Position.Right"
                 :style="{
@@ -48,31 +34,16 @@
             </div>
         </template>
 
-        <template v-if="data.flags.isNested">
-            <template v-for="(handle, index) in cbfuncHandles" :key="handle.key">
-                <Handle :id="handle.key" class="vue-flow__handle-callbackFunc" type="target" :position="Position.Left"
-                    :style="{
-                        top: `${handle_h_pad + (index + max_handles_top) * handle_h_gap}px`, left: `${handle_h_pad}px`, transform: 'translateY(0)'
-                    }" />
-                <div class="corner-text" :style="{
-                    top: `${handle_h_pad + (index + max_handles_top) * handle_h_gap}px`, left: `${handle_h_pad + handle_text_edge_pad}px`, transform: 'translateY(0)'
-                }">
-                    {{ handle.label }}
-                </div>
-            </template>
-        </template>
-        <template v-else>
-            <template v-for="(handle, index) in cbfuncHandles" :key="handle.key">
-                <Handle :id="handle.key" class="vue-flow__handle-callbackFunc" type="target" :position="Position.Left"
-                    :style="{
-                        top: 'auto', bottom: `${handle_h_pad + index * handle_h_gap}px`, left: `${handle_h_pad}px`, transform: 'translateY(0)'
-                    }" />
-                <div class="corner-text" :style="{
-                    top: 'auto', bottom: `${handle_h_pad + index * handle_h_gap - 1.5}px`, left: `${handle_h_pad + handle_text_edge_pad}px`, transform: 'translateY(0)'
-                }">
-                    {{ handle.label }}
-                </div>
-            </template>
+        <template v-for="(handle, index) in cbfuncHandles" :key="handle.key">
+            <Handle :id="handle.key" class="vue-flow__handle-callbackFunc" type="target" :position="Position.Left"
+                :style="{
+                    top: 'auto', bottom: `${handle_h_pad + index * handle_h_gap}px`, left: `${handle_h_pad}px`, transform: 'translateY(0)'
+                }" />
+            <div class="corner-text" :style="{
+                top: 'auto', bottom: `${handle_h_pad + index * handle_h_gap - 1.5}px`, left: `${handle_h_pad + handle_text_edge_pad}px`, transform: 'translateY(0)'
+            }">
+                {{ handle.label }}
+            </div>
         </template>
 
         <div class="center-text"
@@ -85,7 +56,7 @@
 <script setup>
 import { ref, computed, onMounted, onBeforeUnmount, onUnmounted, watch } from 'vue';
 import { Position, Handle, useVueFlow } from '@vue-flow/core'
-const { getNodes, findNode } = useVueFlow();
+const { findNode } = useVueFlow();
 const props = defineProps(['id', 'data'])
 
 const handle_h_pad = 1;

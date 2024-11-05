@@ -30,6 +30,10 @@ const handle_id = showOutputHandle ? 'output' : showCallbackUserHandle ? 'callba
 <style>
 .vue-flow__node-attached_node {
     pointer-events: none;
+    border: 1px solid rgb(52, 52, 56);
+    padding: 3px;
+    border-radius: 6px;
+
 }
 
 .vue-flow__node-attached_node:hover {

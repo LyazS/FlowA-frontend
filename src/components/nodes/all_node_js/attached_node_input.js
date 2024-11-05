@@ -28,13 +28,15 @@ import NodeVue from '../all_node_vue/attached_node.vue';
 
 const _initInfo = createBaseNodeInfo();
 initAttachedAttribute(_initInfo);
-setNodeType(_initInfo, "attached_node");
+setNodeType(_initInfo, "attached_node_input");
 setVueType(_initInfo, "attached_node");
 setLabel(_initInfo, "附属节点");
 initSize(_initInfo, 20, 6);
 
 initConnectionsAttribute(_initInfo);
-addHandle(_initInfo, "inputs", "input");
+// 在output里加一个，去搜索父节点
+addHandle(_initInfo, "outputs", "output");
+addConnection(_initInfo, "outputs", "output", { type: "FromParent" });
 
 export const initInfo = cloneDeep(_initInfo);
 export { NodeVue };
