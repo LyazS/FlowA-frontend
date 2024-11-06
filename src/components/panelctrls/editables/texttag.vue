@@ -3,6 +3,7 @@
     <n-flex class="flexctitem">
         <n-text :bordered="false">{{ nodeTextTag.label }}</n-text>
         <n-tag :bordered="false" type="info">{{ nodeTextTag.key }}</n-tag>
+        <n-text :bordered="false">{{ nodeTextTag.type }}</n-text>
     </n-flex>
 </template>
 
@@ -39,6 +40,7 @@ const nodeTextTag = computed(() => {
     return {
         label: tagdata.label,
         key: tagdata.key,
+        type: tagdata.type
     };
 })
 </script>

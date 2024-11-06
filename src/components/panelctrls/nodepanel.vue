@@ -71,11 +71,23 @@ const isShowOutput = computed(() => {
 });
 
 // 可供该节点使用的变量 ==================================================
-const findFromXXX = (nid, hid, findtype = 'input') => {
+const findVarFromIO = (nid, hid, findtype) => {
     const result = [];
     const thenode = findNode(nid);
-    const connection = findtype === 'input' ? thenode.data.connections.inputs[hid] : thenode.data.connections.outputs[hid];
-    for (const c_data of Object.values(connection.data)) {
+    let connection = {};
+    if (findtype === 'self') {
+        connection = thenode.data.connections.self[hid].data;
+    }
+    else if (findtype === 'attach') {
+        connection = thenode.data.connections.attach[hid].data;
+    }
+    else if (findtype === 'input') {
+        connection = thenode.data.connections.inputs[hid].data;
+    }
+    else if (findtype === 'output') {
+        connection = thenode.data.connections.outputs[hid].data;
+    }
+    for (const c_data of Object.values(connection)) {
         if (c_data.type === 'FromInner') {
             result.push({
                 nodeId: nid,
@@ -93,7 +105,7 @@ const findFromXXX = (nid, hid, findtype = 'input') => {
             for (const [eidx, edge] of Object.entries(edges)) {
                 const src_nid = edge.source;
                 const src_hid = edge.sourceHandle;
-                result.push(...recursiveFindVariables(src_nid, false, [], false, [src_hid]));
+                result.push(...recursiveFindVariables(src_nid, false, false, false, [], false, [src_hid]));
             }
         }
         else if (c_data.type === 'FromAttached') {
@@ -106,6 +118,8 @@ const findFromXXX = (nid, hid, findtype = 'input') => {
             else if (c_data.atype === 'output') { find_ainput = true; }
             result.push(...recursiveFindVariables(
                 thenode.data.nesting.attached_nodes[c_data.atype].nid,
+                false,
+                false,
                 find_ainput,
                 [],
                 find_aoutput,
@@ -114,7 +128,7 @@ const findFromXXX = (nid, hid, findtype = 'input') => {
         }
         else if (c_data.type === 'FromParent') {
             // 如果是父节点，则递归搜索父节点的所有输入handle
-            result.push(...recursiveFindVariables(thenode.parentNode, true, [], false, []));
+            result.push(...recursiveFindVariables(thenode.parentNode, false, true, true, [], false, []));
         }
     }
     return result;
@@ -123,6 +137,8 @@ const findFromXXX = (nid, hid, findtype = 'input') => {
 
 const recursiveFindVariables = (
     nid,
+    findSelf = false,
+    findAttach = false,
     findAllInput = false,
     findInput = [],
     findAllOutput = false,
@@ -133,18 +149,20 @@ const recursiveFindVariables = (
     if (findAllInput) { findInput = Object.keys(thenode.data.connections.inputs); }
     if (findAllOutput) { findOutput = Object.keys(thenode.data.connections.outputs); }
 
+    if (findSelf) result.push(...findVarFromIO(nid, 'self', 'self'));
+    if (findAttach) result.push(...findVarFromIO(nid, 'attach', 'attach'));
     for (const hid of findInput) {
-        result.push(...findFromXXX(nid, hid, 'input'));
+        result.push(...findVarFromIO(nid, hid, 'input'));
     }
     for (const hid of findOutput) {
-        result.push(...findFromXXX(nid, hid, 'output'));
+        result.push(...findVarFromIO(nid, hid, 'output'));
     }
     return result;
 };
 
 
 const inputSelections = computed(() => {
-    return recursiveFindVariables(props.nodeId, true, [], false, []).map((item) => {
+    return recursiveFindVariables(props.nodeId, true, false, true, [], false, []).map((item) => {
         return {
             label: `${item.nlabel} / ${item.dlabel}[${item.dtype}]`,
             value: `${item.nodeId}/${item.dpath[0]}/${item.dpath[1]}`,

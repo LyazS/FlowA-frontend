@@ -10,7 +10,6 @@
 <script setup>
 import { ref, computed, onMounted, onBeforeUnmount, onUnmounted, watch } from 'vue';
 import { Position, Handle } from '@vue-flow/core'
-import { NTag, NText, NH3, NFlex, NLayout } from 'naive-ui';
 const props = defineProps(['id', 'data']);
 
 const showOutputHandle = !!(props.data.attaching.type === 'input');

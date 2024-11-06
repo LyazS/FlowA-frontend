@@ -5,7 +5,7 @@
             <n-text v-if="hasMultipleOutputs">
                 {{ item.label }}
             </n-text>
-            <n-tag type="info">{{ item.id }}</n-tag>
+            <n-tag :bordered="false" type="info">{{ item.id }}</n-tag>
             <n-text>{{ item.type }}</n-text>
         </n-flex>
     </n-flex>

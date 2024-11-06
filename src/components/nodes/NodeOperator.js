@@ -50,6 +50,20 @@ const NestedAttribute = {
 }
 const ConnectionsAttribute = {
     connections: {
+        // 自身可用变量，默认存在
+        self: {
+            self: {
+                label: "self",
+                data: {}
+            }
+        },
+        // 附属节点可用变量，默认存在
+        attach: {
+            attach: {
+                label: "attach",
+                data: {}
+            }
+        },
         // 单一个输入handle，数组里每个元素表示使用哪些输入
         inputs: {
             // input: {// 输入handle的id
@@ -217,4 +231,10 @@ export const rmResult = (_Node, rid) => {
         delete _Node.data.results.byId[rid];
         _Node.data.results.order.splice(_Node.data.results.order.indexOf(rid), 1);
     }
+};
+export const clearResults = (_Node) => {
+    const tmp_rid = _Node.data.results.order.slice();
+    tmp_rid.forEach(rid => {
+        rmResult(_Node, rid);
+    });
 };
