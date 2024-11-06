@@ -11,9 +11,6 @@ import {
     setVueType,
     setLabel,
     addAttachedNode,
-    setSize,
-    getSize,
-    setAttachedAttribute,
     addHandle,
     addConnection,
     rmConnection,
@@ -21,6 +18,7 @@ import {
     addResult,
     rmPayload,
     rmResult,
+    setOutputsUIType,
 } from '../NodeOperator.js'
 
 import { cloneDeep } from 'lodash';

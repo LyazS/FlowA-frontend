@@ -102,6 +102,7 @@ const RunningAttribute = {
         ]
     },
     results: {
+        uitype: "",
         byId: {
             // "idxxx1-r": { type: "String", key: "text", data: "", hid: "output-1", oid: "idxxx1-ot" },
             // "idxxx2-r": { type: "String", key: "text", data: "", hid: "output-1", oid: "idxxx2-ot" },
@@ -170,22 +171,8 @@ export const addAttachedNode = (_BaseNodeInfo, ntype, atype, apos) => {
 };
 
 // 节点数据操作函数 ==========
-export const setSize = (_Node, width, height) => {
-    _Node.data.size.width = width;
-    _Node.data.size.height = height;
-    _Node.style.width = width;
-    _Node.style.height = height;
-};
-export const getSize = (_Node) => {
-    return {
-        width: _Node.data.size.width,
-        height: _Node.data.size.height
-    };
-};
-
-export const setAttachedAttribute = (_Node, type, pos) => {
-    _Node.data.attaching.type = type;
-    _Node.data.attaching.pos = pos;
+export const setOutputsUIType = (_Node, uitype) => {
+    _Node.data.connections['outputs-uitype'] = uitype;
 };
 export const addHandle = (_Node, handletype, handleId, label = null) => {
     _Node.data.connections[handletype][handleId] = { label: label || handleId, data: {} };

@@ -11,9 +11,6 @@ import {
     setVueType,
     setLabel,
     addAttachedNode,
-    setSize,
-    getSize,
-    setAttachedAttribute,
     addHandle,
     addConnection,
     rmConnection,
@@ -21,6 +18,7 @@ import {
     addResult,
     rmPayload,
     rmResult,
+    setOutputsUIType,
 } from '../NodeOperator.js'
 
 import { cloneDeep } from 'lodash';
@@ -39,6 +37,8 @@ addHandle(_initInfo, "outputs", "output");
 
 let pid = addPayload(_initInfo, { label: "内容", type: "String", key: "text", data: "", uitype: "textinput" });
 addConnection(_initInfo, "outputs", "output", { type: "FromInner", path: ["payloads", pid], useid: [] })
+setOutputsUIType(_initInfo, "tagoutputs");
+
 
 export const initInfo = cloneDeep(_initInfo);
 // 该节点需要实现，动态的handle和文字

@@ -3,7 +3,8 @@ import { computed, ref, watch, nextTick, inject, onUnmounted, onMounted, h } fro
 import { NFlex, NH2, NCard, NScrollbar, NInput, NText, NDivider } from 'naive-ui';
 import { Panel, useVueFlow, useHandleConnections } from '@vue-flow/core'
 import editable_input from './editables/input.vue';
-import editable_output from './editables/output.vue';
+import editable_tagoutputs from './editables/tagoutputs.vue';
+import editable_packoutputs from './editables/packoutputs.vue';
 import editable_textinput from './editables/textinput.vue';
 import editable_textprint from './editables/textprint.vue';
 import editable_texttag from './editables/texttag.vue';
@@ -44,7 +45,8 @@ const payloadInnerComponents = computed(() => {
     return thisnode.value.data.payloads.order.reduce((acc, pid) => {
         const payload = thisnode.value.data.payloads.byId[pid];
         // 只追踪需要的属性
-        const { uitype } = payload; if (uitype === 'texttag') {
+        const { uitype } = payload;
+        if (uitype === 'texttag') {
             acc[pid] = h(editable_texttag, { nodeId: props.nodeId, pid });
         }
         return acc;
@@ -66,8 +68,15 @@ const payloadComponents = computed(() => {
     }, {});
 });
 // 渲染输出的连接 =============================================
-const isShowOutput = computed(() => {
-    return Object.keys(thisnode.value.data.connections.outputs).length > 0;
+const outputsComponent = computed(() => {
+    const uitype = thisnode.value.data.connections['outputs-uitype'];
+    if (uitype === 'tagoutputs') {
+        return h(editable_tagoutputs, { nodeId: props.nodeId, outputVarSelections: outputVarSelections.value });
+    }
+    else if (uitype === 'packoutputs') {
+        // return h(editable_packoutputs, { nodeId: props.nodeId });
+    }
+    return null;
 });
 
 // 可供该节点使用的变量 ==================================================
@@ -169,6 +178,18 @@ const varSelections = computed(() => {
         }
     });
 })
+const outputVarSelections = computed(() => {
+    const selections = {};
+    for (const hid of Object.keys(thisnode.value.data.connections.outputs)) {
+        selections[hid] = recursiveFindVariables(props.nodeId, false, false, false, [], false, [hid]).map((item) => {
+            return {
+                label: `${item.nlabel} / ${item.dlabel}[${item.dtype}]`,
+                value: `${item.nodeId}/${item.dpath[0]}/${item.dpath[1]}`,
+            }
+        });
+    }
+    return selections;
+})
 // 节点数据文本 ================================================================================================
 const nodedatatext = computed(() => {
     if (!thisnode.value?.data) return '';
@@ -210,9 +231,7 @@ onUnmounted(() => {
                     </template>
                 </n-flex>
                 <!-- 渲染输出的连接 -->
-                <editable_output v-if="isShowOutput" :nodeId="nodeId" :key="`${nodeId}-outputs`" />
-
-                <!-- <editable_textcontent :nodeId="nodeId" :payloadidx="0" /> -->
+                <component v-if="outputsComponent" :is="outputsComponent" :key="`${nodeId}-outputs`" />
                 <!-- <div>{{ sourceConnections }}</div> -->
                 <!-- <pre>edge count: {{ inputConnections.length }}</pre> -->
                 <!-- <pre>inputConnections: {{ inputConnections }}</pre> -->

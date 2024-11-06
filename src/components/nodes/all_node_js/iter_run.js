@@ -11,9 +11,6 @@ import {
     setVueType,
     setLabel,
     addAttachedNode,
-    setSize,
-    getSize,
-    setAttachedAttribute,
     addHandle,
     addConnection,
     rmConnection,
@@ -21,6 +18,7 @@ import {
     addResult,
     rmPayload,
     rmResult,
+    setOutputsUIType,
 } from '../NodeOperator.js'
 
 import { add, cloneDeep } from 'lodash';
@@ -54,6 +52,7 @@ addConnection(_initInfo, "inputs", "input", { type: "FromOuter", inputKey: "inpu
 let pid = addPayload(_initInfo, { label: "迭代索引", type: "IterIndex", key: "iter_index", data: null, uitype: "texttag" });
 addConnection(_initInfo, "attach", "attach", { type: "FromInner", path: ["payloads", pid], useid: [] });
 
+setOutputsUIType(_initInfo, "tagoutputs");
 // 【结果】是用来动态调整【输出链接】的
 addResult(_initInfo, { label: "输出", type: "Array", key: "iter_output", data: [], uitype: "packoutput" }, "output");
 
