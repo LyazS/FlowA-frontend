@@ -4,7 +4,7 @@
             <editable_header>
                 {{ thisnode.data.payloads.byId[pid].label }}
             </editable_header>
-            <n-select multiple v-model:value="selectValue" :options="inputSelections"
+            <n-select multiple v-model:value="selectValue" :options="varSelections"
                 :render-tag="renderTag"></n-select>
         </n-flex>
         <n-text v-for="printtext in printtexts" :key="printtext">
@@ -27,7 +27,7 @@ const props = defineProps({
         type: String,
         required: true
     },
-    inputSelections: {
+    varSelections: {
         type: Array,
         required: true
     },
@@ -49,7 +49,7 @@ watch(selectValue, (newVal) => {
 const renderTag = ({ option, handleClose }) => {
     let tagtype = "default";
     let label = option.label;
-    if (!props.inputSelections.some(select => select.value === option.value)) {
+    if (!props.varSelections.some(select => select.value === option.value)) {
         tagtype = "error";
         label = `❓${option.label}`;
     }
@@ -71,7 +71,7 @@ const renderTag = ({ option, handleClose }) => {
 };
 const printtexts = computed(() => {
     return thisnode.value.data.payloads.byId[props.pid].data.map(item => {
-        if (!props.inputSelections.some(select => select.value === item)) {
+        if (!props.varSelections.some(select => select.value === item)) {
             return `❓错误变量：【${item}】`;
         }
         else {

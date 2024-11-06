@@ -60,7 +60,7 @@ const payloadComponents = computed(() => {
             acc[pid] = h(editable_textinput, { nodeId: props.nodeId, pid });
         }
         else if (uitype === 'textprint') {
-            acc[pid] = h(editable_textprint, { nodeId: props.nodeId, pid, inputSelections: inputSelections.value });
+            acc[pid] = h(editable_textprint, { nodeId: props.nodeId, pid, varSelections: varSelections.value });
         }
         return acc;
     }, {});
@@ -161,7 +161,7 @@ const recursiveFindVariables = (
 };
 
 
-const inputSelections = computed(() => {
+const varSelections = computed(() => {
     return recursiveFindVariables(props.nodeId, true, false, true, [], false, []).map((item) => {
         return {
             label: `${item.nlabel} / ${item.dlabel}[${item.dtype}]`,
