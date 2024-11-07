@@ -40,44 +40,6 @@ const saveTitle = () => {
     const newLabel = thisnode.value.data.label.trim();
     thisnode.value.data.label = newLabel || thisnode.value.data.placeholderlabel;
 }
-// 渲染节点payload的内置变量 =======================================
-const payloadInnerComponents = computed(() => {
-    return thisnode.value.data.payloads.order.reduce((acc, pid) => {
-        const payload = thisnode.value.data.payloads.byId[pid];
-        // 只追踪需要的属性
-        const { uitype } = payload;
-        if (uitype === 'texttag') {
-            acc[pid] = h(editable_texttag, { nodeId: props.nodeId, pid });
-        }
-        return acc;
-    }, {});
-});
-// 渲染节点payload数据 =======================================
-const payloadComponents = computed(() => {
-    return thisnode.value.data.payloads.order.reduce((acc, pid) => {
-        const payload = thisnode.value.data.payloads.byId[pid];
-        // 只追踪需要的属性
-        const { uitype } = payload;
-        if (uitype === 'textinput') {
-            acc[pid] = h(editable_textinput, { nodeId: props.nodeId, pid });
-        }
-        else if (uitype === 'textprint') {
-            acc[pid] = h(editable_textprint, { nodeId: props.nodeId, pid, varSelections: selfVarSelections.value });
-        }
-        return acc;
-    }, {});
-});
-// 渲染输出的连接 =============================================
-const outputsComponent = computed(() => {
-    const uitype = thisnode.value.data.connections['outputs-uitype'];
-    if (uitype === 'tagoutputs') {
-        return h(editable_tagoutputs, { nodeId: props.nodeId, varSelections: outputVarSelections.value });
-    }
-    else if (uitype === 'packoutputs') {
-        // return h(editable_packoutputs, { nodeId: props.nodeId });
-    }
-    return null;
-});
 
 // 可供该节点使用的变量 ==================================================
 const findVarFromIO = (nid, hid, findtype) => {
@@ -103,6 +65,7 @@ const findVarFromIO = (nid, hid, findtype) => {
                 nlabel: thenode.data.label,
                 dpath: c_data.path,
                 dlabel: thenode.data[c_data.path[0]].byId[c_data.path[1]].label,
+                dkey: thenode.data[c_data.path[0]].byId[c_data.path[1]].key,
                 dtype: thenode.data[c_data.path[0]].byId[c_data.path[1]].type,
             });
         }
@@ -165,28 +128,64 @@ const recursiveFindVariables = (
     return result;
 };
 
+const mapVarItemToSelect = (item) => {
+    return {
+        label: `${item.nlabel}/${item.dlabel}/${item.dkey}/${item.dtype}`,
+        value: `${item.nodeId}/${item.dpath[0]}/${item.dpath[1]}`,
+    }
+}
 // 输出变量字典{列表}
 const outputVarSelections = computed(() => {
     const selections = {};
     for (const hid of Object.keys(thisnode.value.data.connections.outputs)) {
-        selections[hid] = recursiveFindVariables(props.nodeId, false, false, false, [], false, [hid]).map((item) => {
-            return {
-                label: `${item.nlabel} / ${item.dlabel}[${item.dtype}]`,
-                value: `${item.nodeId}/${item.dpath[0]}/${item.dpath[1]}`,
-            }
-        });
+        selections[hid] = recursiveFindVariables(props.nodeId, false, false, false, [], false, [hid])
+            .map((item) => mapVarItemToSelect(item));
     }
     return selections;
 })
 // 自身可用变量
 const selfVarSelections = computed(() => {
-    return recursiveFindVariables(props.nodeId, true, false, false, [], false, []).map((item) => {
-        return {
-            label: `${item.nlabel} / ${item.dlabel}[${item.dtype}]`,
-            value: `${item.nodeId}/${item.dpath[0]}/${item.dpath[1]}`,
-        }
-    });
+    return recursiveFindVariables(props.nodeId, true, false, false, [], false, [])
+        .map((item) => mapVarItemToSelect(item));
 })
+// 渲染节点payload的内置变量 =======================================
+const payloadInnerComponents = computed(() => {
+    return thisnode.value.data.payloads.order.reduce((acc, pid) => {
+        const payload = thisnode.value.data.payloads.byId[pid];
+        // 只追踪需要的属性
+        const { uitype } = payload;
+        if (uitype === 'texttag') {
+            acc[pid] = h(editable_texttag, { nodeId: props.nodeId, pid });
+        }
+        return acc;
+    }, {});
+});
+// 渲染节点payload数据 =======================================
+const payloadComponents = computed(() => {
+    return thisnode.value.data.payloads.order.reduce((acc, pid) => {
+        const payload = thisnode.value.data.payloads.byId[pid];
+        // 只追踪需要的属性
+        const { uitype } = payload;
+        if (uitype === 'textinput') {
+            acc[pid] = h(editable_textinput, { nodeId: props.nodeId, pid });
+        }
+        else if (uitype === 'textprint') {
+            acc[pid] = h(editable_textprint, { nodeId: props.nodeId, pid, selfVarSelections: selfVarSelections.value });
+        }
+        return acc;
+    }, {});
+});
+// 渲染输出的连接 =============================================
+const outputsComponent = computed(() => {
+    const uitype = thisnode.value.data.connections['outputs-uitype'];
+    if (uitype === 'tagoutputs') {
+        return h(editable_tagoutputs, { nodeId: props.nodeId, outputVarSelections: outputVarSelections.value });
+    }
+    else if (uitype === 'packoutputs') {
+        return h(editable_packoutputs, { nodeId: props.nodeId, selfVarSelections: selfVarSelections.value });
+    }
+    return null;
+});
 // 节点数据文本 ================================================================================================
 const nodedatatext = computed(() => {
     if (!thisnode.value?.data) return '';

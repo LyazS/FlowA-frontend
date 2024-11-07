@@ -4,11 +4,12 @@
         <n-flex vertical v-for="(items, hid) in nodeOutputs2">
             <n-flex v-for="item in items" class="flexctitem" :wrap="false">
                 <n-text v-if="hasMultipleOutputs">
-                    {{ item.label }}
+                    {{ hid }}
                 </n-text>
-                <n-text>{{ item.nid }}</n-text>
-                <n-tag :bordered="false" type="info">{{ item.key }}</n-tag>
-                <n-text>{{ item.type }}</n-text>
+                <n-text>{{ item.nlabel }}</n-text>
+                <n-text>{{ item.dlabel }}</n-text>
+                <n-tag :bordered="false" type="info">{{ item.dkey }}</n-tag>
+                <n-text>{{ item.dtype }}</n-text>
             </n-flex>
         </n-flex>
     </n-flex>
@@ -32,7 +33,7 @@ const props = defineProps({
         type: String,
         required: true
     },
-    varSelections: {
+    outputVarSelections: {
         type: Object,
         required: true
     },
@@ -50,17 +51,17 @@ const hasMultipleOutputs = computed(() => {
 // 转换输出数据
 const nodeOutputs2 = computed(() => {
     const vars = {};
-    for (const [hid, items] of Object.entries(props.varSelections)) {
+    for (const [hid, items] of Object.entries(props.outputVarSelections)) {
         vars[hid] = [];
         for (const item of items) {
             const [nid, dpath, did] = item.value.split("/");
             const thenode = findNode(nid);
             const data = thenode.data[dpath].byId[did];
             vars[hid].push({
-                nid: nid,
-                label: data.label,
-                key: data.key,
-                type: data.type,
+                nlabel: thenode.data.label,
+                dlabel: data.label,
+                dkey: data.key,
+                dtype: data.type,
             });
         }
     }

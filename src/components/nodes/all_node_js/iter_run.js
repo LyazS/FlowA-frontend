@@ -51,8 +51,8 @@ let pid = addPayload(_initInfo, { label: "迭代索引", type: "IterIndex", key:
 addConnection(_initInfo, "attach", "attach", { type: "FromInner", path: ["payloads", pid], useid: [] });
 addConnection(_initInfo, "attach", "attach", { type: "FromOuter", inputKey: "input" });
 
-setOutputsUIType(_initInfo, "tagoutputs");
-addResult(_initInfo, { label: "输出", type: "Array", key: "iter_output", data: [], uitype: "packoutput" }, "output");
+setOutputsUIType(_initInfo, "packoutputs");
+// addResult(_initInfo, { label: "输出", type: "Array", key: "iter_output", data: [] }, "output");
 
 export const initInfo = cloneDeep(_initInfo);
 // 该节点需要实现，动态的handle和文字

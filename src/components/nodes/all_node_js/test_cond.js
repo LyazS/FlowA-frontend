@@ -41,6 +41,7 @@ addHandle(_initInfo, "outputs", "output-3", "条件3");
 addConnection(_initInfo, "outputs", "output-1", { type: "FromOuter", inputKey: "input" })
 addConnection(_initInfo, "outputs", "output-2", { type: "FromOuter", inputKey: "input" })
 addConnection(_initInfo, "outputs", "output-3", { type: "FromOuter", inputKey: "input" })
+setOutputsUIType(_initInfo, "tagoutputs");
 
 export const initInfo = cloneDeep(_initInfo);
 export { NodeVue };

@@ -4,7 +4,7 @@
             <editable_header>
                 {{ thisnode.data.payloads.byId[pid].label }}
             </editable_header>
-            <n-select multiple v-model:value="selectValue" :options="varSelections"
+            <n-select multiple clearable  v-model:value="selectValue" :options="selfVarSelections"
                 :render-tag="renderTag"></n-select>
         </n-flex>
         <n-text v-for="printtext in printtexts" :key="printtext">
@@ -27,7 +27,7 @@ const props = defineProps({
         type: String,
         required: true
     },
-    varSelections: {
+    selfVarSelections: {
         type: Array,
         required: true
     },
@@ -47,12 +47,10 @@ watch(selectValue, (newVal) => {
 });
 
 const renderTag = ({ option, handleClose }) => {
-    let tagtype = "default";
-    let label = option.label;
-    if (!props.varSelections.some(select => select.value === option.value)) {
-        tagtype = "error";
-        label = `❓${option.label}`;
-    }
+    const [nlabel, dlabel, dkey, dtype] = option.label.split("/");
+
+    const isError = !props.selfVarSelections.some(select => select.value === option.value);
+    const tagtype = isError ? "error" : "default";
     return h(
         NTag,
         {
@@ -66,12 +64,24 @@ const renderTag = ({ option, handleClose }) => {
                 handleClose();
             }
         },
-        { default: () => label }
+        {
+            default: () => {
+                if (isError) {
+                    return `❓${nlabel}`;
+                }
+                return [
+                    h(NText, { type: "default", strong: true }, { default: () => `${nlabel}` }),
+                    h(NText, { type: "default" }, { default: () => "/ " }),
+                    h(NText, { type: "info", }, { default: () => dlabel }),
+                    h(NText, { type: "info", }, { default: () => ` {${dkey}: ${dtype}}` }),
+                ]
+            }
+        }
     );
 };
 const printtexts = computed(() => {
     return thisnode.value.data.payloads.byId[props.pid].data.map(item => {
-        if (!props.varSelections.some(select => select.value === item)) {
+        if (!props.selfVarSelections.some(select => select.value === item)) {
             return `❓错误变量：【${item}】`;
         }
         else {
