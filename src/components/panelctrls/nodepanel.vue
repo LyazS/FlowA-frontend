@@ -186,7 +186,7 @@ const outputsComponent = computed(() => {
         return h(editable_packoutputs, { nodeId: props.nodeId, selfVarSelections: selfVarSelections.value });
     }
     else if (uitype === 'condoutputs') {
-        return h(editable_condoutputs);
+        return h(editable_condoutputs, { nodeId: props.nodeId, selfVarSelections: selfVarSelections.value });
     }
     return null;
 });
@@ -232,9 +232,8 @@ onUnmounted(() => {
                             :style="{ 'padding-bottom': '10px' }" />
                     </template>
                 </n-flex>
-                <!-- 渲染输出的连接 -->
-                <component v-if="outputsComponent" :is="outputsComponent" :key="`${nodeId}-outputs`"
-                    :style="{ 'padding-bottom': '10px' }" />
+                <!-- 渲染输出 -->
+                <component v-if="outputsComponent" :is="outputsComponent" :key="`${nodeId}-outputs`" />
                 <!-- <div>{{ sourceConnections }}</div> -->
                 <!-- <pre>edge count: {{ inputConnections.length }}</pre> -->
                 <!-- <pre>inputConnections: {{ inputConnections }}</pre> -->
