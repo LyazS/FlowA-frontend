@@ -33,7 +33,7 @@ const props = defineProps({
         type: String,
         required: true
     },
-    varSelections: {
+    selfVarSelections: {
         type: Array,
         required: true
     },

@@ -32,7 +32,7 @@ const props = defineProps({
         type: String,
         required: true
     },
-    outputVarSelections: {
+    varSelections: {
         type: Object,
         required: true
     },
@@ -50,7 +50,7 @@ const hasMultipleOutputs = computed(() => {
 // 转换输出数据
 const nodeOutputs2 = computed(() => {
     const vars = {};
-    for (const [hid, items] of Object.entries(props.outputVarSelections)) {
+    for (const [hid, items] of Object.entries(props.varSelections)) {
         vars[hid] = [];
         for (const item of items) {
             const [nid, dpath, did] = item.value.split("/");

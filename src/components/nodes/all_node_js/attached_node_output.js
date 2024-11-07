@@ -34,7 +34,7 @@ initSize(_initInfo, 20, 6);
 initConnectionsAttribute(_initInfo);
 // 加个输入handle，自动开搜
 addHandle(_initInfo, "inputs", "input");
-addConnection(_initInfo, "inputs", "input", { type: "FromOuter", inputKey: "input" });
+addConnection(_initInfo, "self", "self", { type: "FromOuter", inputKey: "input" });
 
 export const initInfo = cloneDeep(_initInfo);
 export { NodeVue };

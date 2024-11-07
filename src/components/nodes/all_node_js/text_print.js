@@ -34,7 +34,7 @@ setLabel(_initInfo, "文本输出");
 initSize(_initInfo, 80, 80);
 
 addHandle(_initInfo, "inputs", "input");
-addConnection(_initInfo, "inputs", "input", { type: "FromOuter", inputKey: "input" });
+addConnection(_initInfo, "self", "self", { type: "FromOuter", inputKey: "input" });
 let pid = addPayload(_initInfo, { label: "内容", type: "Array[String]", key: "text", data: [], uitype: "textprint" });
 
 export const initInfo = cloneDeep(_initInfo);

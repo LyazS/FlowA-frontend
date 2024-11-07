@@ -62,7 +62,7 @@ const payloadComponents = computed(() => {
             acc[pid] = h(editable_textinput, { nodeId: props.nodeId, pid });
         }
         else if (uitype === 'textprint') {
-            acc[pid] = h(editable_textprint, { nodeId: props.nodeId, pid, varSelections: varSelections.value });
+            acc[pid] = h(editable_textprint, { nodeId: props.nodeId, pid, varSelections: selfVarSelections.value });
         }
         return acc;
     }, {});
@@ -71,7 +71,7 @@ const payloadComponents = computed(() => {
 const outputsComponent = computed(() => {
     const uitype = thisnode.value.data.connections['outputs-uitype'];
     if (uitype === 'tagoutputs') {
-        return h(editable_tagoutputs, { nodeId: props.nodeId, outputVarSelections: outputVarSelections.value });
+        return h(editable_tagoutputs, { nodeId: props.nodeId, varSelections: outputVarSelections.value });
     }
     else if (uitype === 'packoutputs') {
         // return h(editable_packoutputs, { nodeId: props.nodeId });
@@ -119,19 +119,15 @@ const findVarFromIO = (nid, hid, findtype) => {
         }
         else if (c_data.type === 'FromAttached') {
             // 对于子节点，
-            // 如果是输入节点，则搜索它的输出handle
-            // 如果是输出节点，则搜索它的输入handle
-            let find_ainput = false;
-            let find_aoutput = false;
-            if (c_data.atype === 'intput') { find_aoutput = true; }
-            else if (c_data.atype === 'output') { find_ainput = true; }
+            // 如果是输入节点，则搜索它的输出变量
+            // 如果是输出节点，则搜索它的自身可用变量
             result.push(...recursiveFindVariables(
                 thenode.data.nesting.attached_nodes[c_data.atype].nid,
+                c_data.atype === 'output',
                 false,
                 false,
-                find_ainput,
                 [],
-                find_aoutput,
+                c_data.atype === 'intput',
                 [],
             ));
         }
@@ -169,15 +165,7 @@ const recursiveFindVariables = (
     return result;
 };
 
-
-const varSelections = computed(() => {
-    return recursiveFindVariables(props.nodeId, true, false, true, [], false, []).map((item) => {
-        return {
-            label: `${item.nlabel} / ${item.dlabel}[${item.dtype}]`,
-            value: `${item.nodeId}/${item.dpath[0]}/${item.dpath[1]}`,
-        }
-    });
-})
+// 输出变量字典{列表}
 const outputVarSelections = computed(() => {
     const selections = {};
     for (const hid of Object.keys(thisnode.value.data.connections.outputs)) {
@@ -189,6 +177,15 @@ const outputVarSelections = computed(() => {
         });
     }
     return selections;
+})
+// 自身可用变量
+const selfVarSelections = computed(() => {
+    return recursiveFindVariables(props.nodeId, true, false, false, [], false, []).map((item) => {
+        return {
+            label: `${item.nlabel} / ${item.dlabel}[${item.dtype}]`,
+            value: `${item.nodeId}/${item.dpath[0]}/${item.dpath[1]}`,
+        }
+    });
 })
 // 节点数据文本 ================================================================================================
 const nodedatatext = computed(() => {

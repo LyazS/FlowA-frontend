@@ -88,6 +88,8 @@ const ConnectionsAttribute = {
             //     }
             // }
         },
+        // 用于设置节点输出的ui类型
+        "outputs-uitype": "",// 【packoutputs】或者其他啥的
     }
 }
 const RunningAttribute = {
@@ -102,7 +104,6 @@ const RunningAttribute = {
         ]
     },
     results: {
-        uitype: "",
         byId: {
             // "idxxx1-r": { type: "String", key: "text", data: "", hid: "output-1", oid: "idxxx1-ot" },
             // "idxxx2-r": { type: "String", key: "text", data: "", hid: "output-1", oid: "idxxx2-ot" },
