@@ -209,14 +209,14 @@ export const rmPayload = (_Node, pid) => {
         _Node.data.payloads.order.splice(_Node.data.payloads.order.indexOf(pid), 1);
     }
 };
-export const addResult = (_Node, result, hid, rid = null) => {
+export const addResultWConnect = (_Node, result, hid, rid = null) => {
     const _rid = cloneDeep(rid) || getUuid();
     const oid = addConnection(_Node, "outputs", hid, { type: "FromInner", path: ["results", _rid], useid: [] });
     _Node.data.results.byId[_rid] = { ...cloneDeep(result), hid, oid };
     _Node.data.results.order.push(_rid);
     return _rid;
 };
-export const rmResult = (_Node, rid) => {
+export const rmResultWConnect = (_Node, rid) => {
     if (_Node.data.results.byId.hasOwnProperty(rid)) {
         const hid = _Node.data.results.byId[rid].hid;
         const oid = _Node.data.results.byId[rid].oid;
@@ -225,9 +225,21 @@ export const rmResult = (_Node, rid) => {
         _Node.data.results.order.splice(_Node.data.results.order.indexOf(rid), 1);
     }
 };
-export const clearResults = (_Node) => {
+export const clearResultsWConnect = (_Node) => {
     const tmp_rid = _Node.data.results.order.slice();
     tmp_rid.forEach(rid => {
-        rmResult(_Node, rid);
+        rmResultWConnect(_Node, rid);
     });
+};
+export const addResult = (_Node, result, rid = null) => {
+    const _rid = cloneDeep(rid) || getUuid();
+    _Node.data.results.byId[_rid] = cloneDeep(result);
+    _Node.data.results.order.push(_rid);
+    return _rid;
+};
+export const rmResult = (_Node, rid) => {
+    if (_Node.data.results.byId.hasOwnProperty(rid)) {
+        delete _Node.data.results.byId[rid];
+        _Node.data.results.order.splice(_Node.data.results.order.indexOf(rid), 1);
+    }
 };

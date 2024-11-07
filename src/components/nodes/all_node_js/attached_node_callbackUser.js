@@ -15,9 +15,9 @@ import {
     addConnection,
     rmConnection,
     addPayload,
-    addResult,
+    addResultWConnect,
     rmPayload,
-    rmResult,
+    rmResultWConnect,
     setOutputsUIType,
 } from '../NodeOperator.js'
 

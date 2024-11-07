@@ -1,21 +1,28 @@
 <template>
     <n-flex vertical>
-        <editable_header type="info">封装输出数组</editable_header>
+        <n-flex class="flexctitem" justify="space-between">
+            <editable_header type="info">封装输出数组</editable_header>
+            <n-button type="primary" text @click="handleAdd">
+                <template #icon>
+                    <n-icon>
+                        <Add />
+                    </n-icon>
+                </template>
+                添加输出
+            </n-button>
+        </n-flex>
         <n-flex vertical>
-            <div v-for="rid in thisnode.data.results.order" :key="rid">
-                <n-input-group>
-                    <n-input :style="{ width: '25%' }" placeholder="输出变量Key"
-                        :value="thisnode.data.results.byId[rid].key" @blur="isEditing = false" @focus="isEditing = true"
-                        @update:value="(val) => updateResultKey(rid, val)" :allow-input="isPythonVariable" />
-                    <n-select :style="{ width: '60%' }" placeholder="选择变量" :value="thisnode.data.results.byId[rid].data"
-                        :options="selfVarSelections" @update:value="(val) => updateResultType(rid, val)"
-                        :render-tag="renderTag" />
-                    <n-button :style="{ width: '15%' }" type="error" @click="() => handleRemove(rid)">
-                        删除
-                    </n-button>
-                </n-input-group>
-            </div>
-            <n-button type="default" @click="handleAdd">添加输出值</n-button>
+            <n-input-group v-for="rid in thisnode.data.results.order" :key="rid">
+                <n-input :style="{ width: '25%' }" placeholder="输出变量Key" :value="thisnode.data.results.byId[rid].key"
+                    @blur="isEditing = false" @focus="isEditing = true"
+                    @update:value="(val) => updateResultKey(rid, val)" :allow-input="isPythonVariable" />
+                <n-select :style="{ width: '60%' }" placeholder="选择变量" :value="thisnode.data.results.byId[rid].data"
+                    :options="selfVarSelections" @update:value="(val) => updateResultType(rid, val)"
+                    :render-tag="renderTag" />
+                <n-button :style="{ width: '15%' }" type="error" @click="() => handleRemove(rid)">
+                    删除
+                </n-button>
+            </n-input-group>
         </n-flex>
     </n-flex>
 </template>
@@ -29,10 +36,11 @@
 
 <script setup>
 import { computed, ref, inject, h } from 'vue'
-import { NText, NFlex, NTag, NInputGroup, NInput, NSelect, NButton } from 'naive-ui'
+import { NText, NIcon, NFlex, NTag, NInputGroup, NInput, NSelect, NButton } from 'naive-ui'
 import { useVueFlow } from '@vue-flow/core'
+import { Add, Close } from '@vicons/ionicons5'
 import editable_header from './header.vue'
-import { addResult, rmResult } from '../../nodes/NodeOperator.js'
+import { addResultWConnect, rmResultWConnect } from '../../nodes/NodeOperator.js'
 
 const props = defineProps({
     nodeId: {
@@ -53,10 +61,10 @@ const thisnode = computed(() => findNode(props.nodeId))
 // 处理添加
 function handleAdd() {
     const newResult = { label: "", type: "", key: "", data: null }
-    addResult(thisnode.value, newResult, "output")
+    addResultWConnect(thisnode.value, newResult, "output")
 }
 function handleRemove(rid) {
-    rmResult(thisnode.value, rid)
+    rmResultWConnect(thisnode.value, rid)
 }
 // 更新结果的 key
 function updateResultKey(rid, value) {

@@ -15,9 +15,10 @@ import {
     addConnection,
     rmConnection,
     addPayload,
-    addResult,
+    addResultWConnect,
     rmPayload,
-    rmResult,
+    rmResultWConnect,
+    addResult,
     setOutputsUIType,
 } from '../NodeOperator.js'
 
@@ -36,8 +37,9 @@ initSize(_initInfo, 80, 80);
 addHandle(_initInfo, "inputs", "input");
 addHandle(_initInfo, "outputs", "output-else", "ELSE");
 
-addConnection(_initInfo, "outputs", "output-else", { type: "FromOuter", inputKey: "input" })
 setOutputsUIType(_initInfo, "condoutputs");
+addConnection(_initInfo, "outputs", "output-else", { type: "FromOuter", inputKey: "input" })
+addResult(_initInfo, { "label": "其他", "type": "ConditionDict", "key": "cond-else", "data": {} })
 
 export const initInfo = cloneDeep(_initInfo);
 export { NodeVue };

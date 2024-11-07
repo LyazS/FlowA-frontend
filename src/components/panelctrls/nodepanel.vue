@@ -216,7 +216,8 @@ onUnmounted(() => {
 
                 <!-- 渲染输入的连接 -->
                 <!-- 渲染内置变量 -->
-                <n-flex vertical v-if="Object.keys(payloadInnerComponents).length > 0">
+                <n-flex vertical v-if="Object.keys(payloadInnerComponents).length > 0"
+                    :style="{ 'padding-bottom': '10px' }">
                     <editable_header type="default">内置变量</editable_header>
                     <n-flex vertical>
                         <template v-for="pid in thisnode.data.payloads.order" :key="pid">
@@ -227,11 +228,13 @@ onUnmounted(() => {
                 <!-- 渲染负载数据 -->
                 <n-flex vertical>
                     <template v-for="pid in thisnode.data.payloads.order" :key="pid">
-                        <component v-if="payloadComponents[pid]" :is="payloadComponents[pid]" />
+                        <component v-if="payloadComponents[pid]" :is="payloadComponents[pid]"
+                            :style="{ 'padding-bottom': '10px' }" />
                     </template>
                 </n-flex>
                 <!-- 渲染输出的连接 -->
-                <component v-if="outputsComponent" :is="outputsComponent" :key="`${nodeId}-outputs`" />
+                <component v-if="outputsComponent" :is="outputsComponent" :key="`${nodeId}-outputs`"
+                    :style="{ 'padding-bottom': '10px' }" />
                 <!-- <div>{{ sourceConnections }}</div> -->
                 <!-- <pre>edge count: {{ inputConnections.length }}</pre> -->
                 <!-- <pre>inputConnections: {{ inputConnections }}</pre> -->

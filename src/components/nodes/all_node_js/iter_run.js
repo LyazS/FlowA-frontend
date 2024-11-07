@@ -15,9 +15,9 @@ import {
     addConnection,
     rmConnection,
     addPayload,
-    addResult,
+    addResultWConnect,
     rmPayload,
-    rmResult,
+    rmResultWConnect,
     setOutputsUIType,
 } from '../NodeOperator.js'
 
@@ -52,7 +52,6 @@ addConnection(_initInfo, "attach", "attach", { type: "FromInner", path: ["payloa
 addConnection(_initInfo, "attach", "attach", { type: "FromOuter", inputKey: "input" });
 
 setOutputsUIType(_initInfo, "packoutputs");
-// addResult(_initInfo, { label: "输出", type: "Array", key: "iter_output", data: [] }, "output");
 
 export const initInfo = cloneDeep(_initInfo);
 // 该节点需要实现，动态的handle和文字
