@@ -5,6 +5,7 @@ import { Panel, useVueFlow, useHandleConnections } from '@vue-flow/core'
 import editable_input from './editables/input.vue';
 import editable_tagoutputs from './editables/tagoutputs.vue';
 import editable_packoutputs from './editables/packoutputs.vue';
+import editable_condoutputs from './editables/condoutputs.vue';
 import editable_textinput from './editables/textinput.vue';
 import editable_textprint from './editables/textprint.vue';
 import editable_texttag from './editables/texttag.vue';
@@ -183,6 +184,9 @@ const outputsComponent = computed(() => {
     }
     else if (uitype === 'packoutputs') {
         return h(editable_packoutputs, { nodeId: props.nodeId, selfVarSelections: selfVarSelections.value });
+    }
+    else if (uitype === 'condoutputs') {
+        return h(editable_condoutputs);
     }
     return null;
 });

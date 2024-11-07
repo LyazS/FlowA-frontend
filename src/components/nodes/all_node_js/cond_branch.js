@@ -28,21 +28,16 @@ const _initInfo = createBaseNodeInfo();
 initConnectionsAttribute(_initInfo);
 initRunningAttribute(_initInfo);
 initStateAttribute(_initInfo);
-setNodeType(_initInfo, "test_cond");
+setNodeType(_initInfo, "cond_branch");
 setVueType(_initInfo, "basenode");
-setLabel(_initInfo, "测试条件分支");
+setLabel(_initInfo, "条件分支");
 initSize(_initInfo, 80, 80);
 
 addHandle(_initInfo, "inputs", "input");
-addHandle(_initInfo, "outputs", "output-1", "条件1");
-addHandle(_initInfo, "outputs", "output-2", "条件2");
-addHandle(_initInfo, "outputs", "output-3", "条件3");
+addHandle(_initInfo, "outputs", "output-else", "ELSE");
 
-addConnection(_initInfo, "outputs", "output-1", { type: "FromOuter", inputKey: "input" })
-addConnection(_initInfo, "outputs", "output-2", { type: "FromOuter", inputKey: "input" })
-addConnection(_initInfo, "outputs", "output-3", { type: "FromOuter", inputKey: "input" })
-setOutputsUIType(_initInfo, "tagoutputs");
+addConnection(_initInfo, "outputs", "output-else", { type: "FromOuter", inputKey: "input" })
+setOutputsUIType(_initInfo, "condoutputs");
 
 export const initInfo = cloneDeep(_initInfo);
 export { NodeVue };
-// 该节点需要实现，动态的handle和文字

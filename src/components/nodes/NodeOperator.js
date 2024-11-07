@@ -178,6 +178,11 @@ export const setOutputsUIType = (_Node, uitype) => {
 export const addHandle = (_Node, handletype, handleId, label = null) => {
     _Node.data.connections[handletype][handleId] = { label: label || handleId, data: {} };
 };
+export const rmHandle = (_Node, handletype, handleId) => {
+    if (_Node.data.connections[handletype].hasOwnProperty(handleId)) {
+        delete _Node.data.connections[handletype][handleId];
+    }
+};
 export const addConnection = (_Node, handletype, handleId, ConnectData, cid = null) => {
     const _cid = cid || getUuid();
     if (!_Node.data.connections[handletype].hasOwnProperty(handleId)) {
@@ -198,18 +203,18 @@ export const addPayload = (_Node, payload) => {
     _Node.data.payloads.order.push(pid);
     return pid;
 };
+export const rmPayload = (_Node, pid) => {
+    if (_Node.data.payloads.byId.hasOwnProperty(pid)) {
+        delete _Node.data.payloads.byId[pid];
+        _Node.data.payloads.order.splice(_Node.data.payloads.order.indexOf(pid), 1);
+    }
+};
 export const addResult = (_Node, result, hid, rid = null) => {
     const _rid = cloneDeep(rid) || getUuid();
     const oid = addConnection(_Node, "outputs", hid, { type: "FromInner", path: ["results", _rid], useid: [] });
     _Node.data.results.byId[_rid] = { ...cloneDeep(result), hid, oid };
     _Node.data.results.order.push(_rid);
     return _rid;
-};
-export const rmPayload = (_Node, pid) => {
-    if (_Node.data.payloads.byId.hasOwnProperty(pid)) {
-        delete _Node.data.payloads.byId[pid];
-        _Node.data.payloads.order.splice(_Node.data.payloads.order.indexOf(pid), 1);
-    }
 };
 export const rmResult = (_Node, rid) => {
     if (_Node.data.results.byId.hasOwnProperty(rid)) {
