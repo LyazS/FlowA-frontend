@@ -247,7 +247,6 @@ onUnmounted(() => {
 <style scoped>
 .nodepanel {
     margin-top: 20px;
-    max-width: 500px;
 }
 
 .nodepanel:hover {

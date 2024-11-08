@@ -40,8 +40,8 @@ addHandle(_initInfo, "outputs", "output-else", "ELSE");
 
 setOutputsUIType(_initInfo, "condoutputs");
 addConnection(_initInfo, "self", "self", { type: "FromOuter", inputKey: "input-cond" });
-addConnection(_initInfo, "outputs", "output-else", { type: "FromOuter", inputKey: "input" })
-addResult(_initInfo, { "label": "其他", "type": "ConditionDict", "key": "cond-else", "data": {} })
+addConnection(_initInfo, "outputs", "output-else", { type: "FromOuter", inputKey: "input-var" });
+addResult(_initInfo, { "label": "其他", "type": "ConditionDict", "key": "cond-else", "data": {} });
 
 export const initInfo = cloneDeep(_initInfo);
 export { NodeVue };

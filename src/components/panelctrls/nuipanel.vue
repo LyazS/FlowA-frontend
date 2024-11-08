@@ -24,7 +24,7 @@ const testclick = () => {
 </script>
 
 <template>
-    <Panel position="top-right" :style="{ minWidth: '500px' }">
+    <Panel position="top-right" :style="{ width: '600px' }">
         <n-flex justify="flex-end">
             <n-button class="glow-btn" strong tertiary round type="success" @click="testclick">保存</n-button>
             <n-button class="glow-btn" strong tertiary round type="success" @click="testclick">运行</n-button>
