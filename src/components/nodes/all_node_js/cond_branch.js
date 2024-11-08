@@ -36,7 +36,7 @@ initSize(_initInfo, 80, 80);
 
 addHandle(_initInfo, "inputs", "input-cond", "CONDITION");
 addHandle(_initInfo, "inputs", "input-var", "VARIABLE");
-addHandle(_initInfo, "outputs", "output-else", "ELSE");
+addHandle(_initInfo, "outputs", "output-else", "0/ELSE");
 
 setOutputsUIType(_initInfo, "condoutputs");
 addConnection(_initInfo, "self", "self", { type: "FromOuter", inputKey: "input-cond" });

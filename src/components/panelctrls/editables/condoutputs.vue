@@ -17,7 +17,7 @@
         <n-card v-for="(branch, bindex) in branches">
             <template #header>
                 <n-flex class="flexctitem" justify="flex-start">
-                    <n-text> {{ `分支 ${bindex + 1}` }} </n-text>
+                    <n-text> {{ branch.data.label }} </n-text>
                 </n-flex>
             </template>
             <template #header-extra>
@@ -53,7 +53,7 @@
                                 placeholder="比较变量" :options="selfVarSelections" :render-label="renderLabel"
                                 v-model:value="cond.value" />
                             <n-input v-else :style="{ width: '65%' }" size="small" placeholder="数值"
-                                v-model:value="cond.value" />
+                                v-model:value="cond.value" @blur="isEditing = false" @focus="isEditing = true" />
                         </n-flex>
                     </n-flex>
                     <n-button circle tertiary size="small" type="error" @click="rmBranchCondition(branch.rid, cindex)">
@@ -145,6 +145,19 @@ const branches = computed(() => {
     return conddata;
 });
 
+const updateOutputsLabel = () => {
+    const elsekey = Object.keys(thisnode.value.data.connections.outputs)
+        .filter(key => thisnode.value.data.connections.outputs[key].label.endsWith('ELSE'));
+    thisnode.value.data.connections.outputs[elsekey[0]].label = `${Object.keys(thisnode.value.data.connections.outputs).length}/ELSE`;
+    const hids = Object.keys(thisnode.value.data.connections.outputs)
+        .filter(key => !thisnode.value.data.connections.outputs[key].label.endsWith('ELSE'));
+    for (let index = 0; index < hids.length; index++) {
+        const hid = hids[index];
+        thisnode.value.data.connections.outputs[hid].label = `${index + 1}/CASE ${index + 1}`;
+        const rid = hid.replace('output-', '');
+        thisnode.value.data.results.byId[rid].label = `CASE ${index + 1}`;
+    }
+};
 const addBranch = () => {
     const bid = getUuid();
     const hid = `output-${bid}`;
@@ -170,6 +183,7 @@ const addBranch = () => {
     addHandle(thisnode.value, "outputs", hid, "分支");
     addConnection(thisnode.value, "outputs", hid, { type: "FromOuter", inputKey: "input-var" }, cid);
     updateNodeInternals(props.nodeId);
+    updateOutputsLabel();
 };
 const rmBranch = (rid) => {
     const hid = `output-${rid}`;
@@ -180,6 +194,7 @@ const rmBranch = (rid) => {
     const edges = getHandleConnections({ id: hid, type: "source", nodeId: props.nodeId });
     removeEdges(edges.map(edge => edge.edgeId));
     rmHandle(thisnode.value, "outputs", hid);
+    updateOutputsLabel();
 };
 
 const addCondition = (rid) => {

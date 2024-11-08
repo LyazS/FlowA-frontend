@@ -70,9 +70,28 @@ const inputHandles = computed(() => {
 });
 
 const outputHandles = computed(() => {
-    return Object.entries(props.data.connections.outputs)
-        .map(([key, value]) => ({ key, label: value.label }))
-        .sort((a, b) => a.key.localeCompare(b.key));
+    const pattern = /^\d+\/[^/]*$/;
+    // 先对数据进行排序
+    const sortedEntries = Object.entries(props.data.connections.outputs)
+        .sort(([aKey, aValue], [bKey, bValue]) => {
+            if (pattern.test(aValue.label) && pattern.test(bValue.label)) {
+                const a_num = parseInt(aValue.label.split('/')[0]);
+                const b_num = parseInt(bValue.label.split('/')[0]);
+                return b_num - a_num;
+            } else {
+                return aKey.localeCompare(bKey);
+            }
+        });
+
+    // 然后对排序后的数据进行映射
+    return sortedEntries.map(([key, value]) => {
+        if (pattern.test(value.label)) {
+            return { key, label: value.label.split('/')[1] };
+        }
+        else {
+            return { key, label: value.label };
+        }
+    });
 });
 
 const cbfuncHandles = computed(() => {
