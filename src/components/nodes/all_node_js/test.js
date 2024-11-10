@@ -53,10 +53,10 @@ addHandle(_initInfo, "callbackFuncs", "callbackFunc-3");
 // rmPayload(_initInfo, pid);
 // console.log("remove payload and result", JSON.stringify(_initInfo, null, 2));
 
-let pid = addPayload(_initInfo, { label: "Python 代码", type: "String", key: "text1", data: "import numpy as np\nimport cv2\n#your code here\n", uitype: "codeeditor" });
-addConnection(_initInfo, "outputs", "output-1", { type: "FromInner", path: ["payloads", pid], useid: [] })
+// let pid = addPayload(_initInfo, { label: "Python 代码", type: "String", key: "text1", data: "import numpy as np\nimport cv2\n#your code here\n", uitype: "codeeditor" });
+// addConnection(_initInfo, "outputs", "output-1", { type: "FromInner", path: ["payloads", pid], useid: [] })
 
-let rid = addResultWConnect(_initInfo, { type: "String", key: "text2", data: "", canEdit: false }, "output-1", "text2");
+// let rid = addResultWConnect(_initInfo, { type: "String", key: "text2", data: "", canEdit: false }, "output-1", "text2");
 // console.log("init payload and result", JSON.stringify(_initInfo, null, 2));
 
 export const initInfo = cloneDeep(_initInfo);

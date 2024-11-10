@@ -209,9 +209,9 @@ export const rmPayload = (_Node, pid) => {
         _Node.data.payloads.order.splice(_Node.data.payloads.order.indexOf(pid), 1);
     }
 };
-export const addResultWConnect = (_Node, result, hid, rid = null) => {
+export const addResultWConnect = (_Node, result, hid, rid = null, cid = null) => {
     const _rid = cloneDeep(rid) || getUuid();
-    const oid = addConnection(_Node, "outputs", hid, { type: "FromInner", path: ["results", _rid], useid: [] });
+    const oid = addConnection(_Node, "outputs", hid, { type: "FromInner", path: ["results", _rid], useid: [] }, cid);
     _Node.data.results.byId[_rid] = { ...cloneDeep(result), hid, oid };
     _Node.data.results.order.push(_rid);
     return _rid;

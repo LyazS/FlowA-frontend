@@ -15,7 +15,7 @@
             <n-input-group v-for="rid in thisnode.data.results.order" :key="rid">
                 <n-input :style="{ width: '25%' }" placeholder="输出变量Key" :value="thisnode.data.results.byId[rid].key"
                     @blur="isEditing = false" @focus="isEditing = true"
-                    @update:value="(val) => updateResultKey(rid, val)" :allow-input="isPythonVariable" />
+                    @update:value="(val) => updateResultKey(rid, val)" />
                 <n-select :style="{ width: '60%' }" placeholder="选择变量" :value="thisnode.data.results.byId[rid].data"
                     :options="selfVarSelections" @update:value="(val) => updateResultType(rid, val)"
                     :render-tag="renderTag" />
@@ -81,7 +81,7 @@ function updateResultType(rid, value) {
     const thedata = thenode.data[dpath].byId[did];
     if (thisnode.value.data.results.byId[rid]) {
         thisnode.value.data.results.byId[rid].data = value;
-        thisnode.value.data.results.byId[rid].type = `Array[${thedata.type}]`;
+        thisnode.value.data.results.byId[rid].type = `Array<${thedata.type}>`;
     }
 }
 const PYTHON_KEYWORDS = [

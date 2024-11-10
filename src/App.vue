@@ -6,7 +6,7 @@
     <miniMap />
     <miniMapCtrl />
 
-    <n-config-provider :theme="darkTheme">
+    <n-config-provider :theme="darkTheme" :hljs="hljs">
       <n-message-provider>
         <nuipanel :nodeId="lastClickedNodeId" />
       </n-message-provider>
@@ -36,7 +36,7 @@
 </style>
 
 <script setup>
-import {cloneDeep} from 'lodash';
+import { cloneDeep } from 'lodash';
 import { ref, markRaw, onMounted, onBeforeUnmount, reactive, watch, provide } from 'vue'
 import { ConnectionMode, VueFlow, Panel, useVueFlow } from '@vue-flow/core'
 import { Background } from '@vue-flow/background'
@@ -46,6 +46,10 @@ import {
   NMessageProvider,
 } from 'naive-ui';
 import { ContextMenu, ContextMenuGroup, ContextMenuSeparator, ContextMenuItem } from '@imengyu/vue3-context-menu';
+import hljs from 'highlight.js/lib/core'
+import python from 'highlight.js/lib/languages/python'
+
+hljs.registerLanguage('python', python)
 import { getUuid } from './utils/tools.js';
 import miniMap from './components/panelctrls/miniMap.vue'
 import miniMapCtrl from './components/panelctrls/miniMapCtrl.vue'

@@ -3,15 +3,17 @@ import { computed, ref, watch, nextTick, inject, defineAsyncComponent, onUnmount
 import { NFlex, NH2, NCard, NScrollbar, NInput, NText, NDivider } from 'naive-ui';
 import { Panel, useVueFlow, useHandleConnections } from '@vue-flow/core'
 
-const editable_input=defineAsyncComponent(() => import('./editables/input.vue'));
-const editable_tagoutputs=defineAsyncComponent(() => import('./editables/tagoutputs.vue'));
-const editable_packoutputs=defineAsyncComponent(() => import('./editables/packoutputs.vue'));
-const editable_condoutputs=defineAsyncComponent(() => import('./editables/condoutputs.vue'));
-const editable_textinput=defineAsyncComponent(() => import('./editables/textinput.vue'));
-const editable_textprint=defineAsyncComponent(() => import('./editables/textprint.vue'));
-const editable_texttag=defineAsyncComponent(() => import('./editables/texttag.vue'));
-const editable_header=defineAsyncComponent(() => import('./editables/header.vue'));
-const editable_codeeditor=defineAsyncComponent(() => import('./editables/codeeditor.vue'));
+const editable_input = defineAsyncComponent(() => import('./editables/input.vue'));
+const editable_tagoutputs = defineAsyncComponent(() => import('./editables/tagoutputs.vue'));
+const editable_packoutputs = defineAsyncComponent(() => import('./editables/packoutputs.vue'));
+const editable_condoutputs = defineAsyncComponent(() => import('./editables/condoutputs.vue'));
+const editable_codeoutputs = defineAsyncComponent(() => import('./editables/codeoutputs.vue'));
+const editable_textinput = defineAsyncComponent(() => import('./editables/textinput.vue'));
+const editable_textprint = defineAsyncComponent(() => import('./editables/textprint.vue'));
+const editable_texttag = defineAsyncComponent(() => import('./editables/texttag.vue'));
+const editable_header = defineAsyncComponent(() => import('./editables/header.vue'));
+const editable_codeeditor = defineAsyncComponent(() => import('./editables/codeeditor.vue'));
+const editable_codeinputs = defineAsyncComponent(() => import('./editables/codeinputs.vue'));
 const props = defineProps({
     nodeId: {
         type: String,
@@ -159,6 +161,7 @@ const payloadInnerComponents = computed(() => {
         if (uitype === 'texttag') {
             acc[pid] = h(editable_texttag, { nodeId: props.nodeId, pid });
         }
+        console.log(payload.label, pid);
         return acc;
     }, {});
 });
@@ -177,11 +180,14 @@ const payloadComponents = computed(() => {
         else if (uitype === 'codeeditor') {
             acc[pid] = h(editable_codeeditor, { nodeId: props.nodeId, pid });
         }
+        else if (uitype === 'codeinputs') {
+            acc[pid] = h(editable_codeinputs, { nodeId: props.nodeId, pid, selfVarSelections: selfVarSelections.value });
+        }
         return acc;
     }, {});
 });
 // 渲染输出的连接 =============================================
-const outputsComponent = computed(() => {
+const outputsComponents = computed(() => {
     const uitype = thisnode.value.data.connections['outputs-uitype'];
     if (uitype === 'tagoutputs') {
         return h(editable_tagoutputs, { nodeId: props.nodeId, outputVarSelections: outputVarSelections.value });
@@ -191,6 +197,9 @@ const outputsComponent = computed(() => {
     }
     else if (uitype === 'condoutputs') {
         return h(editable_condoutputs, { nodeId: props.nodeId, selfVarSelections: selfVarSelections.value });
+    }
+    else if (uitype === 'codeoutputs') {
+        return h(editable_codeoutputs, { nodeId: props.nodeId });
     }
     return null;
 });
@@ -217,32 +226,32 @@ onUnmounted(() => {
                     <n-input v-else v-model:value="thisnode.data.label" :placeholder="thisnode.data.placeholderlabel"
                         ref="titleInputRef" :bordered="false" @blur="saveTitle" class="title-input" />
                 </template>
-
-                <!-- 渲染输入的连接 -->
-                <!-- 渲染内置变量 -->
-                <n-flex vertical v-if="Object.keys(payloadInnerComponents).length > 0"
-                    :style="{ 'padding-bottom': '10px' }">
-                    <editable_header type="default">内置变量</editable_header>
+                <n-flex vertical>
+                    <!-- 渲染输入的连接 -->
+                    <!-- 渲染内置变量 -->
+                    <n-flex vertical v-if="Object.keys(payloadInnerComponents).length > 0"
+                        :style="{ 'padding-bottom': '10px' }">
+                        <editable_header type="default">内置变量</editable_header>
+                        <n-flex vertical>
+                            <template v-for="(comp, pid) in payloadInnerComponents" :key="`${nodeId}-${pid}-inner`">
+                                <component v-if="comp" :is="comp" />
+                            </template>
+                        </n-flex>
+                    </n-flex>
+                    <!-- 渲染负载数据 -->
                     <n-flex vertical>
-                        <template v-for="pid in thisnode.data.payloads.order" :key="pid">
-                            <component v-if="payloadInnerComponents[pid]" :is="payloadInnerComponents[pid]" />
+                        <template v-for="(comp, pid) in payloadComponents" :key="`${nodeId}-${pid}-payloads`">
+                            <component v-if="comp" :is="comp" :style="{ 'padding-bottom': '10px' }" />
                         </template>
                     </n-flex>
+                    <!-- 渲染输出 -->
+                    <component v-if="outputsComponents" :is="outputsComponents" :key="`${nodeId}-outputs`" />
+                    <!-- <div>{{ sourceConnections }}</div> -->
+                    <!-- <pre>edge count: {{ inputConnections.length }}</pre> -->
+                    <!-- <pre>inputConnections: {{ inputConnections }}</pre> -->
+                    <n-divider />
+                    <pre>{{ nodedatatext }}</pre>
                 </n-flex>
-                <!-- 渲染负载数据 -->
-                <n-flex vertical>
-                    <template v-for="pid in thisnode.data.payloads.order" :key="pid">
-                        <component v-if="payloadComponents[pid]" :is="payloadComponents[pid]"
-                            :style="{ 'padding-bottom': '10px' }" />
-                    </template>
-                </n-flex>
-                <!-- 渲染输出 -->
-                <component v-if="outputsComponent" :is="outputsComponent" :key="`${nodeId}-outputs`" />
-                <!-- <div>{{ sourceConnections }}</div> -->
-                <!-- <pre>edge count: {{ inputConnections.length }}</pre> -->
-                <!-- <pre>inputConnections: {{ inputConnections }}</pre> -->
-                <n-divider />
-                <pre>{{ nodedatatext }}</pre>
             </n-card>
         </n-scrollbar>
     </div>
