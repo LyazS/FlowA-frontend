@@ -11,7 +11,7 @@
 <script setup>
 import { ref, computed, inject } from 'vue'
 import { NText, NH6, NInput, NSelect, NInputGroup, NFlex } from 'naive-ui'
-import { Panel, useVueFlow, useHandleConnections } from '@vue-flow/core'
+import { useVueFlow, useHandleConnections } from '@vue-flow/core'
 import editable_header from './header.vue'
 const props = defineProps({
     nodeId: {

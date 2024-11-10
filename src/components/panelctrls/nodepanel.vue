@@ -1,16 +1,17 @@
 <script setup>
-import { computed, ref, watch, nextTick, inject, onUnmounted, onMounted, h } from 'vue';
+import { computed, ref, watch, nextTick, inject, defineAsyncComponent, onUnmounted, onMounted, h } from 'vue';
 import { NFlex, NH2, NCard, NScrollbar, NInput, NText, NDivider } from 'naive-ui';
 import { Panel, useVueFlow, useHandleConnections } from '@vue-flow/core'
-import editable_input from './editables/input.vue';
-import editable_tagoutputs from './editables/tagoutputs.vue';
-import editable_packoutputs from './editables/packoutputs.vue';
-import editable_condoutputs from './editables/condoutputs.vue';
-import editable_textinput from './editables/textinput.vue';
-import editable_textprint from './editables/textprint.vue';
-import editable_texttag from './editables/texttag.vue';
-import editable_header from './editables/header.vue';
 
+const editable_input=defineAsyncComponent(() => import('./editables/input.vue'));
+const editable_tagoutputs=defineAsyncComponent(() => import('./editables/tagoutputs.vue'));
+const editable_packoutputs=defineAsyncComponent(() => import('./editables/packoutputs.vue'));
+const editable_condoutputs=defineAsyncComponent(() => import('./editables/condoutputs.vue'));
+const editable_textinput=defineAsyncComponent(() => import('./editables/textinput.vue'));
+const editable_textprint=defineAsyncComponent(() => import('./editables/textprint.vue'));
+const editable_texttag=defineAsyncComponent(() => import('./editables/texttag.vue'));
+const editable_header=defineAsyncComponent(() => import('./editables/header.vue'));
+const editable_codeeditor=defineAsyncComponent(() => import('./editables/codeeditor.vue'));
 const props = defineProps({
     nodeId: {
         type: String,
@@ -172,6 +173,9 @@ const payloadComponents = computed(() => {
         }
         else if (uitype === 'textprint') {
             acc[pid] = h(editable_textprint, { nodeId: props.nodeId, pid, selfVarSelections: selfVarSelections.value });
+        }
+        else if (uitype === 'codeeditor') {
+            acc[pid] = h(editable_codeeditor, { nodeId: props.nodeId, pid });
         }
         return acc;
     }, {});

@@ -14,8 +14,10 @@
     "@vue-flow/controls": "^1.1.2",
     "@vue-flow/core": "^1.41.2",
     "@vue-flow/minimap": "^1.5.0",
+    "ace-builds": "^1.36.4",
     "lodash": "^4.17.21",
-    "vue": "^3.5.12"
+    "vue": "^3.5.12",
+    "vue3-ace-editor": "^2.2.4"
   },
   "devDependencies": {
     "@vicons/ionicons5": "^0.12.0",
