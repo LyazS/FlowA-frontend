@@ -5,6 +5,12 @@ import { VAceEditor } from 'vue3-ace-editor';
 import ace from 'ace-builds';
 import modePythonUrl from 'ace-builds/src-noconflict/mode-python?url';
 ace.config.setModuleUrl('ace/mode/python', modePythonUrl);
+import modeJavaScriptUrl from 'ace-builds/src-noconflict/mode-javascript?url';
+ace.config.setModuleUrl('ace/mode/javascript', modeJavaScriptUrl);
+import modeMarkdownUrl from 'ace-builds/src-noconflict/mode-markdown?url';
+ace.config.setModuleUrl('ace/mode/markdown', modeMarkdownUrl);
+import modeTextUrl from 'ace-builds/src-noconflict/mode-text?url';
+ace.config.setModuleUrl('ace/mode/text', modeTextUrl);
 import themeUrl from 'ace-builds/src-noconflict/theme-tomorrow_night_bright?url';
 ace.config.setModuleUrl('ace/theme/tomorrow_night_bright', themeUrl);
 
@@ -12,17 +18,28 @@ ace.config.setModuleUrl('ace/theme/tomorrow_night_bright', themeUrl);
 // ace.config.setModuleUrl("ace/mode/base", workerBaseUrl);
 import snippetsPyhontUrl from "ace-builds/src-noconflict/snippets/python?url";
 ace.config.setModuleUrl("ace/snippets/python", snippetsPyhontUrl);
+import snippetsJavaScriptUrl from "ace-builds/src-noconflict/snippets/javascript?url";
+ace.config.setModuleUrl("ace/snippets/javascript", snippetsJavaScriptUrl);
 import extSearchboxUrl from 'ace-builds/src-noconflict/ext-searchbox?url';
 ace.config.setModuleUrl('ace/ext/searchbox', extSearchboxUrl);
 import "ace-builds/src-noconflict/ext-language_tools";
 ace.require("ace/ext/language_tools");
 import extAutocompleterUrl from 'ace-builds/src-noconflict/ext-language_tools?url';
 ace.config.setModuleUrl('ace/ext/autocompleter', extAutocompleterUrl);
+const enableAutocompletion = computed(() => {
+    const regex = /Code<([^>]+)>/;
+    const match = thisnode.value.data.payloads.byId[props.pid].type.match(regex);
+    if (match) {
+        if (match[1] === "Python") return true;
+        else if (match[1] === "JavaScript") return true;
+    };
+    return false;
+});
 const options = reactive({
     // useWorker: true, // 启用语法检查,必须为true
-    enableBasicAutocompletion: true, // 自动补全
-    enableLiveAutocompletion: true, // 智能补全
-    enableSnippets: true, // 启用代码段
+    enableBasicAutocompletion: enableAutocompletion, // 自动补全
+    enableLiveAutocompletion: enableAutocompletion, // 智能补全
+    enableSnippets: enableAutocompletion, // 启用代码段
     showPrintMargin: false, // 去掉灰色的线，printMarginColumn
     highlightActiveLine: true, // 高亮行
     highlightSelectedWord: true, // 高亮选中的字符
@@ -58,13 +75,27 @@ const isShowCodeEditor = inject("isShowCodeEditor");
 const thisnode = computed(() => {
     return findNode(props.nodeId);
 });
+const language = computed(() => {
+    const regex = /Code<([^>]+)>/;
+    const match = thisnode.value.data.payloads.byId[props.pid].type.match(regex);
+    if (match) {
+        if (match[1] === "Python")
+            return 'python';
+        else if (match[1] === "JavaScript")
+            return 'javascript';
+        else if (match[1] === "Markdown")
+            return 'markdown';
+    } else {
+        return 'text';
+    };
+});
 
 </script>
 <template>
     <n-modal v-model:show="isShowCodeEditor" :close-on-esc="false">
         <n-card :title="`${thisnode.data.label} —— ${thisnode.data.payloads.byId[pid].label}`" closable
             @close="isShowCodeEditor = false" :style="{ width: '90%' }" content-style="padding: 10px">
-            <v-ace-editor v-model:value="thisnode.data.payloads.byId[pid].data" lang="python"
+            <v-ace-editor v-model:value="thisnode.data.payloads.byId[pid].data" :lang="language"
                 theme="tomorrow_night_bright" :options="options" style="height: calc(100vh - 200px)"
                 @blur="isEditing = false" @focus="isEditing = true" />
         </n-card>

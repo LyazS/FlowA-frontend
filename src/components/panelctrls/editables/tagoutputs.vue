@@ -6,8 +6,12 @@
                 <n-text v-if="hasMultipleOutputs">
                     {{ hid }}
                 </n-text>
-                <n-text>{{ item.nlabel }}</n-text>
-                <n-text>{{ item.dlabel }}</n-text>
+                <n-text v-if="!isUniqueNlabel">
+                    {{ item.nlabel }}
+                </n-text>
+                <n-text v-if="!isSingleOutput">
+                    {{ item.dlabel }}
+                </n-text>
                 <n-tag :bordered="false" type="info">{{ item.dkey }}</n-tag>
                 <n-text>{{ item.dtype }}</n-text>
             </n-flex>
@@ -66,5 +70,17 @@ const nodeOutputs2 = computed(() => {
         }
     }
     return vars;
+});
+
+// 检查nodeOutputs2长度是否只有一个
+const isSingleOutput = computed(() => {
+    return Object.keys(nodeOutputs2.value).length <= 1;
+});
+
+// 检查nodeOutputs2每一个hid的数组，nlabel是不是唯一的
+const isUniqueNlabel = computed(() => {
+    const allNlabels = Object.values(nodeOutputs2.value)
+        .flatMap(items => items.map(item => item.nlabel));
+    return new Set(allNlabels).size <= 1;
 });
 </script>

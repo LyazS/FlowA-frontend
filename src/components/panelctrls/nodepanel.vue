@@ -14,6 +14,8 @@ const editable_texttag = defineAsyncComponent(() => import('./editables/texttag.
 const editable_header = defineAsyncComponent(() => import('./editables/header.vue'));
 const editable_codeeditor = defineAsyncComponent(() => import('./editables/codeeditor.vue'));
 const editable_codeinputs = defineAsyncComponent(() => import('./editables/codeinputs.vue'));
+const editable_llminputs = defineAsyncComponent(() => import('./editables/llminputs.vue'));
+
 const props = defineProps({
     nodeId: {
         type: String,
@@ -182,6 +184,9 @@ const payloadComponents = computed(() => {
         }
         else if (uitype === 'codeinputs') {
             acc[pid] = h(editable_codeinputs, { nodeId: props.nodeId, pid, selfVarSelections: selfVarSelections.value });
+        }
+        else if (uitype === 'llminputs') {
+            acc[pid] = h(editable_llminputs, { nodeId: props.nodeId, pid, selfVarSelections: selfVarSelections.value });
         }
         return acc;
     }, {});

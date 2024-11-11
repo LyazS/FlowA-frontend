@@ -3,7 +3,7 @@ import { ref, onMounted, reactive, inject, computed } from 'vue';
 import { useVueFlow } from '@vue-flow/core'
 import { NText, NCode, NIcon, NButton, NH6, NInput, NSelect, NInputGroup, NFlex, NDivider } from 'naive-ui'
 import editable_header from './header.vue'
-import { LogoPython } from '@vicons/ionicons5'
+import { CreateOutline } from '@vicons/ionicons5'
 
 const props = defineProps({
     nodeId: {
@@ -27,7 +27,20 @@ const editCode = () => {
     CodeEditorPid.value = props.pid;
     isShowCodeEditor.value = true;
 }
-
+const language = computed(() => {
+    const regex = /Code<([^>]+)>/;
+    const match = thisnode.value.data.payloads.byId[props.pid].type.match(regex);
+    if (match) {
+        if (match[1] === "Python")
+            return 'python';
+        else if (match[1] === "JavaScript")
+            return 'javascript';
+        else if (match[1] === "Markdown")
+            return 'markdown';
+    } else {
+        return 'text';
+    };
+});
 </script>
 <template>
     <n-flex vertical>
@@ -38,13 +51,13 @@ const editCode = () => {
             <n-button text type="info" @click="editCode">
                 <template #icon>
                     <n-icon>
-                        <LogoPython />
+                        <CreateOutline />
                     </n-icon>
                 </template>
                 编辑代码
             </n-button>
         </n-flex>
-        <n-code :code="thisnode.data.payloads.byId[pid].data" language="python" show-line-numbers />
+        <n-code :code="thisnode.data.payloads.byId[pid].data" :language="language" show-line-numbers />
     </n-flex>
 </template>
 

@@ -30,9 +30,9 @@ const _initInfo = createBaseNodeInfo();
 initConnectionsAttribute(_initInfo);
 initRunningAttribute(_initInfo);
 initStateAttribute(_initInfo);
-setNodeType(_initInfo, "code_interpreter");
+setNodeType(_initInfo, "LLM_inference");
 setVueType(_initInfo, "basenode");
-setLabel(_initInfo, "代码解释器");
+setLabel(_initInfo, "LLM推理");
 initSize(_initInfo, 80, 80);
 
 addHandle(_initInfo, "inputs", "input");
@@ -41,11 +41,17 @@ addHandle(_initInfo, "callbackUsers", "callbackUser");
 addHandle(_initInfo, "callbackFuncs", "callbackFunc");
 
 addConnection(_initInfo, "self", "self", { type: "FromOuter", inputKey: "input" });
-addPayload(_initInfo, { label: "输入变量", type: "CodeInput", key: "inputvars", data: [{ key: "arg1", refdata: "" }, { key: "arg2", refdata: "" },], uitype: "codeinputs" });
-addPayload(_initInfo, { label: "Python 代码", type: "Code<Python>", key: "code", data: "#You can use numpy and cv2 by import\ndef main(arg1, arg2):\n    # do something\n    return {\n        \"output1\": arg1,\n        \"output2\": arg2\n    }", uitype: "codeeditor" });
-setOutputsUIType(_initInfo, "codeoutputs");
-addResultWConnect(_initInfo, { label: "output1", type: "String", key: "output1", data: null, }, "output");
-addResultWConnect(_initInfo, { label: "output2", type: "String", key: "output2", data: null, }, "output");
+addPayload(_initInfo, { label: "输入变量", type: "LLMInput", key: "inputvars", data: [
+    { key: "text", type: "value", value: "good assistant" },
+    { key: "ask", type: "value", value: "hi" },
+], uitype: "llminputs" });
+addPayload(_initInfo, { label: "LLM Prompt", type: "Array<Prompt>", key: "prompts", data: [
+    { role: "system", content: "You are a {{text}}." },
+    { role: "user", content: "{{ask}}" },
+    { role: "assistant", content: "Hello" },
+], uitype: "llmprompts" });
+setOutputsUIType(_initInfo, "tagoutputs");
+addResultWConnect(_initInfo, { label: "推理结果", type: "String", key: "output", data: "" }, "output");
 
 export const initInfo = cloneDeep(_initInfo);
 // 该节点需要实现，动态的handle和文字
