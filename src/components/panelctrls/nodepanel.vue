@@ -1,7 +1,8 @@
 <script setup>
 import { computed, ref, watch, nextTick, inject, defineAsyncComponent, onUnmounted, onMounted, h } from 'vue';
-import { NFlex, NH2, NCard, NScrollbar, NInput, NText, NDivider } from 'naive-ui';
+import { NFlex, NH2, NCard, NScrollbar, NInput, NIcon, NText, NDivider } from 'naive-ui';
 import { Panel, useVueFlow, useHandleConnections } from '@vue-flow/core'
+import { CreateOutline } from '@vicons/ionicons5'
 
 const editable_input = defineAsyncComponent(() => import('./editables/input.vue'));
 const editable_tagoutputs = defineAsyncComponent(() => import('./editables/tagoutputs.vue'));
@@ -15,6 +16,7 @@ const editable_header = defineAsyncComponent(() => import('./editables/header.vu
 const editable_codeeditor = defineAsyncComponent(() => import('./editables/codeeditor.vue'));
 const editable_codeinputs = defineAsyncComponent(() => import('./editables/codeinputs.vue'));
 const editable_llminputs = defineAsyncComponent(() => import('./editables/llminputs.vue'));
+const editable_llmprompts = defineAsyncComponent(() => import('./editables/llmprompts.vue'));
 
 const props = defineProps({
     nodeId: {
@@ -188,6 +190,9 @@ const payloadComponents = computed(() => {
         else if (uitype === 'llminputs') {
             acc[pid] = h(editable_llminputs, { nodeId: props.nodeId, pid, selfVarSelections: selfVarSelections.value });
         }
+        else if (uitype === 'llmprompts') {
+            acc[pid] = h(editable_llmprompts, { nodeId: props.nodeId, pid });
+        }
         return acc;
     }, {});
 });
@@ -227,6 +232,9 @@ onUnmounted(() => {
                 <template #header>
                     <n-h2 prefix="bar" align-text v-if="!isEditingTitle" class="card-title" @click="startEditTilte">
                         <n-text type="success" strong>{{ thisnode.data.label }}</n-text>
+                        <n-icon size="17" depth="2">
+                            <CreateOutline />
+                        </n-icon>
                     </n-h2>
                     <n-input v-else v-model:value="thisnode.data.label" :placeholder="thisnode.data.placeholderlabel"
                         ref="titleInputRef" :bordered="false" @blur="saveTitle" class="title-input" />

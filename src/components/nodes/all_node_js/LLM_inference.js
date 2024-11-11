@@ -48,7 +48,6 @@ addPayload(_initInfo, { label: "输入变量", type: "LLMInput", key: "inputvars
 addPayload(_initInfo, { label: "LLM Prompt", type: "Array<Prompt>", key: "prompts", data: [
     { role: "system", content: "You are a {{text}}." },
     { role: "user", content: "{{ask}}" },
-    { role: "assistant", content: "Hello" },
 ], uitype: "llmprompts" });
 setOutputsUIType(_initInfo, "tagoutputs");
 addResultWConnect(_initInfo, { label: "推理结果", type: "String", key: "output", data: "" }, "output");
