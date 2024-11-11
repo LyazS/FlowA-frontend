@@ -18,13 +18,13 @@ const props = defineProps({
 const { findNode } = useVueFlow();
 
 const isShowCodeEditor = inject("isShowCodeEditor");
-const CodeEditorPid = inject("CodeEditorPid");
+const CodeEditorPath = inject("CodeEditorPath");
 const thisnode = computed(() => {
     return findNode(props.nodeId);
 });
 
 const editCode = () => {
-    CodeEditorPid.value = props.pid;
+    CodeEditorPath.value = ["data","payloads", "byId", props.pid];
     isShowCodeEditor.value = true;
 }
 const language = computed(() => {

@@ -27,9 +27,9 @@ const props = defineProps({
     }
 })
 const isShowCodeEditor = ref(false);
-const CodeEditorPid = ref('');
+const CodeEditorPath = ref([]);
 provide('isShowCodeEditor', isShowCodeEditor);
-provide('CodeEditorPid', CodeEditorPid);
+provide('CodeEditorPath', CodeEditorPath);
 
 </script>
 
@@ -40,7 +40,7 @@ provide('CodeEditorPid', CodeEditorPid);
                 <ctrlpanel :nodeId="nodeId" />
                 <nodepanel v-if="!!nodeId" :nodeId="nodeId" />
             </Panel>
-            <AceCodeEditor v-if="!!nodeId" :nodeId="nodeId" :pid="CodeEditorPid" />
+            <AceCodeEditor v-if="!!nodeId" :nodeId="nodeId" :path="CodeEditorPath" />
         </n-message-provider>
     </n-config-provider>
 </template>
