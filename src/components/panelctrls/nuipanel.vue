@@ -1,5 +1,5 @@
 <script setup>
-import { computed, ref, watch, defineAsyncComponent } from 'vue';
+import { computed, ref, watch, provide, defineAsyncComponent } from 'vue';
 import {
     useMessage,
     darkTheme,
@@ -11,32 +11,38 @@ import {
 } from 'naive-ui';
 import { Panel, useVueFlow } from '@vue-flow/core'
 import nodepanel from './nodepanel.vue'
-const message = useMessage();
+import ctrlpanel from './ctrlpanel.vue';
+import AceCodeEditor from './AceCodeEditor.vue';
+import hljs from 'highlight.js/lib/core'
+import python_hljs from 'highlight.js/lib/languages/python'
+import javascript_hljs from 'highlight.js/lib/languages/javascript'
+
+hljs.registerLanguage('python', python_hljs)
+hljs.registerLanguage('javascript', javascript_hljs)
+
 const props = defineProps({
     nodeId: {
         type: [String, null],
         required: true
     }
 })
-const testclick = () => {
-    message.success('test')
-}
+const isShowCodeEditor = ref(false);
+const CodeEditorPid = ref('');
+provide('isShowCodeEditor', isShowCodeEditor);
+provide('CodeEditorPid', CodeEditorPid);
+
 </script>
 
 <template>
-    <Panel position="top-right" :style="{ width: '600px' }">
-        <n-flex justify="flex-end">
-            <n-button class="glow-btn" strong tertiary round type="success" @click="testclick">保存</n-button>
-            <n-button class="glow-btn" strong tertiary round type="success" @click="testclick">运行</n-button>
-            <n-button class="glow-btn" strong tertiary round type="success" @click="testclick">导入</n-button>
-            <n-button class="glow-btn" strong tertiary round type="success" @click="testclick">导出</n-button>
-        </n-flex>
-        <nodepanel v-if="!!nodeId" :nodeId="nodeId" />
-    </Panel>
+    <n-config-provider :theme="darkTheme" :hljs="hljs">
+        <n-message-provider>
+            <Panel position="top-right" :style="{ width: '600px' }">
+                <ctrlpanel :nodeId="nodeId" />
+                <nodepanel v-if="!!nodeId" :nodeId="nodeId" />
+            </Panel>
+            <AceCodeEditor v-if="!!nodeId" :nodeId="nodeId" :pid="CodeEditorPid" />
+        </n-message-provider>
+    </n-config-provider>
 </template>
-<style scoped>
-.glow-btn:hover {
-    box-shadow: 0 0 20px rgb(138, 203, 236);
-    transition: box-shadow 0.2s ease;
-}
-</style>
+
+<style scoped></style>

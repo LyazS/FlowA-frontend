@@ -1,15 +1,12 @@
 <script setup>
 import { ref, onMounted, reactive, inject, computed } from 'vue';
-import { useVueFlow, useHandleConnections } from '@vue-flow/core'
-import { NText, NH6, NInput, NSelect, NInputGroup, NFlex } from 'naive-ui'
-import editable_header from './header.vue'
-
+// =======================================================================================
 import { VAceEditor } from 'vue3-ace-editor';
 import ace from 'ace-builds';
 import modePythonUrl from 'ace-builds/src-noconflict/mode-python?url';
 ace.config.setModuleUrl('ace/mode/python', modePythonUrl);
-import themeUrl from 'ace-builds/src-noconflict/theme-cloud_editor_dark?url';
-ace.config.setModuleUrl('ace/theme/cloud_editor_dark', themeUrl);
+import themeUrl from 'ace-builds/src-noconflict/theme-tomorrow_night_bright?url';
+ace.config.setModuleUrl('ace/theme/tomorrow_night_bright', themeUrl);
 
 // import workerBaseUrl from "ace-builds/src-noconflict/worker-base?url";
 // ace.config.setModuleUrl("ace/mode/base", workerBaseUrl);
@@ -21,29 +18,11 @@ import "ace-builds/src-noconflict/ext-language_tools";
 ace.require("ace/ext/language_tools");
 import extAutocompleterUrl from 'ace-builds/src-noconflict/ext-language_tools?url';
 ace.config.setModuleUrl('ace/ext/autocompleter', extAutocompleterUrl);
-
-const props = defineProps({
-    nodeId: {
-        type: String,
-        required: true
-    },
-    pid: {
-        type: String,
-        required: true
-    }
-})
-const { findNode } = useVueFlow();
-const isEditing = inject("isEditing");
-const thisnode = computed(() => {
-    return findNode(props.nodeId);
-});
-
-
 const options = reactive({
     // useWorker: true, // 启用语法检查,必须为true
     enableBasicAutocompletion: true, // 自动补全
     enableLiveAutocompletion: true, // 智能补全
-    // enableSnippets: true, // 启用代码段
+    enableSnippets: true, // 启用代码段
     showPrintMargin: false, // 去掉灰色的线，printMarginColumn
     highlightActiveLine: true, // 高亮行
     highlightSelectedWord: true, // 高亮选中的字符
@@ -58,14 +37,36 @@ const options = reactive({
     customScrollbar: true, // 自定义滚动条
     vScrollBarAlwaysVisible: true, // 永远显示垂直滚动条
 });
+// =======================================================================================
+
+import { useVueFlow, useHandleConnections } from '@vue-flow/core'
+import { NText, NModal, NCard, NFlex } from 'naive-ui'
+
+const props = defineProps({
+    nodeId: {
+        type: String,
+        required: true
+    },
+    pid: {
+        type: String,
+        required: true
+    }
+})
+const { findNode } = useVueFlow();
+const isEditing = inject("isEditing");
+const isShowCodeEditor = inject("isShowCodeEditor");
+const thisnode = computed(() => {
+    return findNode(props.nodeId);
+});
 
 </script>
 <template>
-    <n-flex vertical>
-        <editable_header>
-            {{ thisnode.data.payloads.byId[pid].label }}
-        </editable_header>
-        <v-ace-editor v-model:value="thisnode.data.payloads.byId[pid].data" lang="python" theme="cloud_editor_dark"
-            :options="options" style="height: 300px" @blur="isEditing = false" @focus="isEditing = true" />
-    </n-flex>
+    <n-modal v-model:show="isShowCodeEditor" :close-on-esc="false">
+        <n-card :title="`${thisnode.data.label} —— ${thisnode.data.payloads.byId[pid].label}`" closable
+            @close="isShowCodeEditor = false" :style="{ width: '90%' }" content-style="padding: 10px">
+            <v-ace-editor v-model:value="thisnode.data.payloads.byId[pid].data" lang="python"
+                theme="tomorrow_night_bright" :options="options" style="height: calc(100vh - 200px)"
+                @blur="isEditing = false" @focus="isEditing = true" />
+        </n-card>
+    </n-modal>
 </template>

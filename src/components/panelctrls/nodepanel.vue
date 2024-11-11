@@ -226,11 +226,11 @@ onUnmounted(() => {
                     <n-input v-else v-model:value="thisnode.data.label" :placeholder="thisnode.data.placeholderlabel"
                         ref="titleInputRef" :bordered="false" @blur="saveTitle" class="title-input" />
                 </template>
-                <n-flex vertical>
+                <n-flex vertical :key="`${nodeId}-main`">
                     <!-- 渲染输入的连接 -->
                     <!-- 渲染内置变量 -->
                     <n-flex vertical v-if="Object.keys(payloadInnerComponents).length > 0"
-                        :style="{ 'padding-bottom': '10px' }">
+                        :style="{ 'padding-bottom': '10px' }" :key="`${nodeId}-inner`">
                         <editable_header type="default">内置变量</editable_header>
                         <n-flex vertical>
                             <template v-for="(comp, pid) in payloadInnerComponents" :key="`${nodeId}-${pid}-inner`">
@@ -239,16 +239,14 @@ onUnmounted(() => {
                         </n-flex>
                     </n-flex>
                     <!-- 渲染负载数据 -->
-                    <n-flex vertical>
+                    <n-flex vertical v-if="Object.keys(payloadComponents).length > 0" :key="`${nodeId}-payloads`">
                         <template v-for="(comp, pid) in payloadComponents" :key="`${nodeId}-${pid}-payloads`">
                             <component v-if="comp" :is="comp" :style="{ 'padding-bottom': '10px' }" />
                         </template>
                     </n-flex>
                     <!-- 渲染输出 -->
                     <component v-if="outputsComponents" :is="outputsComponents" :key="`${nodeId}-outputs`" />
-                    <!-- <div>{{ sourceConnections }}</div> -->
-                    <!-- <pre>edge count: {{ inputConnections.length }}</pre> -->
-                    <!-- <pre>inputConnections: {{ inputConnections }}</pre> -->
+                    <!-- 渲染节点数据文本 -->
                     <n-divider />
                     <pre>{{ nodedatatext }}</pre>
                 </n-flex>
