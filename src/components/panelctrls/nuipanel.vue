@@ -42,7 +42,7 @@ provide('CodeEditorLangType', CodeEditorLangType);
                 <ctrlpanel :nodeId="nodeId" />
                 <nodepanel v-if="!!nodeId" :nodeId="nodeId" />
             </Panel>
-            <AceCodeEditor :nodeId="nodeId" :path="CodeEditorPath" :langtype="CodeEditorLangType" />
+            <AceCodeEditor v-if="!!nodeId" :nodeId="nodeId" :path="CodeEditorPath" :langtype="CodeEditorLangType" />
         </n-message-provider>
     </n-config-provider>
 </template>

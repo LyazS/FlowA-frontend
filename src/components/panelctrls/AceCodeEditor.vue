@@ -102,7 +102,6 @@ const isShow = computed(() => {
     return isPathConnected(thisnode.value, props.path) && isShowCodeEditor.value;
 });
 
-
 </script>
 <template>
     <n-modal v-model:show="isShow" :close-on-esc="false">
