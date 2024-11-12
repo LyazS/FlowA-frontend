@@ -20,7 +20,7 @@
                 <n-flex :style="{ width: '90%' }" class="flexctitem" justify="space-between" :wrap="false">
                     <n-select :style="{ width: '130px' }" size="small" placeholder="类型" :options="roleSelections"
                         v-model:value="pvar.role" />
-                    <n-button text size="small" type="info">
+                    <n-button text size="small" type="info" @click="openEditor(vindex)">
                         <template #icon>
                             <n-icon>
                                 <CreateOutline />
@@ -40,10 +40,8 @@
             <n-input type="textarea" placeholder="请输入Prompt" clearable :autosize="{
                 minRows: 3,
                 maxRows: 5,
-            }" v-model:value="pvar.content"></n-input>
-
+            }" v-model:value="pvar.content" @blur="isEditing = false" @focus="isEditing = true" />
         </n-flex>
-
     </n-flex>
 
 </template>
@@ -67,6 +65,10 @@ const props = defineProps({
     }
 })
 const isEditing = inject("isEditing");
+const isShowCodeEditor = inject("isShowCodeEditor");
+const CodeEditorPath = inject("CodeEditorPath");
+const CodeEditorLangType = inject("CodeEditorLangType");
+
 // 获取节点数据
 const { findNode } = useVueFlow()
 const thisnode = computed(() => findNode(props.nodeId))
@@ -86,6 +88,11 @@ const rmVariable = (index) => {
     thisnode.value.data.payloads.byId[props.pid].data.splice(index, 1);
 };
 
+const openEditor = (index) => {
+    isShowCodeEditor.value = true;
+    CodeEditorPath.value = ["data", "payloads", "byId", props.pid, "data", index, "content"];
+    CodeEditorLangType.value = "text";
+};
 </script>
 
 <style scoped>

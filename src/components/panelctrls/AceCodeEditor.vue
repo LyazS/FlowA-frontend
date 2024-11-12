@@ -1,5 +1,23 @@
 <script setup>
 import { ref, onMounted, reactive, inject, computed } from 'vue';
+import { useVueFlow, useHandleConnections } from '@vue-flow/core'
+import { NText, NModal, NCard, NFlex } from 'naive-ui'
+import { getValueByPath, setValueByPath, isPathConnected } from '../../utils/tools.js'
+
+const props = defineProps({
+    nodeId: {
+        type: String,
+        required: true
+    },
+    path: {
+        type: Array,
+        required: true
+    },
+    langtype: {
+        type: String,
+        required: true
+    }
+})
 // =======================================================================================
 import { VAceEditor } from 'vue3-ace-editor';
 import ace from 'ace-builds';
@@ -28,7 +46,7 @@ import extAutocompleterUrl from 'ace-builds/src-noconflict/ext-language_tools?ur
 ace.config.setModuleUrl('ace/ext/autocompleter', extAutocompleterUrl);
 const enableAutocompletion = computed(() => {
     const regex = /Code<([^>]+)>/;
-    const match = codedata.value.type.match(regex);
+    const match = props.langtype.match(regex);
     if (match) {
         if (match[1] === "Python") return true;
         else if (match[1] === "JavaScript") return true;
@@ -56,20 +74,7 @@ const options = reactive({
 });
 // =======================================================================================
 
-import { useVueFlow, useHandleConnections } from '@vue-flow/core'
-import { NText, NModal, NCard, NFlex } from 'naive-ui'
-import { getValueByPath, setValueByPath, isPathConnected } from '../../utils/tools.js'
 
-const props = defineProps({
-    nodeId: {
-        type: String,
-        required: true
-    },
-    path: {
-        type: Array,
-        required: true
-    }
-})
 const { findNode } = useVueFlow();
 const isEditing = inject("isEditing");
 const isShowCodeEditor = inject("isShowCodeEditor");
@@ -80,7 +85,7 @@ const codedata = computed({
 const thisnode = computed(() => { return findNode(props.nodeId); });
 const language = computed(() => {
     const regex = /Code<([^>]+)>/;
-    const match = codedata.value.type.match(regex);
+    const match = props.langtype.match(regex);
     if (match) {
         if (match[1] === "Python")
             return 'python';
@@ -103,7 +108,7 @@ const isShow = computed(() => {
     <n-modal v-model:show="isShow" :close-on-esc="false">
         <n-card :title="`${thisnode.data.label}`" closable @close="isShowCodeEditor = false" :style="{ width: '90%' }"
             content-style="padding: 10px">
-            <v-ace-editor v-model:value="codedata.data" :lang="language" theme="tomorrow_night_bright" :options="options"
+            <v-ace-editor v-model:value="codedata" :lang="language" theme="tomorrow_night_bright" :options="options"
                 style="height: calc(100vh - 200px)" @blur="isEditing = false" @focus="isEditing = true" />
         </n-card>
     </n-modal>

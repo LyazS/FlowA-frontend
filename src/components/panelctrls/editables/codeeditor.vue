@@ -19,13 +19,16 @@ const { findNode } = useVueFlow();
 
 const isShowCodeEditor = inject("isShowCodeEditor");
 const CodeEditorPath = inject("CodeEditorPath");
+const CodeEditorLangType = inject("CodeEditorLangType");
+
 const thisnode = computed(() => {
     return findNode(props.nodeId);
 });
 
 const editCode = () => {
-    CodeEditorPath.value = ["data","payloads", "byId", props.pid];
+    CodeEditorPath.value = ["data", "payloads", "byId", props.pid, "data"];
     isShowCodeEditor.value = true;
+    CodeEditorLangType.value = thisnode.value.data.payloads.byId[props.pid].type;
 }
 const language = computed(() => {
     const regex = /Code<([^>]+)>/;
