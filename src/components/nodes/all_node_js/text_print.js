@@ -35,7 +35,7 @@ initSize(_initInfo, 80, 80);
 
 addHandle(_initInfo, "inputs", "input");
 addConnection(_initInfo, "self", "self", { type: "FromOuter", inputKey: "input" });
-let pid = addPayload(_initInfo, { label: "内容", type: "Array<String>", key: "text", data: [], uitype: "textprint" });
+addPayload(_initInfo, { label: "内容", type: "Array<String>", key: "text", data: [], uitype: "textprint" });
 
 export const initInfo = cloneDeep(_initInfo);
 // 该节点需要实现，动态的handle和文字

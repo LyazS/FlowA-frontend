@@ -39,8 +39,9 @@ addHandle(_initInfo, "inputs", "input-var", "VARIABLE");
 addHandle(_initInfo, "outputs", "output-else", "0/ELSE");
 
 addConnection(_initInfo, "self", "self", { type: "FromOuter", inputKey: "input-cond" });
-addConnection(_initInfo, "outputs", "output-else", { type: "FromOuter", inputKey: "input-var" });
+
 setOutputsUIType(_initInfo, "condoutputs");
+addConnection(_initInfo, "outputs", "output-else", { type: "FromOuter", inputKey: "input-var" });
 addResult(_initInfo, { "label": "其他", "type": "ConditionDict", "key": "cond-else", "data": {} });
 
 export const initInfo = cloneDeep(_initInfo);
