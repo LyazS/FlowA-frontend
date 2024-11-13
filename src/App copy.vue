@@ -79,21 +79,6 @@ let AddNodeListFromInitInfos = [];
 const getNestedNodeById = (id) => {
   return NestedNodeGraph.value[id];
 }
-const buildNestedNodeGraph = () => {
-  NestedNodeGraph.value = {}
-  getNodes.value.forEach((node) => {
-    NestedNodeGraph.value[node.id] = { parentNode: node.parentNode, children: [] }
-  })
-
-  Object.entries(NestedNodeGraph.value).forEach(([nid, node]) => {
-    if (node.parentNode) {
-      NestedNodeGraph.value[node.parentNode].children.push(nid)
-    }
-  })
-  // console.log("NestedNodeGraph", NestedNodeGraph.value);
-  // console.log("getNodes", getNodes.value);
-  // console.log("edges", getEdges.value);
-}
 
 const initAllNodeInfos = async () => {
   const modules = import.meta.glob('./components/nodes/all_node_js/**.js');
@@ -119,6 +104,22 @@ const initAllNodeInfos = async () => {
     .filter(item => !item.data.flags.isAttached);
   console.log("AddNodeListFromInitInfos", AddNodeListFromInitInfos);
 };
+
+const buildNestedNodeGraph = () => {
+  NestedNodeGraph.value = {}
+  getNodes.value.forEach((node) => {
+    NestedNodeGraph.value[node.id] = { parentNode: node.parentNode, children: [] }
+  })
+
+  Object.entries(NestedNodeGraph.value).forEach(([nid, node]) => {
+    if (node.parentNode) {
+      NestedNodeGraph.value[node.parentNode].children.push(nid)
+    }
+  })
+  // console.log("NestedNodeGraph", NestedNodeGraph.value);
+  // console.log("getNodes", getNodes.value);
+  // console.log("edges", getEdges.value);
+}
 
 const recursiveUpdateNodeSize = (nodeId) => {
   let vf_node = findNode(nodeId);
