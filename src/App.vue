@@ -58,7 +58,6 @@ const {
   getVFNodeCount,
   increaseVFNodeCount,
 } = useVFlowInitial()
-console.log("AllVFNodeTypes", AllVFNodeTypes);
 const {
   getNestedNodeById,
   buildNestedNodeGraph,
