@@ -1,58 +1,70 @@
-import { ref, reactive } from "vue";
+import { ref, reactive, markRaw } from "vue";
 import { cloneDeep } from 'lodash';
 
 // 单例模式
-let AllNodeInitInfos = null;
-let AllNodeCounters = null;
-let AllVFNodeTypes = null;
-let AddNodeListFromInitInfos = null;
+let instance = null;
 
-export const initAllNodeInfos = async () => {
-  AllNodeInitInfos = {};
-  AllNodeCounters = {};
-  AllVFNodeTypes = reactive({});
-  AddNodeListFromInitInfos = [];
+export const useVFlowInitial = () => {
+  if (instance) return instance;
 
-  const modules = import.meta.glob('../components/nodes/all_node_js/**.js');
-  const promises = Object.keys(modules).map(async (key) => {
-    const module = await modules[key]();
-    const initInfo = module.initInfo;
-    AllNodeInitInfos[initInfo.ntype] = initInfo;
-    AllNodeCounters[initInfo.ntype] = 0;
-    if (!AllVFNodeTypes.hasOwnProperty(initInfo.vtype)) {
-      AllVFNodeTypes[initInfo.vtype] = markRaw(module.NodeVue);
-    }
-  });
-  // 等待所有异步操作完成
-  await Promise.all(promises);
+  const AllNodeInitInfos = ref([]);
+  const AllNodeCounters = ref([]);
+  const AllVFNodeTypes = reactive({});
+  const AddNodeListFromInitInfos = ref([]);
 
-  console.log("AllNodeInitInfos", AllNodeInitInfos);
-  console.log("all nodeTypes", AllVFNodeTypes);
+  const initAllNodeInfos = async () => {
 
-  // 排序节点列表
-  AddNodeListFromInitInfos = Object.entries(AllNodeInitInfos)
-    .sort((a, b) => a[0].localeCompare(b[0])) // 按key排序
-    .map(([key, item]) => item)
-    .filter(item => !item.data.flags.isAttached);
-  console.log("AddNodeListFromInitInfos", AddNodeListFromInitInfos);
-};
+    const modules = import.meta.glob('../components/nodes/all_node_js/**.js');
+    const promises = Object.keys(modules).map(async (key) => {
+      const module = await modules[key]();
+      const initInfo = module.initInfo;
+      AllNodeInitInfos.value[initInfo.ntype] = initInfo;
+      AllNodeCounters.value[initInfo.ntype] = 0;
+      if (!AllVFNodeTypes.hasOwnProperty(initInfo.vtype)) {
+        AllVFNodeTypes[initInfo.vtype] = markRaw(module.NodeVue);
+      }
+    });
+    // 等待所有异步操作完成
+    await Promise.all(promises);
 
-export const getAddNodeList = () => {
-  return AddNodeListFromInitInfos;
-};
+    console.log("AllNodeInitInfos.value", AllNodeInitInfos.value);
+    console.log("all nodeTypes", AllVFNodeTypes);
 
-export const getVFNodeTypes = () => {
-  return AllVFNodeTypes;
-};
+    // 排序节点列表
+    AddNodeListFromInitInfos.value = Object.entries(AllNodeInitInfos.value)
+      .sort((a, b) => a[0].localeCompare(b[0])) // 按key排序
+      .map(([key, item]) => item)
+      .filter(item => !item.data.flags.isAttached);
+    console.log("AddNodeListFromInitInfos.value", AddNodeListFromInitInfos.value);
+  };
 
-export const cloneVFNodeInitInfo = (ntype) => {
-  return cloneDeep(AllNodeInitInfos[ntype]);
-};
+  const getAddNodeList = () => {
+    return AddNodeListFromInitInfos.value;
+  };
 
-export const getVFNodeCount = (ntype) => {
-  return AllNodeCounters[ntype];
-};
 
-export const increaseVFNodeCount = (ntype, value) => {
-  AllNodeCounters[ntype] += value;
+  const cloneVFNodeInitInfo = (ntype) => {
+    return cloneDeep(AllNodeInitInfos.value[ntype]);
+  };
+
+  const getVFNodeCount = (ntype) => {
+    return AllNodeCounters.value[ntype];
+  };
+
+  const increaseVFNodeCount = (ntype, value) => {
+    AllNodeCounters.value[ntype] += value;
+  };
+
+
+  instance = {
+    AllVFNodeTypes,
+    initAllNodeInfos,
+    getAddNodeList,
+    cloneVFNodeInitInfo,
+    getVFNodeCount,
+    increaseVFNodeCount,
+  };
+
+  return instance;
+
 };

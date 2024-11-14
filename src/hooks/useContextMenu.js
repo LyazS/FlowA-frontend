@@ -1,9 +1,68 @@
 // hooks/useContextMenu.js
 import { ref, reactive } from 'vue';
 import { useVueFlow } from '@vue-flow/core';
-import { useNodeManagement } from './useVFlowManagement';
+import { useVFlowManagement } from './useVFlowManagement.js';
+import { useVFlowInitial } from './useVFlowInitial.js';
 
-export function useContextMenu() {
+// 单例模式
+let instance = null;
+export const useContextMenu = () => {
+  if (instance) return instance;
+  const {
+    getNodes,
+    getEdges,
+    getSelectedNodes,
+    addNodes,
+    findNode,
+    removeNodes,
+    onConnect,
+    addEdges,
+    removeEdges,
+    onNodesChange,
+    onEdgesChange,
+    onNodeDragStart,
+    onNodeDrag,
+    onNodeDragStop,
+    onNodeClick,
+    onNodeDoubleClick,
+    onNodeContextMenu,
+    onNodeMouseEnter,
+    onNodeMouseLeave,
+    onNodeMouseMove,
+    onPaneContextMenu,
+    onEdgeContextMenu,
+    screenToFlowCoordinate,
+    getViewport,
+    setViewport,
+} = useVueFlow();
+  const {
+    getNestedNodeById,
+    buildNestedNodeGraph,
+    recursiveUpdateNodeSize,
+    recursiveAddNodeToVFlow,
+    addNodeToVFlow,
+    removeNodeFromVFlow,
+    addEdgeToVFlow,
+  } = useVFlowManagement();
+
+  const { AllVFNodeTypes,
+    initAllNodeInfos,
+    getAddNodeList,
+    getVFNodeTypes,
+    cloneVFNodeInitInfo,
+    getVFNodeCount,
+    increaseVFNodeCount,
+  } = useVFlowInitial();
+
+  const onClickContextMenuRmNode = (event_cm) => {
+    console.log('删除节点');
+    const node = event_cm.node;
+    const parent_id = node.parentNode;
+
+    removeNodeFromVFlow(node);
+    buildNestedNodeGraph();
+    recursiveUpdateNodeSize(parent_id);
+  }
   const showMenu = ref(false);
   const menuOptions = reactive({
     theme: 'mac dark',
@@ -14,12 +73,8 @@ export function useContextMenu() {
     items: [],
   });
 
-  const { addNodeToVFlow, removeNodeFromVFlow, AddNodeListFromInitInfos } = useNodeManagement();
-  const { removeEdges, screenToFlowCoordinate } = useVueFlow();
-
-  // ... AddNodeList, showContextMenu, and other context menu related functions
   const AddNodeList = (event_cm) => {
-    return AddNodeListFromInitInfos.map(item => ({
+    return getAddNodeList().map(item => ({
       label: item.data.label,
       onClick: () => {
         console.log("add node", item.ntype);
@@ -35,7 +90,7 @@ export function useContextMenu() {
       },
     }));
   };
-  
+
   const showContextMenu = (event_cm) => {
     menuOptions.x = event_cm.event.clientX
     menuOptions.y = event_cm.event.clientY
@@ -44,7 +99,7 @@ export function useContextMenu() {
     let show_rm_node = (event_cm.type === 'node' && !event_cm.node.data.flags.isAttached);
     let show_rm_edge = (event_cm.type === 'edge');
     menuOptions.items = [];
-  
+
     if (show_add_node) {
       menuOptions.items.push({
         label: '添加节点',
@@ -63,11 +118,15 @@ export function useContextMenu() {
         onClick: () => removeEdges([event_cm.edge]),
       });
     }
-  }
-  
-  return {
+  };
+
+  instance = {
     showMenu,
     menuOptions,
-    showContextMenu
-  };
-}
+    showContextMenu,
+    AddNodeList,
+    onClickContextMenuRmNode,
+  }
+  return instance;
+
+};
