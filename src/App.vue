@@ -83,8 +83,8 @@ const {
 
 const {
   isEditing,
-  addEventListeners,
-  removeEventListeners,
+  addKBEventListeners,
+  removeKBEventListeners,
 } = useKeyboardControls()
 
 provide('isEditing', isEditing);
@@ -94,10 +94,10 @@ watch(isEditing, (new_val) => {
 onMounted(async () => {
   await initAllNodeInfos();
   buildNestedNodeGraph();
-  addEventListeners();
+  addKBEventListeners();
 })
 onBeforeUnmount(() => {
-  removeEventListeners();
+  removeKBEventListeners();
 })
 
 </script>

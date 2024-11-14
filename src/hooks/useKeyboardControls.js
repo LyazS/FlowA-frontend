@@ -86,12 +86,12 @@ export const useKeyboardControls = () => {
     }
   }
 
-  const addEventListeners = () => {
+  const addKBEventListeners = () => {
     document.addEventListener('keydown', handleKeyDown);
     document.addEventListener('keyup', handleKeyUp);
     document.addEventListener('mousemove', handleMouseMove);
   }
-  const removeEventListeners = () => {
+  const removeKBEventListeners = () => {
     document.removeEventListener('keydown', handleKeyDown);
     document.removeEventListener('keyup', handleKeyUp);
     document.removeEventListener('mousemove', handleMouseMove);
@@ -99,8 +99,8 @@ export const useKeyboardControls = () => {
 
   instance = {
     isEditing,
-    addEventListeners,
-    removeEventListeners,
+    addKBEventListeners,
+    removeKBEventListeners,
   };
   return instance;
 };
