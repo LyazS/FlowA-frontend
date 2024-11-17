@@ -10,9 +10,10 @@ import {
     NFlex,
 } from 'naive-ui';
 import { Panel, useVueFlow } from '@vue-flow/core'
-// import { onSave, onRestore } from '../../utils/tools.js'
+import { useVFlowManagement } from '@/hooks/useVFlowManagement';
 const message = useMessage();
 
+const { buildNestedNodeGraph } = useVFlowManagement()
 const testclick = () => {
     message.success('test')
 }
@@ -27,6 +28,7 @@ function onRestore(flowKey) {
 
     if (flow) {
         fromObject(flow);
+        buildNestedNodeGraph();
     }
 }
 </script>
