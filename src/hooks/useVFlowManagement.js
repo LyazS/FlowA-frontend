@@ -110,7 +110,7 @@ export const useVFlowManagement = () => {
         const offset_size = { width: node_init_info.data.size.width + 8, height: node_init_info.data.size.height + 8 };
         const new_node = {
             id: nodeinfo.nid || getUuid(),
-            type: node_init_info.vtype,
+            type: node_init_info.data.vtype,
             data: node_init_info.data,
             style: {
                 width: `${offset_size.width}px`,

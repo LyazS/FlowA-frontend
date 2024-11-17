@@ -33,12 +33,14 @@ function onRestore(flowKey) {
 
 <template>
     <n-flex justify="flex-end">
-        <n-button class="glow-btn" strong tertiary round type="success" @click="onSave('vueflow-store')">保存</n-button>
+        <n-button class="glow-btn" strong tertiary round type="success" @click="onSave('vueflow-store')">自动保存</n-button>
         <n-button class="glow-btn" strong tertiary round type="success"
             @click="onRestore('vueflow-store')">载入</n-button>
         <n-button class="glow-btn" strong tertiary round type="success" @click="testclick">运行</n-button>
         <n-button class="glow-btn" strong tertiary round type="success" @click="testclick">导入</n-button>
         <n-button class="glow-btn" strong tertiary round type="success" @click="testclick">导出</n-button>
+        <n-button class="glow-btn" strong tertiary round type="success" @click="testclick">工具</n-button>
+        <n-button class="glow-btn" strong tertiary round type="success" @click="testclick">检查清单</n-button>
     </n-flex>
 </template>
 <style scoped>

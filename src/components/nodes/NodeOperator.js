@@ -2,9 +2,9 @@ import { clone, cloneDeep } from "lodash";
 import { getUuid } from "../../utils/tools.js"
 const BaseNodeInfo = {
     // 节点元数据 ==========
-    ntype: "#TODO",  // 节点类型
-    vtype: "#TODO",    // 节点使用的vue组件类型
     data: {
+        ntype: "#TODO",  // 节点类型
+        vtype: "#TODO",    // 节点使用的vue组件类型
         size: {
             width: -1,// #TODO
             height: -1,// #TODO
@@ -158,10 +158,10 @@ export const initSize = (_Node, width, height) => {
     _Node.data.size.height = height;
 };
 export const setNodeType = (_BaseNodeInfo, ntype) => {
-    _BaseNodeInfo.ntype = ntype;
+    _BaseNodeInfo.data.ntype = ntype;
 };
 export const setVueType = (_BaseNodeInfo, vtype) => {
-    _BaseNodeInfo.vtype = vtype;
+    _BaseNodeInfo.data.vtype = vtype;
 };
 export const setLabel = (_BaseNodeInfo, label) => {
     _BaseNodeInfo.data.label = label;

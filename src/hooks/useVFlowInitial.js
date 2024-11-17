@@ -18,10 +18,10 @@ export const useVFlowInitial = () => {
     const promises = Object.keys(modules).map(async (key) => {
       const module = await modules[key]();
       const initInfo = module.initInfo;
-      AllNodeInitInfos.value[initInfo.ntype] = initInfo;
-      AllNodeCounters.value[initInfo.ntype] = 0;
-      if (!AllVFNodeTypes.hasOwnProperty(initInfo.vtype)) {
-        AllVFNodeTypes[initInfo.vtype] = markRaw(module.NodeVue);
+      AllNodeInitInfos.value[initInfo.data.ntype] = initInfo;
+      AllNodeCounters.value[initInfo.data.ntype] = 0;
+      if (!AllVFNodeTypes.hasOwnProperty(initInfo.data.vtype)) {
+        AllVFNodeTypes[initInfo.data.vtype] = markRaw(module.NodeVue);
       }
     });
     // 等待所有异步操作完成

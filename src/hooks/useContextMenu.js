@@ -77,9 +77,9 @@ export const useContextMenu = () => {
     return getAddNodeList().map(item => ({
       label: item.data.label,
       onClick: () => {
-        console.log("add node", item.ntype);
+        console.log("add node", item.data.ntype);
         let node_info = {
-          ntype: item.ntype,
+          ntype: item.data.ntype,
           type: 'client',
           ...screenToFlowCoordinate({
             x: event_cm.event.clientX,
