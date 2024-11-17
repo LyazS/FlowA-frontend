@@ -34,7 +34,7 @@ export const useContextMenu = () => {
     screenToFlowCoordinate,
     getViewport,
     setViewport,
-} = useVueFlow();
+  } = useVueFlow();
   const {
     getNestedNodeById,
     buildNestedNodeGraph,

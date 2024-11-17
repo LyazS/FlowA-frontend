@@ -220,7 +220,7 @@ export const useVFlowManagement = () => {
         }
     };
 
-    instance={
+    instance = {
         getNestedNodeById,
         buildNestedNodeGraph,
         recursiveUpdateNodeSize,
