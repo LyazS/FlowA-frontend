@@ -11,9 +11,11 @@ import {
 } from 'naive-ui';
 import { Panel, useVueFlow } from '@vue-flow/core'
 import { useVFlowManagement } from '@/hooks/useVFlowManagement';
+import { useVFlowInitial } from '@/hooks/useVFlowInitial'
 const message = useMessage();
 
 const { buildNestedNodeGraph } = useVFlowManagement()
+const { reBuildCounter } = useVFlowInitial()
 const testclick = () => {
     message.success('test')
 }
@@ -29,6 +31,7 @@ function onRestore(flowKey) {
     if (flow) {
         fromObject(flow);
         buildNestedNodeGraph();
+        reBuildCounter();
     }
 }
 </script>

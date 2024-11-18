@@ -1,5 +1,6 @@
 import { ref, reactive, markRaw } from "vue";
-import { cloneDeep } from 'lodash';
+import { cloneDeep } from "lodash";
+import { useVueFlow } from "@vue-flow/core";
 
 // 单例模式
 let instance = null;
@@ -7,14 +8,15 @@ let instance = null;
 export const useVFlowInitial = () => {
   if (instance) return instance;
 
+  const { getNodes, addNodes, findNode, removeNodes, addEdges } = useVueFlow();
+
   const AllNodeInitInfos = ref([]);
   const AllNodeCounters = ref([]);
   const AllVFNodeTypes = reactive({});
   const AddNodeListFromInitInfos = ref([]);
 
   const initAllNodeInfos = async () => {
-
-    const modules = import.meta.glob('../components/nodes/all_node_js/**.js');
+    const modules = import.meta.glob("../components/nodes/all_node_js/**.js");
     const promises = Object.keys(modules).map(async (key) => {
       const module = await modules[key]();
       const initInfo = module.initInfo;
@@ -34,14 +36,16 @@ export const useVFlowInitial = () => {
     AddNodeListFromInitInfos.value = Object.entries(AllNodeInitInfos.value)
       .sort((a, b) => a[0].localeCompare(b[0])) // 按key排序
       .map(([key, item]) => item)
-      .filter(item => !item.data.flags.isAttached);
-    console.log("AddNodeListFromInitInfos.value", AddNodeListFromInitInfos.value);
+      .filter((item) => !item.data.flags.isAttached);
+    console.log(
+      "AddNodeListFromInitInfos.value",
+      AddNodeListFromInitInfos.value
+    );
   };
 
   const getAddNodeList = () => {
     return AddNodeListFromInitInfos.value;
   };
-
 
   const cloneVFNodeInitInfo = (ntype) => {
     return cloneDeep(AllNodeInitInfos.value[ntype]);
@@ -55,6 +59,14 @@ export const useVFlowInitial = () => {
     AllNodeCounters.value[ntype] += value;
   };
 
+  const reBuildCounter = () => {
+    AllNodeCounters.value.forEach((item, index) => {
+      AllNodeCounters.value[index] = 0;
+    });
+    getNodes.value.forEach((node) => {
+      AllNodeCounters.value[node.data.ntype]++;
+    });
+  };
 
   instance = {
     AllVFNodeTypes,
@@ -63,8 +75,8 @@ export const useVFlowInitial = () => {
     cloneVFNodeInitInfo,
     getVFNodeCount,
     increaseVFNodeCount,
+    reBuildCounter,
   };
 
   return instance;
-
 };
