@@ -8,7 +8,7 @@ const { toObject, fromObject } = useVueFlow();
 const { userUuid } = useVFlowInitial();
 async function postData(url, data) {
   try {
-    const response = await axios.post(url, data);
+    const response = await axios.post(`${import.meta.env.VITE_API_URL}/${url}`, data);
     return {
       success: true,
       data: response.data,
@@ -40,5 +40,5 @@ export const runflow = async () => {
     task_uuid,
     user_uuid: userUuid,
   };
-  return await postData("/api/run_flow", data);
+  return await postData(`api/validate`, data);
 };
