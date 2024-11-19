@@ -34,7 +34,7 @@ const props = defineProps({
 })
 const isShowCodeEditor = ref(false);
 const CodeEditorPath = ref([]);
-const CodeEditorLangType = ref('Code<Python>');
+const CodeEditorLangType = ref('CodePython');
 provide('isShowCodeEditor', isShowCodeEditor);
 provide('CodeEditorPath', CodeEditorPath);
 provide('CodeEditorLangType', CodeEditorLangType);

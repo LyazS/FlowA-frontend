@@ -81,7 +81,7 @@ function updateResultType(rid, value) {
     const thedata = thenode.data[dpath].byId[did];
     if (thisnode.value.data.results.byId[rid]) {
         thisnode.value.data.results.byId[rid].data = value;
-        thisnode.value.data.results.byId[rid].type = `Array<${thedata.type}>`;
+        thisnode.value.data.results.byId[rid].type = `Array${thedata.type}`;
     }
 }
 const PYTHON_KEYWORDS = [

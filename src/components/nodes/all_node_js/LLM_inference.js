@@ -45,7 +45,7 @@ addPayload(_initInfo, { label: "输入变量", type: "LLMInput", key: "inputvars
     { key: "text", type: "value", value: "good assistant" },
     { key: "ask", type: "value", value: "hi" },
 ], uitype: "llminputs" });
-addPayload(_initInfo, { label: "LLM Prompt", type: "Array<Prompt>", key: "prompts", data: [
+addPayload(_initInfo, { label: "LLM Prompt", type: "ArrayPrompt", key: "prompts", data: [
     { role: "system", content: "You are a {{text}}." },
     { role: "user", content: "{{ask}}" },
 ], uitype: "llmprompts" });

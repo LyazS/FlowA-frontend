@@ -36,8 +36,10 @@ function onRestore(flowKey) {
     }
 }
 const click2runflow = async () => {
-    await runflow();
+    const vflow = toObject();
     message.success('已发送运行')
+    const res = await runflow(vflow);
+    console.log(res);
 }
 </script>
 

@@ -32,13 +32,12 @@ async function postData(url, data) {
     };
   }
 }
-export const runflow = async () => {
-  const vflow = toObject();
+export const runflow = async (vflow) => {
   const task_uuid = getUuid();
   const data = {
     vflow: vflow,
     task_uuid,
     user_uuid: userUuid,
   };
-  return await postData(`api/validate`, data);
+  return await postData(`api/run`, data);
 };

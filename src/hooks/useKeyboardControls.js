@@ -1,39 +1,39 @@
 // hooks/useKeyboardControls.js
 import { ref, provide, watch } from 'vue';
 import { useVueFlow } from '@vue-flow/core';
-const {
-  getNodes,
-  getEdges,
-  getSelectedNodes,
-  addNodes,
-  findNode,
-  removeNodes,
-  onConnect,
-  addEdges,
-  removeEdges,
-  onNodesChange,
-  onEdgesChange,
-  onNodeDragStart,
-  onNodeDrag,
-  onNodeDragStop,
-  onNodeClick,
-  onNodeDoubleClick,
-  onNodeContextMenu,
-  onNodeMouseEnter,
-  onNodeMouseLeave,
-  onNodeMouseMove,
-  onPaneContextMenu,
-  onEdgeContextMenu,
-  screenToFlowCoordinate,
-  getViewport,
-  setViewport,
-} = useVueFlow();
-
 
 // 单例模式
 let instance = null;
 export const useKeyboardControls = () => {
   if (instance) return instance;
+  
+  const {
+    getNodes,
+    getEdges,
+    getSelectedNodes,
+    addNodes,
+    findNode,
+    removeNodes,
+    onConnect,
+    addEdges,
+    removeEdges,
+    onNodesChange,
+    onEdgesChange,
+    onNodeDragStart,
+    onNodeDrag,
+    onNodeDragStop,
+    onNodeClick,
+    onNodeDoubleClick,
+    onNodeContextMenu,
+    onNodeMouseEnter,
+    onNodeMouseLeave,
+    onNodeMouseMove,
+    onPaneContextMenu,
+    onEdgeContextMenu,
+    screenToFlowCoordinate,
+    getViewport,
+    setViewport,
+  } = useVueFlow();
 
   const isEditing = ref(false);
 
