@@ -62,7 +62,7 @@ const testbtn = () => {
             <Panel position="top-right" :style="{ width: 'auto' }">
                 <ctrlpanel :nodeId="nodeId" />
             </Panel>
-            <Panel position="top-right" :style="{ width: '600px' }">
+            <Panel class="nodepanel" position="top-right">
                 <nodepanel v-if="!!nodeId" :nodeId="nodeId" />
             </Panel>
             <AceCodeEditor v-if="!!nodeId" :nodeId="nodeId" :path="CodeEditorPath" :langtype="CodeEditorLangType" />
@@ -70,4 +70,14 @@ const testbtn = () => {
     </n-config-provider>
 </template>
 
-<style scoped></style>
+<style scoped>
+.nodepanel {
+    margin-top: 65px;
+    width: 600px;
+}
+
+.nodepanel:hover {
+    box-shadow: 0 0 20px rgb(138, 203, 236);
+    transition: box-shadow 0.2s ease;
+}
+</style>
