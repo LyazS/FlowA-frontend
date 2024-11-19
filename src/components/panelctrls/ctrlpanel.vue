@@ -9,9 +9,10 @@ import {
     NButton,
     NFlex,
 } from 'naive-ui';
-import { Panel, useVueFlow } from '@vue-flow/core'
+import { useVueFlow } from '@vue-flow/core'
 import { useVFlowManagement } from '@/hooks/useVFlowManagement';
 import { useVFlowInitial } from '@/hooks/useVFlowInitial'
+import { runflow } from '@/services/run_flow'
 const message = useMessage();
 
 const { buildNestedNodeGraph } = useVFlowManagement()
@@ -34,6 +35,10 @@ function onRestore(flowKey) {
         reBuildCounter();
     }
 }
+const click2runflow = async () => {
+    await runflow();
+    message.success('已发送运行')
+}
 </script>
 
 <template>
@@ -41,11 +46,11 @@ function onRestore(flowKey) {
         <n-button class="glow-btn" strong tertiary round type="success" @click="onSave('vueflow-store')">自动保存</n-button>
         <n-button class="glow-btn" strong tertiary round type="success"
             @click="onRestore('vueflow-store')">载入</n-button>
-        <n-button class="glow-btn" strong tertiary round type="success" @click="testclick">运行</n-button>
-        <n-button class="glow-btn" strong tertiary round type="success" @click="testclick">导入</n-button>
+        <n-button class="glow-btn" strong tertiary round type="success" @click="click2runflow">运行</n-button>
+        <!-- <n-button class="glow-btn" strong tertiary round type="success" @click="testclick">导入</n-button>
         <n-button class="glow-btn" strong tertiary round type="success" @click="testclick">导出</n-button>
         <n-button class="glow-btn" strong tertiary round type="success" @click="testclick">工具</n-button>
-        <n-button class="glow-btn" strong tertiary round type="success" @click="testclick">检查清单</n-button>
+        <n-button class="glow-btn" strong tertiary round type="success" @click="testclick">检查清单</n-button> -->
     </n-flex>
 </template>
 <style scoped>
