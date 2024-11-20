@@ -19,7 +19,7 @@ import ctrlpanel from './ctrlpanel.vue';
 import hljs from 'highlight.js/lib/core'
 import python_hljs from 'highlight.js/lib/languages/python'
 import javascript_hljs from 'highlight.js/lib/languages/javascript'
-import { max } from 'lodash';
+
 
 const AceCodeEditor = defineAsyncComponent(() => import('./AceCodeEditor.vue'));
 
@@ -38,7 +38,6 @@ const CodeEditorLangType = ref('CodePython');
 provide('isShowCodeEditor', isShowCodeEditor);
 provide('CodeEditorPath', CodeEditorPath);
 provide('CodeEditorLangType', CodeEditorLangType);
-
 const testbtn = () => {
     console.log('testbtn')
 }

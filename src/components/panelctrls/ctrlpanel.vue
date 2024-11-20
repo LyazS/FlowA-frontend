@@ -12,14 +12,13 @@ import {
 import { useVueFlow } from '@vue-flow/core'
 import { useVFlowManagement } from '@/hooks/useVFlowManagement';
 import { useVFlowInitial } from '@/hooks/useVFlowInitial'
-import { runflow } from '@/services/run_flow'
+import { useFlowAOperation } from '@/services/run_flow'
+const { runflow } = useFlowAOperation();
 const message = useMessage();
 
 const { buildNestedNodeGraph } = useVFlowManagement()
 const { reBuildCounter } = useVFlowInitial()
-const testclick = () => {
-    message.success('test')
-}
+
 const { toObject, fromObject } = useVueFlow()
 
 function onSave(flowKey) {
@@ -35,10 +34,28 @@ function onRestore(flowKey) {
         reBuildCounter();
     }
 }
+const run_loading = ref(false)
 const click2runflow = async () => {
     const vflow = toObject();
-    message.success('已发送运行')
-    const res = await runflow(vflow);
+    const res = await runflow(
+        vflow,
+        () => {
+            run_loading.value = true;
+        },
+        (data) => {
+            run_loading.value = false;
+            if (data.success) {
+                message.success('已发送运行');
+            }
+            else {
+                message.error(`工作流验证失败，请检查`);
+            }
+        },
+        (err) => {
+            run_loading.value = false;
+            message.error(`运行失败: ${err}`)
+        },
+    );
     console.log(res);
 }
 </script>
@@ -48,7 +65,8 @@ const click2runflow = async () => {
         <n-button class="glow-btn" strong tertiary round type="success" @click="onSave('vueflow-store')">自动保存</n-button>
         <n-button class="glow-btn" strong tertiary round type="success"
             @click="onRestore('vueflow-store')">载入</n-button>
-        <n-button class="glow-btn" strong tertiary round type="success" @click="click2runflow">运行</n-button>
+        <n-button class="glow-btn" strong tertiary round type="success" @click="click2runflow"
+            :loading="run_loading">运行</n-button>
         <!-- <n-button class="glow-btn" strong tertiary round type="success" @click="testclick">导入</n-button>
         <n-button class="glow-btn" strong tertiary round type="success" @click="testclick">导出</n-button>
         <n-button class="glow-btn" strong tertiary round type="success" @click="testclick">工具</n-button>

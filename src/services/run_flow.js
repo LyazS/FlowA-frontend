@@ -3,41 +3,36 @@ import { fetchEventSource } from "@microsoft/fetch-event-source";
 import { useVueFlow } from "@vue-flow/core";
 import { useVFlowInitial } from "@/hooks/useVFlowInitial";
 import { getUuid } from "@/utils/tools";
+import { useRequestMethod } from "@/services/useRequestMethod";
 
-const { toObject, fromObject } = useVueFlow();
-const { userUuid } = useVFlowInitial();
-async function postData(url, data) {
-  try {
-    const response = await axios.post(`${import.meta.env.VITE_API_URL}/${url}`, data);
-    return {
-      success: true,
-      data: response.data,
-      error: null,
+let instance = null;
+export const useFlowAOperation = () => {
+  if (instance) return instance;
+  const { toObject, fromObject } = useVueFlow();
+  const { userUuid } = useVFlowInitial();
+  const { postData } = useRequestMethod();
+
+  const runflow = async (
+    vflow,
+    callback_before = null,
+    callback_success = null,
+    callback_error = null
+  ) => {
+    const data = {
+      vflow: vflow,
+      uid: userUuid,
     };
-  } catch (error) {
-    let errorMsg = "";
-
-    if (error.response) {
-      errorMsg = `响应状态码: ${error.response.status}, 响应数据: ${error.response.data}`;
-    } else if (error.request) {
-      errorMsg = "没有收到响应";
-    } else {
-      errorMsg = `错误信息: ${error.message}`;
-    }
-
-    return {
-      success: false,
-      data: null,
-      error: errorMsg,
-    };
-  }
-}
-export const runflow = async (vflow) => {
-  const task_uuid = getUuid();
-  const data = {
-    vflow: vflow,
-    task_uuid,
-    user_uuid: userUuid,
+    return await postData(
+      `api/run`,
+      data,
+      callback_before,
+      callback_success,
+      callback_error
+    );
   };
-  return await postData(`api/run`, data);
+
+  instance = {
+    runflow,
+  };
+  return instance;
 };
