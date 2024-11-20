@@ -3,7 +3,7 @@
     zoom-activation-key-code="Space" :nodeTypes="AllVFNodeTypes" fit-view-on-init :max-zoom="4" :min-zoom="0.1"
     :select-nodes-on-drag="false" elevate-edges-on-select>
     <Background />
-    <miniMap />
+    <!-- <miniMap /> -->
     <miniMapCtrl />
     <nuipanel :nodeId="lastClickedNodeId" />
 
@@ -26,7 +26,7 @@
   width: 100%;
   margin: 0;
   padding: 0;
-  background: rgb(16, 16, 20);
+  background: rgb(0, 0, 0);
 }
 </style>
 
