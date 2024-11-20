@@ -39,21 +39,23 @@ const click2runflow = async () => {
     const vflow = toObject();
     const res = await runflow(
         vflow,
-        () => {
-            run_loading.value = true;
-        },
-        (data) => {
-            run_loading.value = false;
-            if (data.success) {
-                message.success('已发送运行');
-            }
-            else {
-                message.error(`工作流验证失败，请检查`);
-            }
-        },
-        (err) => {
-            run_loading.value = false;
-            message.error(`运行失败: ${err}`)
+        {
+            before: () => {
+                run_loading.value = true;
+            },
+            success: (data) => {
+                run_loading.value = false;
+                if (data.success) {
+                    message.success('已发送运行');
+                }
+                else {
+                    message.error(`工作流验证失败，请检查`);
+                }
+            },
+            error: (err) => {
+                run_loading.value = false;
+                message.error(`运行失败: ${err}`)
+            },
         },
     );
     console.log(res);

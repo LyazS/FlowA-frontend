@@ -14,21 +14,13 @@ export const useFlowAOperation = () => {
 
   const runflow = async (
     vflow,
-    callback_before = null,
-    callback_success = null,
-    callback_error = null
+    callback = null,
   ) => {
     const data = {
       vflow: vflow,
       uid: userUuid,
     };
-    return await postData(
-      `api/run`,
-      data,
-      callback_before,
-      callback_success,
-      callback_error
-    );
+    return await postData(`api/run`, data, callback);
   };
 
   instance = {
