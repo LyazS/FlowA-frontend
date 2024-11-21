@@ -23,6 +23,7 @@ const AttachedAttribute = {
     attaching: {
         type: "",// input/output/callbackFunc/callbackUser
         pos: "",// top|center|bottom-left|center|right
+        label: "",// INPUT/OUTPUT/CB-FUNC/CB-USE/NEXT...
     },
 };
 const NestedAttribute = {
@@ -42,6 +43,7 @@ const NestedAttribute = {
             bottom: 25,
             left: 17,
             right: 17,
+            gap: 20,
         },// 嵌套固定节点边距
         attached_nodes: {
             // <atype>: { ntype: "attached_node", nid: "", apos: "top-left" },// top|center|bottom-left|center|right
@@ -167,9 +169,14 @@ export const setLabel = (_BaseNodeInfo, label) => {
     _BaseNodeInfo.data.label = label;
     _BaseNodeInfo.data.placeholderlabel = label;
 };
-export const addAttachedNode = (_BaseNodeInfo, ntype, atype, apos) => {
-    _BaseNodeInfo.data.nesting.attached_nodes[atype] = { ntype, nid: null, apos };
+export const addAttachedNode = (_BaseNodeInfo, ntype) => {
+    _BaseNodeInfo.data.nesting.attached_nodes[ntype] = { nid: null };
 };
+export const setAttaching = (_BaseNodeInfo, type, pos, label) => {
+    _BaseNodeInfo.data.attaching.type = type;
+    _BaseNodeInfo.data.attaching.pos = pos;
+    _BaseNodeInfo.data.attaching.label = label;
+}
 
 // 节点数据操作函数 ==========
 export const setOutputsUIType = (_Node, uitype) => {

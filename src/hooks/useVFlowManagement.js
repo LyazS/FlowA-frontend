@@ -40,6 +40,11 @@ export const useVFlowManagement = () => {
         })
     }
 
+    function getNumberWithPrefix(prefix, str) {
+        const regex = new RegExp(`^${prefix}(\\d+)$`);
+        const match = str.match(regex);
+        return match ? parseInt(match[1], 10) : 0;
+    }
     const recursiveUpdateNodeSize = (nodeId) => {
         let vf_node = findNode(nodeId);
         let nested_node = getNestedNodeById(nodeId);
@@ -73,8 +78,9 @@ export const useVFlowManagement = () => {
             // 固定位置的子节点
             if (vf_node_child.data.flags.isAttached) {
                 let [yPart, xPart] = vf_node_child.data.attaching.pos.split('-');
-                if (yPart == "bottom") {
-                    vf_node_child.position.y = vf_node.data.size.height - vf_node.data.nesting.attached_pad.bottom;
+                if (yPart.startsWith("bottom")) {
+                    const yOffset = getNumberWithPrefix("bottom", yPart) * vf_node.data.nesting.attached_pad.gap;
+                    vf_node_child.position.y = vf_node.data.size.height - vf_node.data.nesting.attached_pad.bottom - yOffset;
                 }
                 else if (yPart == "center") {
                     vf_node_child.position.y = vf_node.data.size.height / 2 - vf_node.data.nesting.attached_pad.bottom;
@@ -128,12 +134,14 @@ export const useVFlowManagement = () => {
         // 设置全局position
         let new_node_position = { x: 0, y: 0 };
         if (nodeinfo.type == 'attached' && !!parentNode) {
-            const [yPart, xPart] = nodeinfo.position.split('-');
-            if (yPart == "top") {
-                new_node_position.y = parentNode.position.y + parentNode.data.nesting.attached_pad.top;
+            const [yPart, xPart] = node_init_info.data.attaching.pos.split('-');
+            if (yPart.startsWith("top")) {
+                const yOffset = getNumberWithPrefix("top", yPart) * parentNode.data.nesting.attached_pad.gap;
+                new_node_position.y = parentNode.position.y + parentNode.data.nesting.attached_pad.top + yOffset;
             }
-            else if (yPart == "bottom") {
-                new_node_position.y = parentNode.position.y + parentNode.data.size.height - parentNode.data.nesting.attached_pad.bottom;
+            else if (yPart.startsWith("bottom")) {
+                const yOffset = getNumberWithPrefix("bottom", yPart) * parentNode.data.nesting.attached_pad.gap;
+                new_node_position.y = parentNode.position.y + parentNode.data.size.height - parentNode.data.nesting.attached_pad.bottom - yOffset;
             }
             else if (yPart == "center") {
                 new_node_position.y = parentNode.position.y + parentNode.data.size.height / 2 - parentNode.data.nesting.attached_pad.bottom;
@@ -147,9 +155,9 @@ export const useVFlowManagement = () => {
             else if (xPart == "center") {
                 new_node_position.x = parentNode.position.x + parentNode.data.size.width / 2 - parentNode.data.nesting.attached_pad.right;
             }
-            new_node.data.flags.isAttached = true;
-            new_node.data.attaching.pos = nodeinfo.position;
-            new_node.data.attaching.type = nodeinfo.attached_type;
+            // new_node.data.flags.isAttached = true;
+            // new_node.data.attaching.pos = nodeinfo.position;
+            // new_node.data.attaching.type = nodeinfo.attached_type;
             new_node.draggable = false;
             new_node.selectable = false;
             new_node_position.x -= offset_size.width / 2;
@@ -177,16 +185,14 @@ export const useVFlowManagement = () => {
         addNodes(new_node);
         if (node_init_info.data.nesting?.attached_nodes) {
             console.log(`add ${Object.keys(node_init_info.data.nesting.attached_nodes).length} fixed nested nodes`);
-            for (const [atype, anode] of Object.entries(node_init_info.data.nesting.attached_nodes)) {
+            for (const antype of Object.keys(node_init_info.data.nesting.attached_nodes)) {
                 const anid = getUuid();
                 recursiveAddNodeToVFlow(new_node.id, {
-                    ntype: anode.ntype,
-                    type: "attached",
-                    position: anode.apos,
-                    attached_type: atype,
+                    ntype: antype,
                     nid: anid,
+                    type: "attached",
                 });
-                node_init_info.data.nesting.attached_nodes[atype].nid = anid;
+                node_init_info.data.nesting.attached_nodes[antype].nid = anid;
             }
         }
     };

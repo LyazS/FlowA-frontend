@@ -12,18 +12,31 @@ import { ref, computed, onMounted, onBeforeUnmount, onUnmounted, watch } from 'v
 import { Position, Handle } from '@vue-flow/core'
 const props = defineProps(['id', 'data']);
 
-const showOutputHandle = !!(props.data.attaching.type === 'input');
-const showCallbackUserHandle = !!(props.data.attaching.type === 'callbackFunc');
-const showCallbackFuncHandle = !!(props.data.attaching.type === 'callbackUser');
-const showInputHandle = !!(props.data.attaching.type === 'output');
-
 const [yPart, xPart] = props.data.attaching.pos.split('-');
+
 const posLR = xPart === 'left' ? Position.Right : Position.Left;
+const node_text = props.data.attaching.label;
 const handle_style = xPart === 'left' ? { right: '2px' } : { left: '2px' };
 const justCont = xPart === 'left' ? 'flex-start' : 'flex-end';
-const node_text = showOutputHandle ? 'INPUT' : showCallbackUserHandle ? 'CB-FUN' : showCallbackFuncHandle ? 'USE-CB' : showInputHandle ? 'OUTPUT' : "";
-const handle_type = (showOutputHandle || showCallbackUserHandle) ? 'source' : (showCallbackFuncHandle || showInputHandle) ? 'target' : "";
-const handle_id = showOutputHandle ? 'output' : showCallbackUserHandle ? 'callbackUser' : showCallbackFuncHandle ? 'callbackFunc' : showInputHandle ? 'input' : "";
+
+let handle_type = null;
+let handle_id = null;
+if (props.data.attaching.type === 'output') {
+    handle_type = 'target';
+    handle_id = 'input';
+}
+else if (props.data.attaching.type === 'input') {
+    handle_type = 'source';
+    handle_id = 'output';
+}
+else if (props.data.attaching.type === 'callbackFunc') {
+    handle_type = 'source';
+    handle_id = 'callbackUser';
+}
+else if (props.data.attaching.type === 'callbackUser') {
+    handle_type = 'target';
+    handle_id = 'callbackFunc';
+}
 </script>
 
 <style>
@@ -32,7 +45,6 @@ const handle_id = showOutputHandle ? 'output' : showCallbackUserHandle ? 'callba
     border: 1px solid rgb(52, 52, 56);
     padding: 3px;
     border-radius: 6px;
-
 }
 
 .vue-flow__node-attached_node:hover {
@@ -44,7 +56,6 @@ const handle_id = showOutputHandle ? 'output' : showCallbackUserHandle ? 'callba
     width: 100%;
     height: 100%;
     position: relative;
-
 }
 
 .corner-text {

@@ -40,12 +40,13 @@ addHandle(_initInfo, "outputs", "output");
 addHandle(_initInfo, "callbackUsers", "callbackUser");
 addHandle(_initInfo, "callbackFuncs", "callbackFunc");
 
-addAttachedNode(_initInfo, "attached_node_input", "input", "top-left");
-addAttachedNode(_initInfo, "attached_node_callbackUser", "callbackUser", "top-right");
-addAttachedNode(_initInfo, "attached_node_output", "output", "bottom-right");
-addAttachedNode(_initInfo, "attached_node_callbackFunc", "callbackFunc", "bottom-left");
+addAttachedNode(_initInfo, "attached_node_input");
+addAttachedNode(_initInfo, "attached_node_callbackUser");
+addAttachedNode(_initInfo, "attached_node_output");
+addAttachedNode(_initInfo, "attached_node_next");
+addAttachedNode(_initInfo, "attached_node_callbackFunc");
 
-addConnection(_initInfo, "self", "self", { type: "FromAttached", atype: "output", useid: [] });
+addConnection(_initInfo, "self", "self", { type: "FromAttached", atype: "attached_node_output", useid: [] });
 
 let pid = addPayload(_initInfo, { label: "迭代索引", type: "IterIndex", key: "iter_index", data: null, uitype: "texttag" });
 addConnection(_initInfo, "attach", "attach", { type: "FromInner", path: ["payloads", pid], useid: [] });

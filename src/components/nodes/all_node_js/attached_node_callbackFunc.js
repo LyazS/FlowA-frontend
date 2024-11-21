@@ -10,6 +10,7 @@ import {
     setNodeType,
     setVueType,
     setLabel,
+    setAttaching,
     addAttachedNode,
     addHandle,
     addConnection,
@@ -29,6 +30,7 @@ initAttachedAttribute(_initInfo);
 setNodeType(_initInfo, "attached_node_callbackFunc");
 setVueType(_initInfo, "attached_node");
 setLabel(_initInfo, "附属节点");
+setAttaching(_initInfo, "callbackFunc", "bottom-left", "CB-FUN");
 initSize(_initInfo, 20, 6);
 
 initConnectionsAttribute(_initInfo);

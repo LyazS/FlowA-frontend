@@ -94,11 +94,11 @@ const findVarFromIO = (nid, hid, findtype) => {
             // 如果是输出节点，则搜索它的自身可用变量
             result.push(...recursiveFindVariables(
                 thenode.data.nesting.attached_nodes[c_data.atype].nid,
-                c_data.atype === 'output',
+                c_data.atype === 'attached_node_output',
                 false,
                 false,
                 [],
-                c_data.atype === 'intput',
+                c_data.atype === 'attached_node_input',
                 [],
             ));
         }
