@@ -118,7 +118,7 @@ const RunningAttribute = {
 }
 const StateAttribute = {
     state: {              // 节点状态
-        isProcessing: false,
+        status: 'Default',
         error: null,
         lastUpdated: null
     },

@@ -46,7 +46,7 @@
             </div>
         </template>
 
-        <div class="center-text"
+        <div class="center-text" @click="testclick"
             :style="{ top: `${center_text_pos.top}px`, transform: `translate(-50%, ${center_text_pos.trfY}%)` }">
             {{ data.label }}
         </div>
@@ -58,6 +58,7 @@ import { ref, computed, onMounted, onBeforeUnmount, onUnmounted, watch } from 'v
 import { Position, Handle, useVueFlow } from '@vue-flow/core'
 const { findNode } = useVueFlow();
 const props = defineProps(['id', 'data'])
+const thisnode = findNode(props.id);
 
 const handle_h_pad = 1;
 const handle_h_gap = 8;
@@ -123,15 +124,56 @@ onMounted(() => {
     if (!props.data.flags.isNested) {
         watch(() => [max_handles_top.value, max_handles_bottom.value], (newValues) => {
             const [newtop, newbottom] = newValues;
-            const node = findNode(props.id);
             const node_ht = 30 + (newtop + newbottom) * handle_h_gap;
-            node.style.height = `${node_ht}px`;
-            node.data.size.height = node_ht;
+            thisnode.style.height = `${node_ht}px`;
+            thisnode.data.size.height = node_ht;
         }, { immediate: true })
     }
+    else { }
 });
+const testclick = () => {
+    if (thisnode.data.state.status === 'Default') {
+        thisnode.data.state.status = 'Error';
+        thisnode.class = 'node-status-error';
+    }
+    else {
+        thisnode.data.state.status = 'Default';
+        thisnode.class = 'node-status-default';
+    }
+}
 </script>
 
+<style>
+.node-status-default {}
+
+.node-status-success {}
+
+.node-status-pending {}
+
+.node-status-running {}
+
+.node-status-canceled {}
+
+.node-status-error {
+    background: linear-gradient(45deg, #f8312fd2 25%, transparent 25%, transparent 50%, #f8312fd2 50%, #f8312fd2 75%, transparent 75%, transparent);
+    background-size: 20px 20px;
+    animation: wave 1s linear infinite;
+}
+
+.node-status-error.selected {
+    border: 2px solid #f8312f;
+}
+
+@keyframes wave {
+    0% {
+        background-position: 0 0;
+    }
+
+    100% {
+        background-position: 20px 0;
+    }
+}
+</style>
 <style scoped>
 .layout-container {
     width: 100%;
