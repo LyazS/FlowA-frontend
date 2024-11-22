@@ -50,11 +50,15 @@
             :style="{ top: `${center_text_pos.top}px`, transform: `translate(-50%, ${center_text_pos.trfY}%)` }">
             {{ data.label }}
         </div>
+        <!-- 隐藏用于测量的元素 -->
+        <div ref="hiddenText" class="center-text hidden">
+            {{ data.label }}
+        </div>
     </div>
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onBeforeUnmount, onUnmounted, watch } from 'vue';
+import { ref, computed, onMounted, nextTick, onBeforeUnmount, onUnmounted, watch } from 'vue';
 import { Position, Handle, useVueFlow } from '@vue-flow/core'
 const { findNode } = useVueFlow();
 const props = defineProps(['id', 'data'])
@@ -63,6 +67,7 @@ const thisnode = findNode(props.id);
 const handle_h_pad = 1;
 const handle_h_gap = 8;
 const handle_text_edge_pad = 6;
+const label_gap = 15;
 
 const inputHandles = computed(() => {
     return Object.entries(props.data.connections.inputs)
@@ -119,6 +124,7 @@ const center_text_pos = computed(() => {
     else
         return { top: handle_h_pad + max_handles_top.value * handle_h_gap + 10, trfY: -50 };
 });
+const hiddenText = ref(null); // 隐藏测量元素的引用
 
 onMounted(() => {
     if (!props.data.flags.isNested) {
@@ -128,6 +134,17 @@ onMounted(() => {
             thisnode.style.height = `${node_ht}px`;
             thisnode.data.size.height = node_ht;
         }, { immediate: true })
+        watch(() => props.data.label, async (newLabel) => {
+            let textWd = 0;
+            if (hiddenText.value && newLabel !== '') {
+                textWd = hiddenText.value.offsetWidth;
+                const node_wd = textWd + label_gap * 2;
+                thisnode.style.width = `${node_wd}px`;
+                thisnode.data.size.width = node_wd;
+                // console.log(node_wd, newLabel);
+            }
+            await nextTick();
+        }, { immediate: true })
     }
     else { }
 });
@@ -136,17 +153,75 @@ const testclick = () => {
         thisnode.data.state.status = 'Error';
         thisnode.class = 'node-status-error';
     }
-    else {
+    else if (thisnode.data.state.status === 'Success') {
         thisnode.data.state.status = 'Default';
         thisnode.class = 'node-status-default';
+    }
+    else {
+        thisnode.data.state.status = 'Success';
+        thisnode.class = 'node-status-success';
     }
 }
 </script>
 
 <style>
-.node-status-default {}
+.node-status-default {
+    --c: #2196F3;
+    --w1: radial-gradient(100% 57% at top, #0000 100%, var(--c) 100.5%) no-repeat;
+    --w2: radial-gradient(100% 57% at bottom, var(--c) 100%, #0000 100.5%) no-repeat;
+    background: var(--w1), var(--w2), var(--w1), var(--w2);
+    background-position-x: -200%, -100%, 0%, 100%;
+    background-position-y: 100%;
+    background-size: 50.5% 100%;
+    animation: m 1s infinite linear;
+}
 
-.node-status-success {}
+@keyframes m {
+    0% {
+        background-position-x: -200%, -100%, 0%, 100%
+    }
+
+    100% {
+        background-position-x: 0%, 100%, 200%, 300%
+    }
+}
+
+/* .node-status-default {} */
+
+.node-status-success {
+    background: linear-gradient(45deg,
+            #004d40,
+            #00897b,
+            #00bfa5,
+            #00897b,
+            #004d40);
+    background-size: 300% 300%;
+    animation: emeraldWave 8s ease infinite;
+    box-shadow:
+        0 0 10px rgba(0, 191, 165, 0.3),
+        0 0 20px rgba(0, 191, 165, 0.2),
+        inset 0 0 30px rgba(29, 233, 182, 0.2);
+    overflow: hidden
+}
+
+.node-status-success::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 50%;
+    height: 100%;
+    background: linear-gradient(to right,
+            transparent,
+            rgba(255, 255, 255, 0.1),
+            transparent);
+    transform: skewX(-25deg);
+    animation: shine 4s infinite;
+}
+
+.node-status-success.selected {
+    border: 2px solid #00bfa5;
+}
 
 .node-status-pending {}
 
@@ -157,7 +232,7 @@ const testclick = () => {
 .node-status-error {
     background: linear-gradient(45deg, #f8312fd2 25%, transparent 25%, transparent 50%, #f8312fd2 50%, #f8312fd2 75%, transparent 75%, transparent);
     background-size: 20px 20px;
-    animation: wave 1s linear infinite;
+    animation: wave 6s linear infinite;
 }
 
 .node-status-error.selected {
@@ -173,6 +248,31 @@ const testclick = () => {
         background-position: 20px 0;
     }
 }
+
+@keyframes emeraldWave {
+    0% {
+        background-position: 0% 50%;
+    }
+
+    50% {
+        background-position: 100% 50%;
+    }
+
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+@keyframes shine {
+    0% {
+        left: -100%;
+    }
+
+    50%,
+    100% {
+        left: 150%;
+    }
+}
 </style>
 <style scoped>
 .layout-container {
@@ -186,7 +286,7 @@ const testclick = () => {
     text-transform: uppercase;
     font-size: 4px;
     color: white;
-    font-family: 'JetBrains Mono', 'Source Code Pro', 'Consolas', 'Courier New', monospace;
+    font-family: var(--font-mono);
     letter-spacing: 0.1px;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
@@ -199,12 +299,19 @@ const testclick = () => {
 .center-text {
     font-size: 12px;
     color: white;
-    font-family: 'JetBrains Mono', 'Source Code Pro', 'Consolas', 'Courier New', monospace;
     letter-spacing: 0.1px;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     position: absolute;
     text-wrap: nowrap;
     left: 50%;
+}
+
+/* 隐藏用于测量的文字样式 */
+.hidden {
+    visibility: hidden;
+    position: absolute;
+    white-space: nowrap;
+    pointer-events: none;
 }
 </style>
