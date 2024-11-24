@@ -135,37 +135,92 @@ onMounted(() => {
             thisnode.data.size.height = node_ht;
         }, { immediate: true })
         watch(() => props.data.label, async (newLabel) => {
-            let textWd = 0;
             if (hiddenText.value && newLabel !== '') {
-                textWd = hiddenText.value.offsetWidth;
-                const node_wd = textWd + label_gap * 2;
+                const node_wd = hiddenText.value.offsetWidth + label_gap * 2;
                 thisnode.style.width = `${node_wd}px`;
                 thisnode.data.size.width = node_wd;
                 // console.log(node_wd, newLabel);
             }
             await nextTick();
         }, { immediate: true })
+        watch(() => thisnode.data.state.status, async (newStatus) => {
+            if (newStatus === 'Default') {
+                thisnode.class = 'node-status-default';
+            }
+            else if (newStatus === 'Pending') {
+                thisnode.class = 'node-status-pending';
+            }
+            else if (newStatus === 'Running') {
+                thisnode.class = 'node-status-running';
+            }
+            else if (newStatus === 'Success') {
+                thisnode.class = 'node-status-success';
+            }
+            else if (newStatus === 'Canceled') {
+                thisnode.class = 'node-status-canceled';
+            }
+            else if (newStatus === 'Error') {
+                thisnode.class = 'node-status-error';
+            }
+        }, { immediate: true })
+
     }
     else { }
 });
 const testclick = () => {
     if (thisnode.data.state.status === 'Default') {
-        thisnode.data.state.status = 'Error';
-        thisnode.class = 'node-status-error';
+        thisnode.data.state.status = 'Pending';
+    }
+    else if (thisnode.data.state.status === 'Pending') {
+        thisnode.data.state.status = 'Running';
+    }
+    else if (thisnode.data.state.status === 'Running') {
+        thisnode.data.state.status = 'Success';
     }
     else if (thisnode.data.state.status === 'Success') {
-        thisnode.data.state.status = 'Default';
-        thisnode.class = 'node-status-default';
+        thisnode.data.state.status = 'Canceled';
     }
-    else {
-        thisnode.data.state.status = 'Success';
-        thisnode.class = 'node-status-success';
+    else if (thisnode.data.state.status === 'Canceled') {
+        thisnode.data.state.status = 'Error';
+    }
+    else if (thisnode.data.state.status === 'Error') {
+        thisnode.data.state.status = 'Default';
     }
 }
 </script>
 
 <style>
-.node-status-default {
+.node-status-default,
+.node-status-pending,
+.node-status-running,
+.node-status-success,
+.node-status-canceled,
+.node-status-error {
+    overflow: hidden;
+}
+
+.node-status-pending {
+    background: linear-gradient(45deg,
+            #2c3e50,
+            #546e7a,
+            #78909c,
+            #546e7a,
+            #2c3e50
+        );
+    background-size: 300% 300%;
+    animation: emeraldWave 8s ease infinite;
+}
+
+.node-status-pending.selected,
+.node-status-pending:hover {
+    --color: #78909c;
+    border: 2px solid var(--color);
+    box-shadow: 0 0 10px var(--color),
+        inset 0 0 3px 1px var(--color);
+    transition: box-shadow 0.2s ease, border 0.2s ease;
+}
+
+.node-status-running {
     --c: #2196F3;
     --w1: radial-gradient(100% 57% at top, #0000 100%, var(--c) 100.5%) no-repeat;
     --w2: radial-gradient(100% 57% at bottom, var(--c) 100%, #0000 100.5%) no-repeat;
@@ -173,10 +228,10 @@ const testclick = () => {
     background-position-x: -200%, -100%, 0%, 100%;
     background-position-y: 100%;
     background-size: 50.5% 100%;
-    animation: m 1s infinite linear;
+    animation: wavewater 1s infinite linear;
 }
 
-@keyframes m {
+@keyframes wavewater {
     0% {
         background-position-x: -200%, -100%, 0%, 100%
     }
@@ -186,7 +241,14 @@ const testclick = () => {
     }
 }
 
-/* .node-status-default {} */
+.node-status-running.selected,
+.node-status-running:hover {
+    --color: #2196F3d2;
+    border: 2px solid var(--color);
+    box-shadow: 0 0 10px var(--color),
+        inset 0 0 3px 1px var(--color);
+    transition: box-shadow 0.2s ease, border 0.2s ease;
+}
 
 .node-status-success {
     background: linear-gradient(45deg,
@@ -197,80 +259,96 @@ const testclick = () => {
             #004d40);
     background-size: 300% 300%;
     animation: emeraldWave 8s ease infinite;
-    box-shadow:
-        0 0 10px rgba(0, 191, 165, 0.3),
-        0 0 20px rgba(0, 191, 165, 0.2),
-        inset 0 0 30px rgba(29, 233, 182, 0.2);
-    overflow: hidden
 }
 
-.node-status-success::after {
+@keyframes emeraldWave {
+    0% {
+        background-position: 10% 50%;
+    }
+
+    50% {
+        background-position: 90% 50%;
+    }
+
+    100% {
+        background-position: 10% 50%;
+    }
+}
+
+.node-status-success.selected,
+.node-status-success:hover {
+    --color: #00bfa5;
+    border: 2px solid var(--color);
+    box-shadow: 0 0 10px var(--color),
+        inset 0 0 3px 1px var(--color);
+    transition: box-shadow 0.2s ease, border 0.2s ease;
+}
+
+.node-status-canceled::before {
     content: '';
     position: absolute;
-    top: 0;
-    left: -100%;
-    width: 50%;
-    height: 100%;
-    background: linear-gradient(to right,
-            transparent,
-            rgba(255, 255, 255, 0.1),
-            transparent);
-    transform: skewX(-25deg);
-    animation: shine 4s infinite;
+    top: 50%;
+    left: 50%;
+    width: 300%;
+    height: 300%;
+    background-image: url('data:image/svg+xml;utf8,<svg width="20" height="20" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><rect x="0" y="0" width="10" height="20" fill="gray"/><text x="5" y="10" font-family="ui-monospace" font-size="3" fill="black" text-anchor="middle" dominant-baseline="middle" transform="translate(0, 0) rotate(90 5,10)">CANCELED</text></svg>');
+    background-repeat: repeat;
+    transform: translate(-50%, -50%) rotate(-135deg);
+    animation: scrollBackground 60s linear infinite;
 }
 
-.node-status-success.selected {
-    border: 2px solid #00bfa5;
+.node-status-canceled.selected,
+.node-status-canceled:hover {
+    --color: #5b5555;
+    border: 2px solid var(--color);
+    box-shadow: 0 0 10px var(--color),
+        inset 0 0 3px 1px var(--color);
+    transition: box-shadow 0.2s ease, border 0.2s ease;
 }
 
-.node-status-pending {}
-
-.node-status-running {}
-
-.node-status-canceled {}
-
-.node-status-error {
-    background: linear-gradient(45deg, #f8312fd2 25%, transparent 25%, transparent 50%, #f8312fd2 50%, #f8312fd2 75%, transparent 75%, transparent);
-    background-size: 20px 20px;
-    animation: wave 6s linear infinite;
+.node-status-error::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 300%;
+    height: 300%;
+    background-image: url('data:image/svg+xml;utf8,<svg width="20" height="20" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><rect x="0" y="0" width="10" height="20" fill="red"/><text x="5" y="10" font-family="ui-monospace" font-size="4" font-weight="bold" fill="black" text-anchor="middle" dominant-baseline="middle" transform="translate(0, 0) rotate(90 5,10)">ERROR</text></svg>');
+    background-repeat: repeat;
+    transform: translate(-50%, -50%) rotate(-45deg);
+    animation: scrollBackground 15s linear infinite, opacityBackground 3s cubic-bezier(.2, .06, .17, .98) infinite;
 }
 
-.node-status-error.selected {
-    border: 2px solid #f8312f;
+.node-status-error.selected,
+.node-status-error:hover {
+    --color: #e43d3a;
+    border: 2px solid var(--color);
+    box-shadow: 0 0 10px var(--color),
+        inset 0 0 3px 1px var(--color);
+    transition: box-shadow 0.2s ease, border 0.2s ease;
 }
 
-@keyframes wave {
+@keyframes scrollBackground {
     0% {
         background-position: 0 0;
     }
 
     100% {
-        background-position: 20px 0;
+        background-position: 120px 400px;
     }
 }
 
-@keyframes emeraldWave {
+@keyframes opacityBackground {
     0% {
-        background-position: 0% 50%;
+        opacity: 0.1;
     }
 
     50% {
-        background-position: 100% 50%;
+        opacity: 0.9;
     }
 
     100% {
-        background-position: 0% 50%;
-    }
-}
-
-@keyframes shine {
-    0% {
-        left: -100%;
-    }
-
-    50%,
-    100% {
-        left: 150%;
+        opacity: 0.1;
     }
 }
 </style>

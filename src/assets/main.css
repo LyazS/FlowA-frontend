@@ -44,13 +44,13 @@ body,
   align-items: center;
 }
 
-.vue-flow__node.selected {
-  border: 2px solid rgb(138, 203, 236);
-}
-
+.vue-flow__node.selected,
 .vue-flow__node:hover {
-  box-shadow: 0 0 10px rgb(138, 203, 236);
-  transition: box-shadow 0.2s ease;
+  --color: rgb(138, 203, 236);
+  border: 2px solid var(--color);
+  box-shadow: 0 0 10px  var(--color),
+    inset 0 0 3px 1px var(--color);
+  transition: box-shadow 0.2s ease, border 0.2s ease;
 }
 
 .vue-flow__handle-input {
