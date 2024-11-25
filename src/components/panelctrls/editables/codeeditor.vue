@@ -31,7 +31,7 @@ const editCode = () => {
     CodeEditorLangType.value = thisnode.value.data.payloads.byId[props.pid].type;
 }
 const language = computed(() => {
-    const regex = /Code<([^>]+)>/;
+    const regex = /Code([^>]+)/;
     const match = thisnode.value.data.payloads.byId[props.pid].type.match(regex);
     if (match) {
         if (match[1] === "Python")

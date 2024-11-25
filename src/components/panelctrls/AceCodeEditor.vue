@@ -45,7 +45,7 @@ ace.require("ace/ext/language_tools");
 import extAutocompleterUrl from 'ace-builds/src-noconflict/ext-language_tools?url';
 ace.config.setModuleUrl('ace/ext/autocompleter', extAutocompleterUrl);
 const enableAutocompletion = computed(() => {
-    const regex = /Code<([^>]+)>/;
+    const regex = /Code([^>]+)/;
     const match = props.langtype.match(regex);
     if (match) {
         if (match[1] === "Python") return true;
@@ -84,7 +84,7 @@ const codedata = computed({
 })
 const thisnode = computed(() => { return findNode(props.nodeId); });
 const language = computed(() => {
-    const regex = /Code<([^>]+)>/;
+    const regex = /Code([^>]+)/;
     const match = props.langtype.match(regex);
     if (match) {
         if (match[1] === "Python")
