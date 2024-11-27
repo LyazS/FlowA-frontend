@@ -10,7 +10,6 @@ export const useVFlowInitial = () => {
 
   const { getNodes, addNodes, findNode, removeNodes, addEdges } = useVueFlow();
 
-  const userUuid = localStorage.getItem("userUuid") || getUuid();
   const AllNodeInitInfos = ref([]);
   const AllNodeCounters = ref([]);
   const AllVFNodeTypes = reactive({});
@@ -70,7 +69,6 @@ export const useVFlowInitial = () => {
   };
 
   instance = {
-    userUuid,
     AllVFNodeTypes,
     initAllNodeInfos,
     getAddNodeList,

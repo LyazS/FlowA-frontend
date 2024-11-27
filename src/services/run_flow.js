@@ -9,7 +9,6 @@ let instance = null;
 export const useFlowAOperation = () => {
   if (instance) return instance;
   const { toObject, fromObject } = useVueFlow();
-  const { userUuid } = useVFlowInitial();
   const { postData } = useRequestMethod();
 
   const runflow = async (
@@ -18,7 +17,6 @@ export const useFlowAOperation = () => {
   ) => {
     const data = {
       vflow: vflow,
-      uid: userUuid,
     };
     return await postData(`api/run`, data, callback);
   };

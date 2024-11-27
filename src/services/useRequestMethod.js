@@ -1,5 +1,4 @@
 import axios from "axios";
-import { fetchEventSource } from "@microsoft/fetch-event-source";
 import { useMessage } from "naive-ui";
 
 let instance = null;
@@ -34,7 +33,7 @@ export const useRequestMethod = () => {
       throw error;
     }
   }
-
+  
   instance = {
     postData,
   };

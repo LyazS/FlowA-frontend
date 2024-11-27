@@ -13,6 +13,7 @@ import { useVueFlow } from '@vue-flow/core'
 import { useVFlowManagement } from '@/hooks/useVFlowManagement';
 import { useVFlowInitial } from '@/hooks/useVFlowInitial'
 import { useFlowAOperation } from '@/services/run_flow'
+import { SubscribeSSE } from '@/services/useSSE'
 const { runflow } = useFlowAOperation();
 const message = useMessage();
 
@@ -34,6 +35,27 @@ function onRestore(flowKey) {
         reBuildCounter();
     }
 }
+const { subscribe, unsubscribe } = SubscribeSSE(
+    'GET',
+    null,
+    null,
+    // onOpen
+    async (response) => {
+        console.log("onopen SSE", response.ok);
+    },
+    // onMessage
+    async (event) => {
+        console.log("onmessage SSE", event);
+    },
+    // onClose
+    async () => {
+        console.log("onclose SSE");
+    },
+    // onError
+    async (err) => {
+        console.log("onerror SSE", err);
+    },
+);
 const run_loading = ref(false)
 const click2runflow = async () => {
     const vflow = toObject();
@@ -59,6 +81,9 @@ const click2runflow = async () => {
         },
     );
     console.log(res);
+    if (res.success) {
+        subscribe(`${import.meta.env.VITE_API_URL}/api/progress?taskid=${res.tid}`)
+    }
 }
 </script>
 
