@@ -167,26 +167,26 @@ onMounted(() => {
     }
     else { }
 });
-const testclick = () => {
-    if (thisnode.data.state.status === 'Default') {
-        thisnode.data.state.status = 'Pending';
-    }
-    else if (thisnode.data.state.status === 'Pending') {
-        thisnode.data.state.status = 'Running';
-    }
-    else if (thisnode.data.state.status === 'Running') {
-        thisnode.data.state.status = 'Success';
-    }
-    else if (thisnode.data.state.status === 'Success') {
-        thisnode.data.state.status = 'Canceled';
-    }
-    else if (thisnode.data.state.status === 'Canceled') {
-        thisnode.data.state.status = 'Error';
-    }
-    else if (thisnode.data.state.status === 'Error') {
-        thisnode.data.state.status = 'Default';
-    }
-}
+// const testclick = () => {
+//     if (thisnode.data.state.status === 'Default') {
+//         thisnode.data.state.status = 'Pending';
+//     }
+//     else if (thisnode.data.state.status === 'Pending') {
+//         thisnode.data.state.status = 'Running';
+//     }
+//     else if (thisnode.data.state.status === 'Running') {
+//         thisnode.data.state.status = 'Success';
+//     }
+//     else if (thisnode.data.state.status === 'Success') {
+//         thisnode.data.state.status = 'Canceled';
+//     }
+//     else if (thisnode.data.state.status === 'Canceled') {
+//         thisnode.data.state.status = 'Error';
+//     }
+//     else if (thisnode.data.state.status === 'Error') {
+//         thisnode.data.state.status = 'Default';
+//     }
+// }
 </script>
 
 <style>
