@@ -85,6 +85,7 @@ const rmVariable = (rid) => {
 
 const variableTypes = [
     { label: "字符串 String", value: "String" },
+    { label: "整数 Integer", value: "Integer" },
     { label: "数字 Number", value: "Number" },
     { label: "布尔 Boolean", value: "Boolean" },
     { label: "数组 Array", value: "Array" },
