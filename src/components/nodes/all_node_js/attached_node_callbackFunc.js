@@ -37,4 +37,3 @@ initConnectionsAttribute(_initInfo);
 
 export const initInfo = cloneDeep(_initInfo);
 export { NodeVue };
-// 该节点需要实现，动态的handle和文字

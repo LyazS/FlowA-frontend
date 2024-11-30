@@ -47,6 +47,7 @@ addAttachedNode(_initInfo, "attached_node_next");
 addAttachedNode(_initInfo, "attached_node_callbackFunc");
 
 addConnection(_initInfo, "self", "self", { type: "FromAttached", atype: "attached_node_output", useid: [] });
+addConnection(_initInfo, "next", "next", { type: "FromAttached", atype: "attached_node_next", useid: [] });
 
 let pid = addPayload(_initInfo, { label: "迭代索引", type: "IterIndex", key: "iter_index", data: null, uitype: "texttag" });
 addConnection(_initInfo, "attach", "attach", { type: "FromInner", path: ["payloads", pid], useid: [] });
@@ -55,5 +56,5 @@ addConnection(_initInfo, "attach", "attach", { type: "FromOuter", inputKey: "inp
 setOutputsUIType(_initInfo, "packoutputs");
 
 export const initInfo = cloneDeep(_initInfo);
-// 该节点需要实现，动态的handle和文字
+
 export { NodeVue };

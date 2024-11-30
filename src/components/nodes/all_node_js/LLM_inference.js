@@ -53,5 +53,5 @@ setOutputsUIType(_initInfo, "tagoutputs");
 addResultWConnect(_initInfo, { label: "推理结果", type: "String", key: "output", data: "" }, "output");
 
 export const initInfo = cloneDeep(_initInfo);
-// 该节点需要实现，动态的handle和文字
+
 export { NodeVue };

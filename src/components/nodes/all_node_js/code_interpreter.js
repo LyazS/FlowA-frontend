@@ -48,5 +48,5 @@ addResultWConnect(_initInfo, { label: "output1", type: "String", key: "output1",
 addResultWConnect(_initInfo, { label: "output2", type: "String", key: "output2", data: null, }, "output");
 
 export const initInfo = cloneDeep(_initInfo);
-// 该节点需要实现，动态的handle和文字
+
 export { NodeVue };

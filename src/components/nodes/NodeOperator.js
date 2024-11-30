@@ -66,6 +66,13 @@ const ConnectionsAttribute = {
                 data: {}
             }
         },
+        // 用于嵌套节点的下一次迭代的连接
+        next: {
+            next: {
+                label: "next",
+                data: {}
+            }
+        },
         // 单一个输入handle，数组里每个元素表示使用哪些输入
         inputs: {
             // input: {// 输入handle的id
