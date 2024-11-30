@@ -9,9 +9,10 @@
 
 <script setup>
 import { ref, computed, onMounted, onBeforeUnmount, onUnmounted, watch } from 'vue';
-import { Position, Handle } from '@vue-flow/core'
+import { Position, Handle, useVueFlow } from '@vue-flow/core'
+const { findNode } = useVueFlow();
 const props = defineProps(['id', 'data']);
-
+const thisnode = findNode(props.id);
 const [yPart, xPart] = props.data.attaching.pos.split('-');
 
 const posLR = xPart === 'left' ? Position.Right : Position.Left;
@@ -37,6 +38,10 @@ else if (props.data.attaching.type === 'callbackUser') {
     handle_type = 'target';
     handle_id = 'callbackFunc';
 }
+onMounted(() => {
+    thisnode.class = "vue-flow__node-attached_node";
+});
+
 </script>
 
 <style>
@@ -49,6 +54,8 @@ else if (props.data.attaching.type === 'callbackUser') {
 
 .vue-flow__node-attached_node:hover {
     box-shadow: 0 0 0px;
+    border: 1px solid rgb(52, 52, 56);
+    box-shadow: 0 0 0px rgb(52, 52, 56);
 }
 </style>
 <style scoped>
@@ -61,13 +68,11 @@ else if (props.data.attaching.type === 'callbackUser') {
 .corner-text {
     font-size: 4px;
     color: white;
-    font-family: 'JetBrains Mono', 'Source Code Pro', 'Consolas', 'Courier New', monospace;
+    font-family: var(--font-mono);
     letter-spacing: 0.1px;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    /* position: absolute; */
     display: flex;
-    /* align-items: flex-end; */
     height: auto;
     text-align: center;
 }
