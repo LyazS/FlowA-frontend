@@ -44,7 +44,7 @@
                             <n-select :style="{ width: '65%' }" size="small" placeholder="变量"
                                 v-model:value="cond.refdata" :options="selfVarSelections" :render-label="renderLabel" />
                             <n-select :style="{ width: '35%' }" size="small" placeholder="操作"
-                                :options="opTypeSelections" v-model:value="cond.op" />
+                                :options="buildOpTypeSelections(cond.refdata)" v-model:value="cond.operator" />
                         </n-flex>
                         <n-flex :wrap="false">
                             <n-select :style="{ width: '35%' }" size="small" placeholder="类型"
@@ -172,7 +172,7 @@ const addBranch = () => {
             conditions: [// 创建时默认存在一个
                 {
                     refdata: "",
-                    op: "eq",
+                    operator: "eq",
                     comparetype: "ref",
                     value: ""
                 },
@@ -200,7 +200,7 @@ const rmBranch = (rid) => {
 const addCondition = (rid) => {
     const newCond = {
         refdata: "",
-        op: "eq",
+        operator: "eq",
         comparetype: "ref",
         value: ""
     };
@@ -216,13 +216,45 @@ const updateCondType = (rid, value) => {
 }
 
 // 更新条件变量
-const opTypeSelections = [
+const variableTypes = [
+    { label: "字符串 String", value: "String" },
+    { label: "整数 Integer", value: "Integer" },
+    { label: "数字 Number", value: "Number" },
+    { label: "布尔 Boolean", value: "Boolean" },
+    { label: "数组 Array", value: "Array" },
+    { label: "对象 Object", value: "Object" },
+];
+const StringTypeSelections = [
+    { label: "等于", value: "eq" },
+    { label: "不等于", value: "ne" },
+    { label: "长度大于", value: "len_gt" },
+    { label: "长度大于等于", value: "len_gte" },
+    { label: "长度小于", value: "len_lt" },
+    { label: "长度小于等于", value: "len_lte" },
+    { label: "包含", value: "contains" },
+    { label: "不包含", value: "notcontains" },
+    { label: "为空", value: "isnull" },
+    { label: "不为空", value: "notnull" },
+]
+const NumberTypeSelections = [
     { label: "等于", value: "eq" },
     { label: "不等于", value: "ne" },
     { label: "大于", value: "gt" },
     { label: "大于等于", value: "gte" },
     { label: "小于", value: "lt" },
     { label: "小于等于", value: "lte" },
+    { label: "为空", value: "isnull" },
+    { label: "不为空", value: "notnull" },
+]
+const BooleanTypeSelections = [
+    { label: "等于", value: "eq" },
+    { label: "不等于", value: "ne" },
+    { label: "为true", value: "istrue" },
+    { label: "为false", value: "isfalse" },
+    { label: "为空", value: "isnull" },
+    { label: "不为空", value: "notnull" },
+]
+const ArrayTypeSelections = [
     { label: "包含", value: "contains" },
     { label: "不包含", value: "notcontains" },
     { label: "为空", value: "isnull" },
@@ -232,6 +264,34 @@ const compTypeSelections = [
     { label: "引用", value: "ref" },
     { label: "数值", value: "value" },
 ]
+
+const buildOpTypeSelections = (refdata) => {
+    const [nid, r_content, rid] = refdata.split("/");
+    const thenode = findNode(nid);
+    if (!thenode) {
+        return [
+            { label: "×不支持", value: "unsupported" },
+        ];
+    }
+    const rtype = thenode.data[r_content].byId[rid].type;
+    switch (rtype) {
+        case "String":
+            return StringTypeSelections;
+        case "Integer":
+            return NumberTypeSelections;
+        case "Number":
+            return NumberTypeSelections;
+        case "Boolean":
+            return BooleanTypeSelections;
+        case "Array":
+            return ArrayTypeSelections;
+        default:
+            return [
+                { label: "×不支持", value: "unsupported" },
+            ];
+    }
+}
+
 
 </script>
 
