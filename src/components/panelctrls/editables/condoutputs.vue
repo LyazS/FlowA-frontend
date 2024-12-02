@@ -93,6 +93,21 @@ import {
     rmHandle,
 } from '../../nodes/NodeOperator.js'
 import { getUuid } from '@/utils/tools.js'
+// 更新条件变量
+import {
+    VariableTypes,
+    FileVariableTypes,
+    LengthTypeSelections,
+    StartEndTypeSelections,
+    NullTypeSelections,
+    EqualTypeSelections,
+    NotEuqalTypeSelections,
+    ContainsTypeSelections,
+    BooleanTypeSelections,
+    compTypeSelections,
+} from '@/utils/schemas.js'
+
+
 const props = defineProps({
     nodeId: {
         type: String,
@@ -215,55 +230,6 @@ const updateCondType = (rid, value) => {
     thisnode.value.data.results.byId[rid].data.condType = value ? 'AND' : 'OR';
 }
 
-// 更新条件变量
-const variableTypes = [
-    { label: "字符串 String", value: "String" },
-    { label: "整数 Integer", value: "Integer" },
-    { label: "数字 Number", value: "Number" },
-    { label: "布尔 Boolean", value: "Boolean" },
-    { label: "数组 Array", value: "Array" },
-    { label: "对象 Object", value: "Object" },
-];
-const StringTypeSelections = [
-    { label: "等于", value: "eq" },
-    { label: "不等于", value: "ne" },
-    { label: "长度大于", value: "len_gt" },
-    { label: "长度大于等于", value: "len_gte" },
-    { label: "长度小于", value: "len_lt" },
-    { label: "长度小于等于", value: "len_lte" },
-    { label: "包含", value: "contains" },
-    { label: "不包含", value: "notcontains" },
-    { label: "为空", value: "isnull" },
-    { label: "不为空", value: "notnull" },
-]
-const NumberTypeSelections = [
-    { label: "等于", value: "eq" },
-    { label: "不等于", value: "ne" },
-    { label: "大于", value: "gt" },
-    { label: "大于等于", value: "gte" },
-    { label: "小于", value: "lt" },
-    { label: "小于等于", value: "lte" },
-    { label: "为空", value: "isnull" },
-    { label: "不为空", value: "notnull" },
-]
-const BooleanTypeSelections = [
-    { label: "等于", value: "eq" },
-    { label: "不等于", value: "ne" },
-    { label: "为true", value: "istrue" },
-    { label: "为false", value: "isfalse" },
-    { label: "为空", value: "isnull" },
-    { label: "不为空", value: "notnull" },
-]
-const ArrayTypeSelections = [
-    { label: "包含", value: "contains" },
-    { label: "不包含", value: "notcontains" },
-    { label: "为空", value: "isnull" },
-    { label: "不为空", value: "notnull" },
-]
-const compTypeSelections = [
-    { label: "引用", value: "ref" },
-    { label: "数值", value: "value" },
-]
 
 const buildOpTypeSelections = (refdata) => {
     const [nid, r_content, rid] = refdata.split("/");
@@ -274,21 +240,24 @@ const buildOpTypeSelections = (refdata) => {
         ];
     }
     const rtype = thenode.data[r_content].byId[rid].type;
-    switch (rtype) {
-        case "String":
-            return StringTypeSelections;
-        case "Integer":
-            return NumberTypeSelections;
-        case "Number":
-            return NumberTypeSelections;
-        case "Boolean":
-            return BooleanTypeSelections;
-        case "Array":
-            return ArrayTypeSelections;
-        default:
-            return [
-                { label: "×不支持", value: "unsupported" },
-            ];
+    let case_type = rtype;
+    if (case_type.startsWith("Array")) {
+        case_type = "Array";
+    }
+    if (case_type === 'String') {
+        return [...StartEndTypeSelections, ...EqualTypeSelections, ...ContainsTypeSelections, ...LengthTypeSelections, ...NullTypeSelections];
+    }
+    else if (case_type === 'Integer' || case_type === 'Number') {
+        return [...EqualTypeSelections, ...NotEuqalTypeSelections, ...NullTypeSelections];
+    }
+    else if (case_type === 'Boolean') {
+        return [...EqualTypeSelections, ...BooleanTypeSelections, ...NullTypeSelections];
+    }
+    else if (case_type === 'Array') {
+        return [...ContainsTypeSelections, ...LengthTypeSelections, ...NullTypeSelections];
+    }
+    else {
+        return [...NullTypeSelections];
     }
 }
 

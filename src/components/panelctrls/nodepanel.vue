@@ -260,6 +260,7 @@ onUnmounted(() => {
                 <component v-if="outputsComponents" :is="outputsComponents" :key="`${nodeId}-outputs`" />
                 <!-- 渲染节点数据文本 -->
                 <n-divider />
+                <pre>{{ nodeId }}</pre>
                 <pre>{{ nodedatatext }}</pre>
             </n-flex>
         </n-card>
