@@ -21,7 +21,7 @@
                         :value="thisnode.data.results.byId[rid].key" @blur="isEditing = false" @focus="isEditing = true"
                         @update:value="(v) => updateVariable(rid, v)" />
                     <n-select :style="{ width: '50%' }" size="small" placeholder="变量类型"
-                        v-model:value="thisnode.data.results.byId[rid].type" :options="variableTypes" />
+                        v-model:value="thisnode.data.results.byId[rid].type" :options="CodeVarTypes" />
                 </n-flex>
             </n-flex>
             <n-button circle tertiary size="small" type="error" @click="rmVariable(rid)">
@@ -52,6 +52,7 @@ import {
     rmResultWConnect,
 } from '../../nodes/NodeOperator.js'
 import { getUuid } from '@/utils/tools.js'
+import { VariableTypes, FileVariableTypes } from '@/utils/schemas.js'
 
 const props = defineProps({
     nodeId: {
@@ -63,7 +64,7 @@ const isEditing = inject("isEditing");
 // 获取节点数据
 const { findNode } = useVueFlow()
 const thisnode = computed(() => findNode(props.nodeId))
-
+const CodeVarTypes = [...VariableTypes, ...FileVariableTypes]
 const addVariable = () => {
     const rid = getUuid();
     const cid = `c-${rid}`;
@@ -83,14 +84,7 @@ const rmVariable = (rid) => {
     rmResultWConnect(thisnode.value, rid);
 };
 
-const variableTypes = [
-    { label: "字符串 String", value: "String" },
-    { label: "整数 Integer", value: "Integer" },
-    { label: "数字 Number", value: "Number" },
-    { label: "布尔 Boolean", value: "Boolean" },
-    { label: "数组 Array", value: "Array" },
-    { label: "对象 Object", value: "Object" },
-];
+
 </script>
 
 <style scoped>
