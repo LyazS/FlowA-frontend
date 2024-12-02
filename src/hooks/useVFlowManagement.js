@@ -114,8 +114,17 @@ export const useVFlowManagement = () => {
 
         const node_init_info = cloneVFNodeInitInfo(nodetype);
         const offset_size = { width: node_init_info.data.size.width + 8, height: node_init_info.data.size.height + 8 };
+        let new_node_id = nodeinfo.nid || getUuid();
+        if (nodeinfo.type === 'client' && parentNode) {
+            const nest_regex = /#C\d+/g;
+            const pid_matches = parentNode.id.match(nest_regex) || [];
+            console.log("pid_matches", pid_matches);
+            if (parentNode.data.flags.isNested) {
+                new_node_id += pid_matches.join('') + `#C${pid_matches.length + 1}`;
+            }
+        }
         const new_node = {
-            id: nodeinfo.nid || getUuid(),
+            id: new_node_id,
             type: node_init_info.data.vtype,
             data: node_init_info.data,
             style: {
@@ -133,7 +142,7 @@ export const useVFlowManagement = () => {
 
         // 设置全局position
         let new_node_position = { x: 0, y: 0 };
-        if (nodeinfo.type == 'attached' && !!parentNode) {
+        if (nodeinfo.type === 'attached' && !!parentNode) {
             const [yPart, xPart] = node_init_info.data.attaching.pos.split('-');
             if (yPart.startsWith("top")) {
                 const yOffset = getNumberWithPrefix("top", yPart) * parentNode.data.nesting.attached_pad.gap;
