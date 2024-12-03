@@ -32,7 +32,7 @@ function onRestore(flowKey) {
 
     if (flow) {
         for (const node of flow.nodes) {
-            node.data.state.status = "Default";
+            if (node.data.state?.status) { node.data.state.status = "Default"; }
         }
         fromObject(flow);
         buildNestedNodeGraph();

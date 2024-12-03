@@ -32,6 +32,7 @@ const NestedAttribute = {
         height: 200,// #TODO
     },
     nesting: {
+        tag: "",// 嵌套节点的标记，可以用于子节点的id标记
         pad: {
             top: 60,
             bottom: 40,
@@ -145,9 +146,10 @@ export const initAttachedAttribute = (_BaseNodeInfo) => {
     _BaseNodeInfo.data.flags.isAttached = true;
     Object.assign(_BaseNodeInfo.data, cloneDeep(AttachedAttribute));
 };
-export const initNestedAttribute = (_BaseNodeInfo) => {
+export const initNestedAttribute = (_BaseNodeInfo, tag) => {
     _BaseNodeInfo.data.flags.isNested = true;
     Object.assign(_BaseNodeInfo.data, cloneDeep(NestedAttribute));
+    _BaseNodeInfo.data.nesting.tag = tag;
 };
 export const initConnectionsAttribute = (_BaseNodeInfo) => {
     Object.assign(_BaseNodeInfo.data, cloneDeep(ConnectionsAttribute));

@@ -116,11 +116,11 @@ export const useVFlowManagement = () => {
         const offset_size = { width: node_init_info.data.size.width + 8, height: node_init_info.data.size.height + 8 };
         let new_node_id = nodeinfo.nid || getUuid();
         if (nodeinfo.type === 'client' && parentNode) {
-            const nest_regex = /#C\d+/g;
+            const nest_regex = /#(\w+)/g;
             const pid_matches = parentNode.id.match(nest_regex) || [];
             console.log("pid_matches", pid_matches);
             if (parentNode.data.flags.isNested) {
-                new_node_id += pid_matches.join('') + `#C${pid_matches.length + 1}`;
+                new_node_id += pid_matches.join('') + `#${parentNode.data.nesting.tag}`;
             }
         }
         const new_node = {

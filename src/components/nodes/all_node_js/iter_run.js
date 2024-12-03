@@ -25,7 +25,7 @@ import { add, cloneDeep } from 'lodash';
 import NodeVue from '../all_node_vue/basenode.vue';
 
 const _initInfo = createBaseNodeInfo();
-initNestedAttribute(_initInfo);
+initNestedAttribute(_initInfo,"ITER");
 initConnectionsAttribute(_initInfo);
 initRunningAttribute(_initInfo);
 initStateAttribute(_initInfo);
