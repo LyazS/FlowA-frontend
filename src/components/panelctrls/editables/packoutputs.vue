@@ -81,32 +81,10 @@ function updateResultType(rid, value) {
     const thedata = thenode.data[dpath].byId[did];
     if (thisnode.value.data.results.byId[rid]) {
         thisnode.value.data.results.byId[rid].data = value;
-        thisnode.value.data.results.byId[rid].type = `Array${thedata.type}`;
+        // thisnode.value.data.results.byId[rid].type = `Array${thedata.type}`;
+        thisnode.value.data.results.byId[rid].type = `ArrayObject`;
     }
 }
-const PYTHON_KEYWORDS = [
-    'False', 'None', 'True', 'and', 'as', 'assert', 'async', 'await',
-    'break', 'class', 'continue', 'def', 'del', 'elif', 'else', 'except',
-    'finally', 'for', 'from', 'global', 'if', 'import', 'in', 'is', 'lambda',
-    'nonlocal', 'not', 'or', 'pass', 'raise', 'return', 'try', 'while',
-    'with', 'yield'
-];
-const isPythonVariable = (value) => {
-    // 空字符串不是有效的变量名
-    if (!value) return false;
-
-    // 检查是否包含非法字符（只允许字母、数字和下划线）
-    if (!/^[a-zA-Z_][a-zA-Z0-9_]*$/.test(value)) {
-        return false;
-    }
-
-    // 检查是否是Python关键字
-    if (PYTHON_KEYWORDS.includes(value)) {
-        return false;
-    }
-
-    return true;
-};
 
 const renderTag = ({ option, handleClose }) => {
     const [nlabel, dlabel, dkey, dtype] = option.label.split("/");

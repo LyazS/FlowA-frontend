@@ -9,6 +9,7 @@ const editable_tagoutputs = defineAsyncComponent(() => import('./editables/tagou
 const editable_packoutputs = defineAsyncComponent(() => import('./editables/packoutputs.vue'));
 const editable_condoutputs = defineAsyncComponent(() => import('./editables/condoutputs.vue'));
 const editable_codeoutputs = defineAsyncComponent(() => import('./editables/codeoutputs.vue'));
+const editable_iter_input = defineAsyncComponent(() => import('./editables/iter_input.vue'));
 const editable_textinput = defineAsyncComponent(() => import('./editables/textinput.vue'));
 const editable_textprint = defineAsyncComponent(() => import('./editables/textprint.vue'));
 const editable_texttag = defineAsyncComponent(() => import('./editables/texttag.vue'));
@@ -50,22 +51,15 @@ const saveTitle = () => {
 }
 
 // 可供该节点使用的变量 ==================================================
-const findVarFromIO = (nid, hid, findtype) => {
+const findVarFromIO = (nid, findconnect, hid) => {
     const result = [];
     const thenode = findNode(nid);
-    let connection = {};
-    if (findtype === 'self') {
-        connection = thenode.data.connections.self[hid].data;
+    if (!thenode.data.connections.hasOwnProperty(findconnect)
+        || !thenode.data.connections[findconnect].hasOwnProperty(hid)) {
+        return result;
     }
-    else if (findtype === 'attach') {
-        connection = thenode.data.connections.attach[hid].data;
-    }
-    else if (findtype === 'input') {
-        connection = thenode.data.connections.inputs[hid].data;
-    }
-    else if (findtype === 'output') {
-        connection = thenode.data.connections.outputs[hid].data;
-    }
+
+    const connection = thenode.data.connections[findconnect][hid].data;
     for (const c_data of Object.values(connection)) {
         if (c_data.type === 'FromInner') {
             result.push({
@@ -85,7 +79,7 @@ const findVarFromIO = (nid, hid, findtype) => {
             for (const [eidx, edge] of Object.entries(edges)) {
                 const src_nid = edge.source;
                 const src_hid = edge.sourceHandle;
-                result.push(...recursiveFindVariables(src_nid, false, false, false, [], false, [src_hid]));
+                result.push(...recursiveFindVariables(src_nid, [], [], [], false, [], false, [src_hid]));
             }
         }
         else if (c_data.type === 'FromAttached') {
@@ -94,8 +88,9 @@ const findVarFromIO = (nid, hid, findtype) => {
             // 如果是输出节点，则搜索它的自身可用变量
             result.push(...recursiveFindVariables(
                 thenode.data.nesting.attached_nodes[c_data.atype].nid,
-                c_data.atype === 'attached_node_output',
-                false,
+                c_data.atype === 'attached_node_output' ? ['self'] : [],
+                [],
+                [],
                 false,
                 [],
                 c_data.atype === 'attached_node_input',
@@ -104,7 +99,7 @@ const findVarFromIO = (nid, hid, findtype) => {
         }
         else if (c_data.type === 'FromParent') {
             // 如果是父节点，则递归搜索父节点的所有输入handle
-            result.push(...recursiveFindVariables(thenode.parentNode, false, true, true, [], false, []));
+            result.push(...recursiveFindVariables(thenode.parentNode, [], ['attach'], [], true, [], false, []));
         }
     }
     return result;
@@ -113,8 +108,9 @@ const findVarFromIO = (nid, hid, findtype) => {
 
 const recursiveFindVariables = (
     nid,
-    findSelf = false,
-    findAttach = false,
+    findSelf = [],
+    findAttach = [],
+    findNext = [],
     findAllInput = false,
     findInput = [],
     findAllOutput = false,
@@ -125,13 +121,20 @@ const recursiveFindVariables = (
     if (findAllInput) { findInput = Object.keys(thenode.data.connections.inputs); }
     if (findAllOutput) { findOutput = Object.keys(thenode.data.connections.outputs); }
 
-    if (findSelf) result.push(...findVarFromIO(nid, 'self', 'self'));
-    if (findAttach) result.push(...findVarFromIO(nid, 'attach', 'attach'));
+    for (const hid of findSelf) {
+        result.push(...findVarFromIO(nid, 'self', hid));
+    }
+    for (const hid of findAttach) {
+        result.push(...findVarFromIO(nid, 'attach', hid));
+    }
+    for (const hid of findNext) {
+        result.push(...findVarFromIO(nid, 'next', hid));
+    }
     for (const hid of findInput) {
-        result.push(...findVarFromIO(nid, hid, 'input'));
+        result.push(...findVarFromIO(nid, 'inputs', hid));
     }
     for (const hid of findOutput) {
-        result.push(...findVarFromIO(nid, hid, 'output'));
+        result.push(...findVarFromIO(nid, 'outputs', hid));
     }
     return result;
 };
@@ -146,14 +149,19 @@ const mapVarItemToSelect = (item) => {
 const outputVarSelections = computed(() => {
     const selections = {};
     for (const hid of Object.keys(thisnode.value.data.connections.outputs)) {
-        selections[hid] = recursiveFindVariables(props.nodeId, false, false, false, [], false, [hid])
+        selections[hid] = recursiveFindVariables(props.nodeId, [], [], [], false, [], false, [hid])
             .map((item) => mapVarItemToSelect(item));
     }
     return selections;
 })
 // 自身可用变量
 const selfVarSelections = computed(() => {
-    return recursiveFindVariables(props.nodeId, true, false, false, [], false, [])
+    return recursiveFindVariables(props.nodeId, ['self'], [], [], false, [], false, [])
+        .map((item) => mapVarItemToSelect(item));
+})
+// 自身可用变量
+const selfVarSelections_aouput = computed(() => {
+    return recursiveFindVariables(props.nodeId, ['attach_output'], [], [], false, [], false, [])
         .map((item) => mapVarItemToSelect(item));
 })
 // 渲染节点payload的内置变量 =======================================
@@ -193,6 +201,9 @@ const payloadComponents = computed(() => {
         else if (uitype === 'llmprompts') {
             acc[pid] = h(editable_llmprompts, { nodeId: props.nodeId, pid });
         }
+        else if (uitype === 'iter_input') {
+            acc[pid] = h(editable_iter_input, { nodeId: props.nodeId, pid, selfVarSelections: selfVarSelections.value });
+        }
         return acc;
     }, {});
 });
@@ -203,7 +214,7 @@ const outputsComponents = computed(() => {
         return h(editable_tagoutputs, { nodeId: props.nodeId, outputVarSelections: outputVarSelections.value });
     }
     else if (uitype === 'packoutputs') {
-        return h(editable_packoutputs, { nodeId: props.nodeId, selfVarSelections: selfVarSelections.value });
+        return h(editable_packoutputs, { nodeId: props.nodeId, selfVarSelections: selfVarSelections_aouput.value });
     }
     else if (uitype === 'condoutputs') {
         return h(editable_condoutputs, { nodeId: props.nodeId, selfVarSelections: selfVarSelections.value });
