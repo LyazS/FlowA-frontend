@@ -16,7 +16,7 @@
                 <n-input :style="{ width: '25%' }" placeholder="输出变量Key" :value="thisnode.data.results.byId[rid].key"
                     @blur="isEditing = false" @focus="isEditing = true"
                     @update:value="(val) => updateResultKey(rid, val)" />
-                <n-select :style="{ width: '60%' }" placeholder="选择变量" :value="thisnode.data.results.byId[rid].data"
+                <n-select :style="{ width: '60%' }" placeholder="选择变量" :value="thisnode.data.results.byId[rid].config.ref"
                     :options="selfVarSelections" @update:value="(val) => updateResultType(rid, val)"
                     :render-tag="renderTag" />
                 <n-button :style="{ width: '15%' }" type="error" @click="() => handleRemove(rid)">
@@ -60,7 +60,7 @@ const thisnode = computed(() => findNode(props.nodeId))
 
 // 处理添加
 function handleAdd() {
-    const newResult = { label: "", type: "", key: "", data: null }
+    const newResult = { label: "", type: "", key: "", data: [], config: { ref: "" } }
     addResultWConnect(thisnode.value, newResult, "output")
 }
 function handleRemove(rid) {
@@ -80,7 +80,7 @@ function updateResultType(rid, value) {
     const thenode = findNode(nid);
     const thedata = thenode.data[dpath].byId[did];
     if (thisnode.value.data.results.byId[rid]) {
-        thisnode.value.data.results.byId[rid].data = value;
+        thisnode.value.data.results.byId[rid].config.ref = value;
         // thisnode.value.data.results.byId[rid].type = `Array${thedata.type}`;
         thisnode.value.data.results.byId[rid].type = `ArrayObject`;
     }

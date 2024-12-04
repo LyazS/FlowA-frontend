@@ -48,7 +48,9 @@ const updateNodeFromSSE = (data) => {
         const type = udata.type;
         if (type === "overwrite") {
             const thenode = findNode(nid);
-            setValueByPath(thenode.data, path, data);
+            if (thenode) {
+                setValueByPath(thenode.data, path, data);
+            }
         }
         else if (type === "append") { }
         else if (type === "remove") { }
