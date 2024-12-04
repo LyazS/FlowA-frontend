@@ -25,7 +25,7 @@ import { add, cloneDeep } from 'lodash';
 import NodeVue from '../all_node_vue/basenode.vue';
 
 const _initInfo = createBaseNodeInfo();
-initNestedAttribute(_initInfo,"ITER");
+initNestedAttribute(_initInfo, "ITER");
 initConnectionsAttribute(_initInfo);
 initRunningAttribute(_initInfo);
 initStateAttribute(_initInfo);
@@ -52,6 +52,8 @@ addConnection(_initInfo, "next", "next", { type: "FromAttached", atype: "attache
 
 addPayload(_initInfo, { label: "迭代数组", type: "ArrayObject", key: "iter_var", data: "", uitype: "iter_input" });
 let pid = addPayload(_initInfo, { label: "迭代索引", type: "IterIndex", key: "iter_index", data: null, uitype: "texttag" });
+addConnection(_initInfo, "attach", "attach", { type: "FromInner", path: ["payloads", pid], useid: [] });
+pid = addPayload(_initInfo, { label: "迭代项目", type: "IterItem", key: "iter_item", data: null, uitype: "texttag" });
 addConnection(_initInfo, "attach", "attach", { type: "FromInner", path: ["payloads", pid], useid: [] });
 addConnection(_initInfo, "attach", "attach", { type: "FromOuter", inputKey: "input" });
 

@@ -4,11 +4,11 @@
             <editable_header>
                 {{ thisnode.data.payloads.byId[pid].label }}
             </editable_header>
-            <n-select multiple clearable  v-model:value="selectValue" :options="selfVarSelections"
+            <n-select multiple clearable v-model:value="selectValue" :options="selfVarSelections"
                 :render-tag="renderTag"></n-select>
         </n-flex>
         <n-text v-for="printtext in printtexts" :key="printtext">
-            {{ printtext }}
+            <pre>{{ printtext }}</pre>
         </n-text>
     </n-flex>
 </template>
