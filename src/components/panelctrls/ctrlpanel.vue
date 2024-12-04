@@ -19,7 +19,7 @@ const { runflow } = useFlowAOperation();
 const message = useMessage();
 
 const { buildNestedNodeGraph } = useVFlowManagement()
-const { reBuildCounter } = useVFlowInitial()
+const { reBuildCounter, TaskID } = useVFlowInitial()
 
 const { toObject, fromObject, findNode } = useVueFlow()
 
@@ -123,7 +123,9 @@ const click2runflow = async () => {
     );
     console.log(res);
     if (res.success) {
-        subscribe(`${import.meta.env.VITE_API_URL}/api/progress?taskid=${res.tid}`)
+        TaskID.value = res.tid;
+        console.log("TaskID ", TaskID.value);
+        subscribe(`${import.meta.env.VITE_API_URL}/api/progress?taskid=${TaskID.value}`)
     }
 }
 onUnmounted(() => {
