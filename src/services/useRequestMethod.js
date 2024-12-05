@@ -12,12 +12,12 @@ export const useRequestMethod = () => {
     callback = null,
   ) {
     try {
-      if (callback && callback.hasOwnProperty('before')) callback.before();
+      if (callback && callback.hasOwnProperty('before')) await callback.before();
       const response = await axios.post(
         `${import.meta.env.VITE_API_URL}/${url}`,
         data
       );
-      if (callback && callback.hasOwnProperty('success')) callback.success(response.data);
+      if (callback && callback.hasOwnProperty('success')) await callback.success(response.data);
       return response.data;
     } catch (error) {
       let errorMsg = "";
@@ -29,11 +29,11 @@ export const useRequestMethod = () => {
       } else {
         errorMsg = `错误信息: ${error.message}`;
       }
-      if (callback && callback.hasOwnProperty('error')) callback.error(errorMsg);
+      if (callback && callback.hasOwnProperty('error')) await callback.error(errorMsg);
       throw error;
     }
   }
-  
+
   instance = {
     postData,
   };

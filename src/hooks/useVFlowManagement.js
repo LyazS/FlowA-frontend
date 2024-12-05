@@ -1,15 +1,18 @@
-import { ref, reactive } from 'vue';
+import { ref, watch, onMounted, onUnmounted } from 'vue';
 import { useVueFlow } from '@vue-flow/core';
 import { useVFlowInitial } from '@/hooks/useVFlowInitial.js';
 import { getUuid, setValueByPath } from '@/utils/tools.js';
 import { SubscribeSSE } from '@/services/useSSE'
 import { useMessage } from 'naive-ui';
+import { resetState } from "@/components/nodes/NodeOperator.js"
+
 // 单例模式
 let instance = null;
 export const useVFlowManagement = () => {
     if (instance) return instance;
     const message = useMessage();
     const {
+        TaskID,
         getAddNodeList,
         getVFNodeTypes,
         cloneVFNodeInitInfo,
@@ -218,9 +221,8 @@ export const useVFlowManagement = () => {
         removeNodes(node, true, true);
     };
 
-    const resetNodeState = (ndata) => {
-        if (ndata.state?.status) { ndata.state.status = "Default"; }
-        if (ndata.state?.copy) { ndata.state.copy = {}; }
+    const resetNodeState = (node) => {
+        resetState(node);
     }
 
     const addEdgeToVFlow = (params) => {
@@ -276,14 +278,14 @@ export const useVFlowManagement = () => {
         null,
         // onOpen
         async (response) => {
-            console.log("onopen SSE", response.ok);
+            // console.log("onopen SSE", response.ok);
         },
         // onMessage
         async (event) => {
-            console.log("onmessage SSE");
+            // console.log("onmessage SSE");
             if (event.event === "updatenode") {
                 let data = JSON.parse(event.data);
-                console.log(data);
+                // console.log(data);
                 updateNodeFromSSE(data);
             }
             else if (event.event === "batchupdatenode") {
@@ -294,7 +296,7 @@ export const useVFlowManagement = () => {
             }
             else if (event.event === "internalerror") {
                 let data = JSON.parse(event.data);
-                console.log(data);
+                // console.log(data);
                 message.error(`内部错误: ${data}`);
             }
             else if (event.event === "flowfinish") {
@@ -312,6 +314,20 @@ export const useVFlowManagement = () => {
         },
     );
 
+    onMounted(() => {
+        watch(TaskID, (newVal, oldVal) => {
+            if (newVal && newVal !== oldVal) {
+                setTimeout(() => {
+                    console.log("TaskID ", newVal);
+                    subscribe(`${import.meta.env.VITE_API_URL}/api/progress?taskid=${newVal}`)
+                    console.log("subscribeSSE Done.");
+                }, 1000);
+            }
+        });
+    });
+    onUnmounted(() => {
+        unsubscribe();
+    });
     instance = {
         getNestedNodeById,
         buildNestedNodeGraph,
@@ -321,8 +337,6 @@ export const useVFlowManagement = () => {
         removeNodeFromVFlow,
         resetNodeState,
         addEdgeToVFlow,
-        subscribeSSE: subscribe,
-        unsubscribeSSE: unsubscribe,
     }
     return instance;
 };

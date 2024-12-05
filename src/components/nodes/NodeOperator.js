@@ -268,3 +268,6 @@ export const rmResult = (_Node, rid) => {
         _Node.data.results.order.splice(_Node.data.results.order.indexOf(rid), 1);
     }
 };
+export const resetState = (_Node) => { 
+    Object.assign(_Node.data, cloneDeep(StateAttribute));
+}

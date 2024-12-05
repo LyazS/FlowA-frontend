@@ -1,5 +1,5 @@
 <script setup>
-import { computed, ref, watch, onMounted, onUnmounted } from 'vue';
+import { computed, ref, watch, onMounted, onUnmounted, nextTick } from 'vue';
 import {
     useMessage,
     darkTheme,
@@ -20,37 +20,47 @@ const message = useMessage();
 const {
     buildNestedNodeGraph,
     resetNodeState,
-    subscribeSSE,
-    unsubscribeSSE,
 } = useVFlowManagement()
 const { reBuildCounter, TaskID } = useVFlowInitial()
 
-const { toObject, fromObject, findNode } = useVueFlow()
+const { getNodes, toObject, fromObject, findNode, removeNodes } = useVueFlow()
 
-function onSave(flowKey) {
-    localStorage.setItem(flowKey, JSON.stringify(toObject()));
+const onSave = (flowKey) => {
+    const vflow = toObject();
+    for (const node of vflow.nodes) {
+        resetNodeState(node);
+    }
+    localStorage.setItem(flowKey, JSON.stringify(vflow));
 }
 
-function onRestore(flowKey) {
+const restore_loading = ref(false)
+const onRestore = async (flowKey) => {
+    restore_loading.value = true;
+    removeNodes(getNodes.value);
+    await nextTick();
     const flow = JSON.parse(localStorage.getItem(flowKey));
-
     if (flow) {
         for (const node of flow.nodes) {
-            resetNodeState(node.data);
+            resetNodeState(node);
         }
         fromObject(flow);
         buildNestedNodeGraph();
         reBuildCounter();
     }
+    restore_loading.value = false;
 }
 
 const run_loading = ref(false)
 const click2runflow = async () => {
+    for (const node of getNodes.value) {
+        resetNodeState(node);
+    }
+    await nextTick();
     const vflow = toObject();
     const res = await runflow(
         vflow,
         {
-            before: () => {
+            before: async () => {
                 run_loading.value = true;
             },
             success: (data) => {
@@ -69,22 +79,16 @@ const click2runflow = async () => {
         },
     );
     console.log(res);
-    if (res.success) {
-        TaskID.value = res.tid;
-        console.log("TaskID ", TaskID.value);
-        subscribeSSE(`${import.meta.env.VITE_API_URL}/api/progress?taskid=${TaskID.value}`)
-    }
+    TaskID.value = res.tid;
 }
-onUnmounted(() => {
-    unsubscribeSSE();
-})
+onUnmounted(() => {})
 </script>
 
 <template>
     <n-flex justify="flex-end">
         <n-button class="glow-btn" strong tertiary round type="success" @click="onSave('vueflow-store')">自动保存</n-button>
-        <n-button class="glow-btn" strong tertiary round type="success"
-            @click="onRestore('vueflow-store')">载入</n-button>
+        <n-button class="glow-btn" strong tertiary round type="success" @click="onRestore('vueflow-store')"
+            :loading="restore_loading">载入</n-button>
         <n-button class="glow-btn" strong tertiary round type="success" @click="click2runflow"
             :loading="run_loading">运行</n-button>
         <!-- <n-button class="glow-btn" strong tertiary round type="success" @click="testclick">导入</n-button>
