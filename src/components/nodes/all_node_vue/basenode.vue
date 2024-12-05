@@ -46,13 +46,9 @@
             </div>
         </template>
 
-        <div class="center-text"
+        <div class="center-text" ref="hiddenText"
             :style="{ top: `${center_text_pos.top}px`, transform: `translate(-50%, ${center_text_pos.trfY}%)` }">
-            {{ data.label }}
-        </div>
-        <!-- 隐藏用于测量的元素 -->
-        <div ref="hiddenText" class="center-text hidden">
-            {{ data.label }}
+            {{ thisnode.data.label }}
         </div>
     </div>
 </template>
@@ -61,7 +57,7 @@
 import { ref, computed, onMounted, nextTick, onBeforeUnmount, onUnmounted, watch } from 'vue';
 import { Position, Handle, useVueFlow } from '@vue-flow/core'
 const { findNode } = useVueFlow();
-const props = defineProps(['id', 'data'])
+const props = defineProps(['id'])
 const thisnode = findNode(props.id);
 
 const handle_h_pad = 1;
@@ -70,7 +66,7 @@ const handle_text_edge_pad = 6;
 const label_gap = 15;
 
 const inputHandles = computed(() => {
-    return Object.entries(props.data.connections.inputs)
+    return Object.entries(thisnode.data.connections.inputs)
         .map(([key, value]) => ({ key, label: value.label }))
         .sort((a, b) => a.key.localeCompare(b.key));
 });
@@ -78,7 +74,7 @@ const inputHandles = computed(() => {
 const outputHandles = computed(() => {
     const pattern = /^\d+\/[^/]*$/;
     // 先对数据进行排序
-    const sortedEntries = Object.entries(props.data.connections.outputs)
+    const sortedEntries = Object.entries(thisnode.data.connections.outputs)
         .sort(([aKey, aValue], [bKey, bValue]) => {
             if (pattern.test(aValue.label) && pattern.test(bValue.label)) {
                 const a_num = parseInt(aValue.label.split('/')[0]);
@@ -101,13 +97,13 @@ const outputHandles = computed(() => {
 });
 
 const cbfuncHandles = computed(() => {
-    return Object.entries(props.data.connections.callbackFuncs)
+    return Object.entries(thisnode.data.connections.callbackFuncs)
         .map(([key, value]) => ({ key, label: value.label }))
         .sort((a, b) => a.key.localeCompare(b.key));
 });
 
 const cbuserHandles = computed(() => {
-    return Object.entries(props.data.connections.callbackUsers)
+    return Object.entries(thisnode.data.connections.callbackUsers)
         .map(([key, value]) => ({ key, label: value.label }))
         .sort((a, b) => a.key.localeCompare(b.key));
 });
@@ -119,7 +115,7 @@ const max_handles_bottom = computed(() => {
     return Math.max(outputHandles.value.length, cbfuncHandles.value.length);
 });
 const center_text_pos = computed(() => {
-    if (props.data.flags.isNested)
+    if (thisnode.data.flags.isNested)
         return { top: 0, trfY: 0 }
     else
         return { top: handle_h_pad + max_handles_top.value * handle_h_gap + 10, trfY: -50 };
@@ -127,21 +123,23 @@ const center_text_pos = computed(() => {
 const hiddenText = ref(null); // 隐藏测量元素的引用
 
 onMounted(() => {
-    if (!props.data.flags.isNested) {
+    if (!thisnode.data.flags.isNested) {
         watch(() => [max_handles_top.value, max_handles_bottom.value], (newValues) => {
             const [newtop, newbottom] = newValues;
             const node_ht = 30 + (newtop + newbottom) * handle_h_gap;
             thisnode.style.height = `${node_ht}px`;
             thisnode.data.size.height = node_ht;
         }, { immediate: true })
-        watch(() => props.data.label, async (newLabel) => {
-            if (hiddenText.value && newLabel !== '') {
-                const node_wd = hiddenText.value.offsetWidth + label_gap * 2;
-                thisnode.style.width = `${node_wd}px`;
-                thisnode.data.size.width = node_wd;
-                // console.log(node_wd, newLabel);
-            }
-            await nextTick();
+        watch(() => thisnode.data.label, async (newLabel) => {
+            await nextTick(
+                () => {
+                    if (hiddenText.value && newLabel !== '') {
+                        const node_wd = hiddenText.value.offsetWidth + label_gap * 2;
+                        thisnode.style.width = `${node_wd}px`;
+                        thisnode.data.size.width = node_wd;
+                    }
+                }
+            );
         }, { immediate: true })
         watch(() => thisnode.data.state.status, async (newStatus) => {
             if (newStatus === 'Default') {

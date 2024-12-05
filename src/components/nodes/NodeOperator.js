@@ -127,8 +127,15 @@ const RunningAttribute = {
 const StateAttribute = {
     state: {              // 节点状态
         status: 'Default',
-        error: null,
-        lastUpdated: null
+        // 用于嵌套里的复制体
+        copyCount: {
+            Default: 0,
+            Pending: 0,
+            Running: 0,
+            Success: 0,
+            Canceled: 0,
+            Error: 0,
+        }
     },
     // 节点配置项 ==========
     config: {             // 节点级配置
