@@ -13,12 +13,15 @@ import { useVueFlow } from '@vue-flow/core'
 import { useVFlowManagement } from '@/hooks/useVFlowManagement';
 import { useVFlowInitial } from '@/hooks/useVFlowInitial'
 import { useFlowAOperation } from '@/services/run_flow'
-import { SubscribeSSE } from '@/services/useSSE'
 import { setValueByPath } from "@/utils/tools"
 const { runflow } = useFlowAOperation();
 const message = useMessage();
 
-const { buildNestedNodeGraph } = useVFlowManagement()
+const {
+    buildNestedNodeGraph,
+    subscribeSSE,
+    unsubscribeSSE,
+} = useVFlowManagement()
 const { reBuildCounter, TaskID } = useVFlowInitial()
 
 const { toObject, fromObject, findNode } = useVueFlow()
@@ -39,64 +42,7 @@ function onRestore(flowKey) {
         reBuildCounter();
     }
 }
-const updateNodeFromSSE = (data) => {
-    const nid = data.nid;
-    const updatedatas = data.data;
-    for (const udata of updatedatas) {
-        const data = udata.data;
-        const path = udata.path;
-        const type = udata.type;
-        if (type === "overwrite") {
-            const thenode = findNode(nid);
-            if (thenode) {
-                setValueByPath(thenode.data, path, data);
-            }
-        }
-        else if (type === "append") { }
-        else if (type === "remove") { }
-    }
-}
-const { subscribe, unsubscribe } = SubscribeSSE(
-    'GET',
-    null,
-    null,
-    // onOpen
-    async (response) => {
-        console.log("onopen SSE", response.ok);
-    },
-    // onMessage
-    async (event) => {
-        console.log("onmessage SSE");
-        if (event.event === "updatenode") {
-            let data = JSON.parse(event.data);
-            console.log(data);
-            updateNodeFromSSE(data);
-        }
-        else if (event.event === "batchupdatenode") {
-            let datas = JSON.parse(event.data);
-            for (const data of datas) {
-                updateNodeFromSSE(data);
-            }
-        }
-        else if (event.event === "internalerror") {
-            let data = JSON.parse(event.data);
-            console.log(data);
-            message.error(`内部错误: ${data}`);
-        }
-        else if (event.event === "flowfinish") {
-            message.success('工作流运行完成');
-            unsubscribe();
-        }
-    },
-    // onClose
-    async () => {
-        console.log("onclose SSE");
-    },
-    // onError
-    async (err) => {
-        console.log("onerror SSE", err);
-    },
-);
+
 const run_loading = ref(false)
 const click2runflow = async () => {
     const vflow = toObject();
@@ -125,11 +71,11 @@ const click2runflow = async () => {
     if (res.success) {
         TaskID.value = res.tid;
         console.log("TaskID ", TaskID.value);
-        subscribe(`${import.meta.env.VITE_API_URL}/api/progress?taskid=${TaskID.value}`)
+        subscribeSSE(`${import.meta.env.VITE_API_URL}/api/progress?taskid=${TaskID.value}`)
     }
 }
 onUnmounted(() => {
-    unsubscribe();
+    unsubscribeSSE();
 })
 </script>
 
