@@ -47,14 +47,24 @@
         </template>
 
         <div class="center-text" ref="hiddenText"
-            :style="{ top: `${center_text_pos.top}px`, transform: `translate(-50%, ${center_text_pos.trfY}%)` }">
+            :style="{ position: 'absolute', top: `${center_text_pos.top}px`, left: '50%', transform: `translate(-50%, ${center_text_pos.trfY}%)` }">
             {{ thisnode.data.label }}
         </div>
+        <n-flex v-if="isShowCopyCount" justify="center"
+            :style="{ flexWrap: 'nowrap', position: 'absolute', top: `${center_text_pos.top}px`, left: '50%', transform: `translate(-50%,  ${center_text_pos.copCountY}%) translate(0,  10px)` }">
+            <div class="state-text" style="color: #70c0e8;"> {{ thisnode.data.state.copyCount.Running }}</div>
+            <div class="state-text" style="color: white;"> /</div>
+            <div class="state-text" style="color: #63e2b7;"> {{ thisnode.data.state.copyCount.Success }}</div>
+            <div class="state-text" style="color: white;"> /</div>
+            <div class="state-text" style="color: #e88080;"> {{ thisnode.data.state.copyCount.Error }}</div>
+        </n-flex>
     </div>
 </template>
 
 <script setup>
 import { ref, computed, onMounted, nextTick, onBeforeUnmount, onUnmounted, watch } from 'vue';
+import { debounce } from 'lodash';
+import { NFlex } from 'naive-ui'
 import { Position, Handle, useVueFlow } from '@vue-flow/core'
 const { findNode } = useVueFlow();
 const props = defineProps(['id'])
@@ -116,13 +126,58 @@ const max_handles_bottom = computed(() => {
 });
 const center_text_pos = computed(() => {
     if (thisnode.data.flags.isNested)
-        return { top: 0, trfY: 0 }
+        return { top: 0, trfY: 0, copCountY: 50 }
     else
-        return { top: handle_h_pad + max_handles_top.value * handle_h_gap + 10, trfY: -50 };
+        return { top: handle_h_pad + max_handles_top.value * handle_h_gap + 10, trfY: -50, copCountY: -50 };
 });
 const hiddenText = ref(null); // 隐藏测量元素的引用
 
+const isShowCopyCount = computed(() => {
+    // return true;
+    return Object.keys(thisnode.data.state.copy).length > 0;
+});
+const countCopy = (statecopy) => {
+    let copyRunning = 0;
+    let copySuccess = 0;
+    let copyError = 0;
+    for (const cid in statecopy) {
+        if (statecopy.hasOwnProperty(cid)) {
+            const sc = statecopy[cid];
+            if (sc.status === 'Running' || sc.status === 'Pending') {
+                copyRunning++;
+            }
+            else if (sc.status === 'Success') {
+                copySuccess++;
+            }
+            else if (sc.status === 'Error' || sc.status === 'Canceled') {
+                copyError++;
+            }
+        }
+    }
+    thisnode.data.state.copyCount.Running = copyRunning;
+    thisnode.data.state.copyCount.Success = copySuccess;
+    thisnode.data.state.copyCount.Error = copyError;
+
+    if (copyRunning > 0) {
+        thisnode.data.state.status = 'Running';
+    }
+    else if (copyError > 0) {
+        thisnode.data.state.status = 'Error';
+    }
+    else if (copySuccess > 0) {
+        thisnode.data.state.status = 'Success';
+    }
+    else {
+        thisnode.data.state.status = 'Default';
+    }
+};
+const debouncedCountCopy = debounce(countCopy, 500);
 onMounted(() => {
+    watch(() => thisnode.data.state.copy, (newValue) => {
+        debouncedCountCopy(newValue);
+    }, { deep: true })
+
+
     if (!thisnode.data.flags.isNested) {
         watch(() => [max_handles_top.value, max_handles_bottom.value], (newValues) => {
             const [newtop, newbottom] = newValues;
@@ -358,9 +413,16 @@ onMounted(() => {
     letter-spacing: 0.1px;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    position: absolute;
     text-wrap: nowrap;
-    left: 50%;
+
+}
+
+.state-text {
+    font-size: 6px;
+    letter-spacing: 0.1px;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-wrap: nowrap;
 }
 
 /* 隐藏用于测量的文字样式 */

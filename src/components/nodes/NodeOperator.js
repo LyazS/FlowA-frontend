@@ -125,16 +125,18 @@ const RunningAttribute = {
     },
 }
 const StateAttribute = {
-    state: {              // 节点状态
+    // 节点状态
+    state: {
         status: 'Default',
-        // 用于嵌套里的复制体
+        // 嵌套里的复制体
+        copy: {
+            //"<nid>": { status: "" },
+        },
+        // 统计复制体数量
         copyCount: {
-            Default: 0,
-            Pending: 0,
-            Running: 0,
-            Success: 0,
-            Canceled: 0,
-            Error: 0,
+            Running: 0, // Pending|Running|
+            Success: 0, // Success|
+            Error: 0, // Error|Canceled|
         }
     },
     // 节点配置项 ==========

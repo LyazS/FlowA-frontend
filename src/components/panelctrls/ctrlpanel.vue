@@ -19,6 +19,7 @@ const message = useMessage();
 
 const {
     buildNestedNodeGraph,
+    resetNodeState,
     subscribeSSE,
     unsubscribeSSE,
 } = useVFlowManagement()
@@ -35,7 +36,7 @@ function onRestore(flowKey) {
 
     if (flow) {
         for (const node of flow.nodes) {
-            if (node.data.state?.status) { node.data.state.status = "Default"; }
+            resetNodeState(node.data);
         }
         fromObject(flow);
         buildNestedNodeGraph();

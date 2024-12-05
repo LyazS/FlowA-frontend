@@ -218,6 +218,10 @@ export const useVFlowManagement = () => {
         removeNodes(node, true, true);
     };
 
+    const resetNodeState = (ndata) => {
+        if (ndata.state?.status) { ndata.state.status = "Default"; }
+        if (ndata.state?.copy) { ndata.state.copy = {}; }
+    }
 
     const addEdgeToVFlow = (params) => {
         let is_match_port = (params.sourceHandle.startsWith("output") && params.targetHandle.startsWith("input"))
@@ -239,15 +243,27 @@ export const useVFlowManagement = () => {
 
     const updateNodeFromSSE = (data) => {
         const nid = data.nid;
+        const oriid = data.oriid;
         const updatedatas = data.data;
         for (const udata of updatedatas) {
             const data = udata.data;
             const path = udata.path;
             const type = udata.type;
             if (type === "overwrite") {
-                const thenode = findNode(nid);
-                if (thenode) {
-                    setValueByPath(thenode.data, path, data);
+                // 特殊处理状态改变
+                if (nid.includes('#')
+                    && path[0] === 'state'
+                    && path[1] == 'status') {
+                    const vf_node = findNode(oriid);
+                    if (vf_node && !vf_node.data.flags.isAttached) {
+                        vf_node.data.state.copy[nid] = { status: data };
+                    }
+                }
+                else {
+                    const thenode = findNode(nid);
+                    if (thenode) {
+                        setValueByPath(thenode.data, path, data);
+                    }
                 }
             }
             else if (type === "append") { }
@@ -303,6 +319,7 @@ export const useVFlowManagement = () => {
         recursiveAddNodeToVFlow,
         addNodeToVFlow,
         removeNodeFromVFlow,
+        resetNodeState,
         addEdgeToVFlow,
         subscribeSSE: subscribe,
         unsubscribeSSE: unsubscribe,
