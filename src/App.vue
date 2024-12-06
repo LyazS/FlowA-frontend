@@ -1,10 +1,12 @@
 <template>
   <n-config-provider :theme="darkTheme" :hljs="hljs">
-    <n-message-provider>
-      <div :style="{ height: '100vh', width: '100vw' }">
-        <vflow />
-      </div>
-    </n-message-provider>
+    <n-dialog-provider>
+      <n-message-provider>
+        <div :style="{ height: '100vh', width: '100vw' }">
+          <vflow />
+        </div>
+      </n-message-provider>
+    </n-dialog-provider>
   </n-config-provider>
 </template>
 
@@ -13,6 +15,7 @@ import {
   NMessageProvider,
   darkTheme,
   NConfigProvider,
+  NDialogProvider,
 } from 'naive-ui';
 import vflow from '@/components/vflow.vue';
 import hljs from 'highlight.js/lib/core'

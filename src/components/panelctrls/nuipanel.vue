@@ -12,28 +12,30 @@ import {
     NSelect,
     NInputGroup,
     NInputGroupLabel,
+    NEllipsis,
 } from 'naive-ui';
 import { Panel, useVueFlow } from '@vue-flow/core'
 import nodepanel from './nodepanel.vue'
 import ctrlpanel from './ctrlpanel.vue';
-
+import { useVFlowManagement } from '@/hooks/useVFlowManagement'
 const AceCodeEditor = defineAsyncComponent(() => import('./AceCodeEditor.vue'));
-
+const FlowHistorys = defineAsyncComponent(() => import('./FlowHistorys.vue'));
 const props = defineProps({
     nodeId: {
         type: [String, null],
         required: true
     }
 })
+const { TaskID } = useVFlowManagement();
 const isShowCodeEditor = ref(false);
 const CodeEditorPath = ref([]);
 const CodeEditorLangType = ref('CodePython');
 provide('isShowCodeEditor', isShowCodeEditor);
 provide('CodeEditorPath', CodeEditorPath);
 provide('CodeEditorLangType', CodeEditorLangType);
-const testbtn = () => {
-    console.log('testbtn')
-}
+const isShowFlowHistorys = ref(false);
+provide('isShowFlowHistorys', isShowFlowHistorys);
+
 </script>
 
 <template>
@@ -44,8 +46,13 @@ const testbtn = () => {
     </Panel>
     <Panel position="top-center" :style="{ width: 'auto' }">
         <n-flex justify="center">
-            <n-button quaternary type="primary" @click="testbtn">
-                当前工作流/xxxxxxxxxxx
+            <n-button quaternary type="primary" @click="isShowFlowHistorys = true">
+                <n-ellipsis v-if="TaskID" style="max-width: 240px">
+                    {{ TaskID }}
+                </n-ellipsis>
+                <n-ellipsis v-else style="max-width: 240px">
+                    工作流管理器
+                </n-ellipsis>
             </n-button>
         </n-flex>
     </Panel>
@@ -56,7 +63,7 @@ const testbtn = () => {
         <nodepanel v-if="!!nodeId" :nodeId="nodeId" />
     </Panel>
     <AceCodeEditor v-if="!!nodeId" :nodeId="nodeId" :path="CodeEditorPath" :langtype="CodeEditorLangType" />
-
+    <FlowHistorys />
 </template>
 
 <style scoped>

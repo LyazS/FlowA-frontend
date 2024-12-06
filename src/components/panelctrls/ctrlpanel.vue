@@ -1,12 +1,14 @@
 <script setup>
-import { computed, ref, watch, onMounted, onUnmounted, nextTick } from 'vue';
+import { computed, ref, h, watch, onMounted, onUnmounted, nextTick } from 'vue';
 import {
     useMessage,
+    useDialog,
     darkTheme,
     NConfigProvider,
     NMessageProvider,
     NCard,
     NButton,
+    NInput,
     NFlex,
 } from 'naive-ui';
 import { useVueFlow } from '@vue-flow/core'
@@ -16,21 +18,38 @@ import { useFlowAOperation } from '@/services/run_flow'
 import { setValueByPath } from "@/utils/tools"
 const { runflow } = useFlowAOperation();
 const message = useMessage();
+const dialog = useDialog()
 
 const {
     buildNestedNodeGraph,
     resetNodeState,
+    TaskID,
+    TaskName,
+    saveVflow,
 } = useVFlowManagement()
-const { reBuildCounter, TaskID } = useVFlowInitial()
+const { reBuildCounter } = useVFlowInitial()
 
 const { getNodes, toObject, fromObject, findNode, removeNodes } = useVueFlow()
 
-const onSave = (flowKey) => {
-    const vflow = toObject();
-    for (const node of vflow.nodes) {
-        resetNodeState(node);
+const onSave = () => {
+    dialog.info({
+        title: '保存工作流',
+        content: () => (
+            h(NInput, {
+                placeholder: '请输入工作流名称',
+                value: TaskName.value,
+            }, {}
+            )),
+        positiveText: '确定',
+        negativeText: '取消',
+        onPositiveClick: () => {
+            message.success(`保存为${TaskName.value}`)
+        },
+        onNegativeClick: () => {
+            message.error('取消')
+        }
     }
-    localStorage.setItem(flowKey, JSON.stringify(vflow));
+    );
 }
 
 const restore_loading = ref(false)
@@ -81,14 +100,14 @@ const click2runflow = async () => {
     console.log(res);
     TaskID.value = res.tid;
 }
-onUnmounted(() => {})
+onUnmounted(() => { })
 </script>
 
 <template>
     <n-flex justify="flex-end">
-        <n-button class="glow-btn" strong tertiary round type="success" @click="onSave('vueflow-store')">自动保存</n-button>
-        <n-button class="glow-btn" strong tertiary round type="success" @click="onRestore('vueflow-store')"
-            :loading="restore_loading">载入</n-button>
+        <n-button class="glow-btn" strong tertiary round type="success" @click="onSave">保存</n-button>
+        <!-- <n-button class="glow-btn" strong tertiary round type="success" @click="onRestore('vueflow-store')"
+            :loading="restore_loading">载入</n-button> -->
         <n-button class="glow-btn" strong tertiary round type="success" @click="click2runflow"
             :loading="run_loading">运行</n-button>
         <!-- <n-button class="glow-btn" strong tertiary round type="success" @click="testclick">导入</n-button>

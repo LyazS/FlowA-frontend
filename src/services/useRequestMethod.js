@@ -6,14 +6,21 @@ export const useRequestMethod = () => {
   if (instance) return instance;
 
   const message = useMessage();
-  async function postData(
+
+  async function axiosRequest(
     url,
     data,
+    method = "post",
     callback = null,
   ) {
     try {
       if (callback && callback.hasOwnProperty('before')) await callback.before();
-      const response = await axios.post(
+      let reqmethod = axios.post;
+      if (method === "post") {
+      } else if (method === "get") {
+        reqmethod = axios.get;
+      }
+      const response = await reqmethod(
         `${import.meta.env.VITE_API_URL}/${url}`,
         data
       );
@@ -34,8 +41,24 @@ export const useRequestMethod = () => {
     }
   }
 
+  async function postData(
+    url,
+    data,
+    callback = null,
+  ) {
+    return await axiosRequest(url, data, "post", callback);
+  }
+  async function getData(
+    url,
+    params,
+    callback = null,
+  ) {
+    return await axiosRequest(url, params, "get", callback);
+  }
+
   instance = {
     postData,
+    getData,
   };
   return instance;
 };
