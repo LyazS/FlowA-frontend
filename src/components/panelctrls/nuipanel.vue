@@ -26,7 +26,7 @@ const props = defineProps({
         required: true
     }
 })
-const { TaskID } = useVFlowManagement();
+const { TaskID, TaskName } = useVFlowManagement();
 const isShowCodeEditor = ref(false);
 const CodeEditorPath = ref([]);
 const CodeEditorLangType = ref('CodePython');
@@ -47,8 +47,8 @@ provide('isShowFlowHistorys', isShowFlowHistorys);
     <Panel position="top-center" :style="{ width: 'auto' }">
         <n-flex justify="center">
             <n-button quaternary type="primary" @click="isShowFlowHistorys = true">
-                <n-ellipsis v-if="TaskID" style="max-width: 240px">
-                    {{ TaskID }}
+                <n-ellipsis v-if="TaskName" style="max-width: 240px">
+                    {{ TaskName }}
                 </n-ellipsis>
                 <n-ellipsis v-else style="max-width: 240px">
                     工作流管理器

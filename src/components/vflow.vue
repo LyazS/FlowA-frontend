@@ -92,9 +92,6 @@ const {
 } = useKeyboardControls()
 
 provide('isEditing', isEditing);
-watch(isEditing, (new_val) => {
-    console.log("isEditing", new_val);
-})
 onMounted(async () => {
     await initAllNodeInfos();
     buildNestedNodeGraph();

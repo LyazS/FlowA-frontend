@@ -55,8 +55,8 @@ onMounted(async () => {
                 <n-grid-item :span="2">
                     <n-text>本地工作流</n-text>
                     <n-flex vertical :style="{ width: '100%' }">
-                        <n-button v-for="item in workflows" :key="item.tid" @click="loadWorkflow_btn(item.tid)">
-                            {{ item.tid }}
+                        <n-button v-for="name in workflows" @click="loadWorkflow_btn(name)">
+                            {{ name }}
                         </n-button>
                     </n-flex>
                 </n-grid-item>

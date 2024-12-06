@@ -332,7 +332,7 @@ export const useVFlowManagement = () => {
         }
     }
 
-    const saveVflow = async (name, callback) => {
+    const saveWorkflow = async (name, callback) => {
         const data = {
             name: name,
             vflow: toObject(),
@@ -346,10 +346,11 @@ export const useVFlowManagement = () => {
 
     const loadWorkflow = async (name) => {
         if (!name) return;
-        const flow = await postData(`api/loadworkflow?name=${name}`);
+        const flow = await postData(`api/getworkflow?name=${name}`);
         console.log(`load Workflow ${name}: `, flow);
-        loadVflow(flow);
+        loadVflow(flow.vflow);
         TaskID.value = null;
+        TaskName.value = flow.name;
     };
 
     const getHistorys = async () => {
@@ -360,8 +361,9 @@ export const useVFlowManagement = () => {
         if (!tid) return;
         const flow = await postData(`api/loadhistory?tid=${tid}`);
         console.log(`load History ${tid}: `, flow);
-        loadVflow(flow);
+        loadVflow(flow.vflow);
         TaskID.value = tid;
+        TaskName.value = flow.name;
     };
     onMounted(async () => {
         // 打开网页就加载可能的历史taskid
@@ -393,6 +395,7 @@ export const useVFlowManagement = () => {
         removeNodeFromVFlow,
         resetNodeState,
         addEdgeToVFlow,
+        saveWorkflow,
         getWorkflows,
         loadWorkflow,
         getHistorys,

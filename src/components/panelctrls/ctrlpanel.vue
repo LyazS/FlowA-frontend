@@ -1,5 +1,5 @@
 <script setup>
-import { computed, ref, h, watch, onMounted, onUnmounted, nextTick } from 'vue';
+import { computed, ref, h, watch, inject, onMounted, onUnmounted, nextTick } from 'vue';
 import {
     useMessage,
     useDialog,
@@ -19,35 +19,52 @@ import { setValueByPath } from "@/utils/tools"
 const { runflow } = useFlowAOperation();
 const message = useMessage();
 const dialog = useDialog()
+const isEditing = inject("isEditing");
 
 const {
     buildNestedNodeGraph,
     resetNodeState,
     TaskID,
     TaskName,
-    saveVflow,
+    saveWorkflow,
 } = useVFlowManagement()
 const { reBuildCounter } = useVFlowInitial()
 
 const { getNodes, toObject, fromObject, findNode, removeNodes } = useVueFlow()
 
+const saveWflowName = ref("")
 const onSave = () => {
     dialog.info({
         title: '保存工作流',
         content: () => (
             h(NInput, {
-                placeholder: '请输入工作流名称',
-                value: TaskName.value,
+                placeholder: `默认为【${TaskID.value}】`,
+                value: saveWflowName.value,
+                onInput: (value) => {
+                    if (value.trim() !== "") {
+                        saveWflowName.value = value.trim();
+                    }
+                    else {
+                        saveWflowName.value = TaskID.value;
+                    }
+                },
+                onFocus: () => { isEditing.value = true },
+                onBlur: () => { isEditing.value = false },
             }, {}
             )),
-        positiveText: '确定',
+        positiveText: '保存',
         negativeText: '取消',
-        onPositiveClick: () => {
-            message.success(`保存为${TaskName.value}`)
+        onPositiveClick: async () => {
+            await saveWorkflow(saveWflowName.value,{
+                success: () => {
+                    message.success(`【${saveWflowName.value}】保存成功`);
+                },
+                error: (err) => {
+                    message.error(`【${saveWflowName.value}】保存失败: ${err}`)
+                },
+            });
         },
-        onNegativeClick: () => {
-            message.error('取消')
-        }
+        onNegativeClick: () => { },
     }
     );
 }
