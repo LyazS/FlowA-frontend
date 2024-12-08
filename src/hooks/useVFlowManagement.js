@@ -3,7 +3,6 @@ import { useVueFlow } from '@vue-flow/core';
 import { useVFlowInitial } from '@/hooks/useVFlowInitial.js';
 import { useRequestMethod } from '@/services/useRequestMethod';
 import { getUuid, setValueByPath } from '@/utils/tools.js';
-import { SubscribeSSE } from '@/services/useSSE'
 import { useMessage } from 'naive-ui';
 import { resetState } from "@/components/nodes/NodeOperator.js"
 // 单例模式
@@ -11,8 +10,7 @@ let instance = null;
 export const useVFlowManagement = () => {
     if (instance) return instance;
     const message = useMessage();
-    const TaskID = ref(null);
-    const TaskName = ref(null);
+    
     const {
         getAddNodeList,
         getVFNodeTypes,
@@ -248,145 +246,7 @@ export const useVFlowManagement = () => {
         }
     };
 
-    const updateNodeFromSSE = (data) => {
-        const nid = data.nid;
-        const oriid = data.oriid;
-        const updatedatas = data.data;
-        for (const udata of updatedatas) {
-            const data = udata.data;
-            const path = udata.path;
-            const type = udata.type;
-            if (type === "overwrite") {
-                // 特殊处理状态改变
-                if (nid.includes('#')
-                    && path[0] === 'state'
-                    && path[1] == 'status') {
-                    const vf_node = findNode(oriid);
-                    if (vf_node && !vf_node.data.flags.isAttached) {
-                        vf_node.data.state.copy[nid] = { status: data };
-                    }
-                }
-                else {
-                    const thenode = findNode(nid);
-                    if (thenode) {
-                        setValueByPath(thenode.data, path, data);
-                    }
-                }
-            }
-            else if (type === "append") { }
-            else if (type === "remove") { }
-        }
-    }
-    const { subscribe, unsubscribe } = SubscribeSSE(
-        'GET',
-        null,
-        null,
-        // onOpen
-        async (response) => {
-            // console.log("onopen SSE", response.ok);
-        },
-        // onMessage
-        async (event) => {
-            // console.log("onmessage SSE");
-            if (event.event === "updatenode") {
-                let data = JSON.parse(event.data);
-                // console.log(data);
-                updateNodeFromSSE(data);
-            }
-            else if (event.event === "batchupdatenode") {
-                let datas = JSON.parse(event.data);
-                for (const data of datas) {
-                    updateNodeFromSSE(data);
-                }
-            }
-            else if (event.event === "internalerror") {
-                let data = JSON.parse(event.data);
-                // console.log(data);
-                message.error(`内部错误: ${data}`);
-            }
-            else if (event.event === "flowfinish") {
-                unsubscribe();
-                message.success('工作流运行完成');
-            }
-        },
-        // onClose
-        async () => {
-            console.log("onclose SSE");
-        },
-        // onError
-        async (err) => {
-            console.log("onerror SSE", err);
-        },
-    );
-
-    const loadVflow = async (flow) => {
-        if (flow) {
-            removeNodes(getNodes.value);
-            await nextTick();
-            for (const node of flow.nodes) {
-                resetNodeState(node);
-            }
-            fromObject(flow);
-            buildNestedNodeGraph();
-            reBuildCounter();
-        }
-    }
-
-    const saveWorkflow = async (name, callback) => {
-        const data = {
-            name: name,
-            vflow: toObject(),
-        }
-        await postData("api/saveworkflow", data, callback);
-    };
-
-    const getWorkflows = async () => {
-        return await getData("api/workflows");
-    };
-
-    const loadWorkflow = async (name) => {
-        if (!name) return;
-        const flow = await postData(`api/getworkflow?name=${name}`);
-        console.log(`load Workflow ${name}: `, flow);
-        loadVflow(flow.vflow);
-        TaskID.value = null;
-        TaskName.value = flow.name;
-    };
-
-    const getHistorys = async () => {
-        return await getData("api/historys");
-    };
-
-    const loadHistory = async (tid) => {
-        if (!tid) return;
-        const flow = await postData(`api/loadhistory?tid=${tid}`);
-        console.log(`load History ${tid}: `, flow);
-        loadVflow(flow.vflow);
-        TaskID.value = tid;
-        TaskName.value = flow.name;
-    };
-    onMounted(async () => {
-        // 打开网页就加载可能的历史taskid
-        const ls_tid = localStorage.getItem('curTaskID') || null;
-        await loadHistory(ls_tid);
-        // 监听TaskID变化，第一次即订阅以获取历史记录的工作流数据
-        watch(TaskID, (newVal) => {
-            if (newVal) {
-                setTimeout(() => {
-                    console.log("curTaskID ", newVal);
-                    localStorage.setItem('curTaskID', newVal);
-                    subscribe(`${import.meta.env.VITE_API_URL}/api/progress?taskid=${newVal}`)
-                    console.log("subscribeSSE Done.");
-                }, 1000);
-            }
-        }, { immediate: true });
-    });
-    onUnmounted(() => {
-        unsubscribe();
-    });
     instance = {
-        TaskID,
-        TaskName,
         getNestedNodeById,
         buildNestedNodeGraph,
         recursiveUpdateNodeSize,
@@ -395,11 +255,6 @@ export const useVFlowManagement = () => {
         removeNodeFromVFlow,
         resetNodeState,
         addEdgeToVFlow,
-        saveWorkflow,
-        getWorkflows,
-        loadWorkflow,
-        getHistorys,
-        loadHistory,
     }
     return instance;
 };

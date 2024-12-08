@@ -15,9 +15,10 @@ import {
     NEllipsis,
 } from 'naive-ui';
 import { Panel, useVueFlow } from '@vue-flow/core'
+import { useVFlowManagement } from '@/hooks/useVFlowManagement'
+import { useFlowAOperation } from '@/services/useFlowAOperation'
 import nodepanel from './nodepanel.vue'
 import ctrlpanel from './ctrlpanel.vue';
-import { useVFlowManagement } from '@/hooks/useVFlowManagement'
 const AceCodeEditor = defineAsyncComponent(() => import('./AceCodeEditor.vue'));
 const FlowHistorys = defineAsyncComponent(() => import('./FlowHistorys.vue'));
 const props = defineProps({
@@ -26,7 +27,7 @@ const props = defineProps({
         required: true
     }
 })
-const { TaskID, TaskName } = useVFlowManagement();
+const { TaskID, TaskName } = useFlowAOperation();
 const isShowCodeEditor = ref(false);
 const CodeEditorPath = ref([]);
 const CodeEditorLangType = ref('CodePython');

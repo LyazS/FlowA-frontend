@@ -4,14 +4,16 @@ import { useVueFlow, useHandleConnections } from '@vue-flow/core'
 import { NText, NButton, NModal, NCard, NFlex, NGrid, NGridItem, NDivider } from 'naive-ui'
 import { debounce } from 'lodash'
 import { useVFlowManagement } from '@/hooks/useVFlowManagement'
+import { useFlowAOperation } from '@/services/useFlowAOperation'
 const { findNode } = useVueFlow();
+// const { } = useVFlowManagement();
 const {
+    TaskID,
     getWorkflows,
     loadWorkflow,
     getHistorys,
     loadHistory,
-    TaskID,
-} = useVFlowManagement();
+} = useFlowAOperation();
 
 const isEditing = inject("isEditing");
 const isShowFlowHistorys = inject("isShowFlowHistorys");

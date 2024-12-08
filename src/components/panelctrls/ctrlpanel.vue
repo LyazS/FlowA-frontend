@@ -14,9 +14,10 @@ import {
 import { useVueFlow } from '@vue-flow/core'
 import { useVFlowManagement } from '@/hooks/useVFlowManagement';
 import { useVFlowInitial } from '@/hooks/useVFlowInitial'
-import { useFlowAOperation } from '@/services/run_flow'
+import { useFlowAOperation } from '@/services/useFlowAOperation'
 import { setValueByPath } from "@/utils/tools"
-const { runflow } = useFlowAOperation();
+
+const { TaskID, TaskName, runflow } = useFlowAOperation();
 const message = useMessage();
 const dialog = useDialog()
 const isEditing = inject("isEditing");
@@ -24,8 +25,6 @@ const isEditing = inject("isEditing");
 const {
     buildNestedNodeGraph,
     resetNodeState,
-    TaskID,
-    TaskName,
     saveWorkflow,
 } = useVFlowManagement()
 const { reBuildCounter } = useVFlowInitial()
@@ -55,7 +54,7 @@ const onSave = () => {
         positiveText: '保存',
         negativeText: '取消',
         onPositiveClick: async () => {
-            await saveWorkflow(saveWflowName.value,{
+            await saveWorkflow(saveWflowName.value, {
                 success: () => {
                     message.success(`【${saveWflowName.value}】保存成功`);
                 },
@@ -94,7 +93,7 @@ const click2runflow = async () => {
     await nextTick();
     const vflow = toObject();
     const res = await runflow(
-        vflow,
+        { name: TaskName.value, vflow: vflow },
         {
             before: async () => {
                 run_loading.value = true;
