@@ -50,7 +50,7 @@ import connect_edge from '@/components/edges/connect_edge/edge.vue'
 
 import { useVFlowInitial } from '@/hooks/useVFlowInitial.js'
 import { useVFlowManagement } from '@/hooks/useVFlowManagement.js'
-import { useFlowEvents } from '@/hooks/useFlowEvents.js'
+import { useVFlowEvents } from '@/hooks/useVFlowEvents.js'
 import { useContextMenu } from '@/hooks/useContextMenu.js'
 import { useKeyboardControls } from '@/hooks/useKeyboardControls.js'
 
@@ -75,7 +75,7 @@ const {
 
 const {
     lastClickedNodeId
-} = useFlowEvents()
+} = useVFlowEvents()
 
 const {
     onClickContextMenuRmNode,
