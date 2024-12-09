@@ -121,16 +121,16 @@ export const useFlowAOperation = () => {
       name: name,
       vflow: toObject(),
     }
-    await postData("api/saveworkflow", data, callback);
+    await postData("manager/saveworkflow", data, callback);
   };
 
   const getWorkflows = async () => {
-    return await getData("api/workflows");
+    return await getData("manager/workflows");
   };
 
   const loadWorkflow = async (name) => {
     if (!name) return;
-    const flow = await postData(`api/getworkflow?name=${name}`);
+    const flow = await postData(`manager/getworkflow?name=${name}`);
     console.log(`load Workflow ${name}: `, flow);
     loadVflow(flow.vflow);
     TaskID.value = null;
@@ -138,16 +138,18 @@ export const useFlowAOperation = () => {
   };
 
   const getHistorys = async () => {
-    return await getData("api/historys");
+    return await getData("manager/historys");
   };
 
   const loadHistory = async (tid) => {
     if (!tid) return;
-    const flow = await postData(`api/loadhistory?tid=${tid}`);
+    const flow = await postData(`manager/loadhistory?tid=${tid}`);
     console.log(`load History ${tid}: `, flow);
-    loadVflow(flow.vflow);
-    TaskID.value = tid;
-    TaskName.value = flow.name;
+    if (flow) {
+      loadVflow(flow.vflow);
+      TaskID.value = tid;
+      TaskName.value = flow.name;
+    }
   };
 
   onMounted(async () => {

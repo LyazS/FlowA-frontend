@@ -32,13 +32,13 @@ const workflows = ref([]);
 const updateHistorys = debounce(async () => {
     const res = await getHistorys(TaskID.value);
     console.log(res);
-    historys.value = res.historys;
-}, 1000);
+    historys.value = res;
+}, 500);
 const updateWorkflows = debounce(async () => {
     const res = await getWorkflows();
     console.log(res);
-    workflows.value = res.workflows;
-}, 1000);
+    workflows.value = res;
+}, 500);
 watch(isShowFlowHistorys, async (newVal) => {
     if (newVal) {
         updateHistorys();
@@ -57,21 +57,22 @@ onMounted(async () => {
                 <n-grid-item :span="2">
                     <n-text>本地工作流</n-text>
                     <n-flex vertical :style="{ width: '100%' }">
-                        <n-button v-for="name in workflows" @click="loadWorkflow_btn(name)">
-                            {{ name }}
+                        <n-button v-for="(item, idx) in workflows" :key="'workflow_' + idx"
+                            @click="loadWorkflow_btn(item.name)">
+                            {{ item.name }}{{ idx }}
                         </n-button>
                     </n-flex>
                 </n-grid-item>
                 <n-grid-item :span="2">
                     <n-text>历史记录</n-text>
                     <n-flex vertical :style="{ width: '100%' }">
-                        <n-button v-for="item in historys" :key="item.tid" @click="loadHistory_btn(item.tid)">
-                            {{ item.tid }}
+                        <n-button v-for="(item, idx) in historys" :key="'history_' + idx"
+                            @click="loadHistory_btn(item.name)">
+                            {{ item.name }}
                         </n-button>
                     </n-flex>
                 </n-grid-item>
             </n-grid>
-            <!-- <pre>{{ historys }}</pre> -->
         </n-card>
     </n-modal>
 </template>

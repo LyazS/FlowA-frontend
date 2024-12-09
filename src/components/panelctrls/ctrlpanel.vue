@@ -1,5 +1,5 @@
 <script setup>
-import { computed, ref, h, watch, inject, onMounted, onUnmounted, nextTick } from 'vue';
+import { computed, provide, ref, h, watch, inject, onMounted, onUnmounted, nextTick } from 'vue';
 import {
     useMessage,
     useDialog,
@@ -16,8 +16,8 @@ import { useVFlowManagement } from '@/hooks/useVFlowManagement';
 import { useVFlowInitial } from '@/hooks/useVFlowInitial'
 import { useFlowAOperation } from '@/services/useFlowAOperation'
 import { setValueByPath } from "@/utils/tools"
-
-const { TaskID, TaskName, runflow } = useFlowAOperation();
+import FlowSaver from "@/components/panelctrls/FlowSaver.vue"
+const { TaskID, TaskName, runflow, saveWorkflow } = useFlowAOperation();
 const message = useMessage();
 const dialog = useDialog()
 const isEditing = inject("isEditing");
@@ -25,65 +25,13 @@ const isEditing = inject("isEditing");
 const {
     buildNestedNodeGraph,
     resetNodeState,
-    saveWorkflow,
 } = useVFlowManagement()
 const { reBuildCounter } = useVFlowInitial()
 
 const { getNodes, toObject, fromObject, findNode, removeNodes } = useVueFlow()
 
-const saveWflowName = ref("")
-const onSave = () => {
-    dialog.info({
-        title: '保存工作流',
-        content: () => (
-            h(NInput, {
-                placeholder: `默认为【${TaskID.value}】`,
-                value: saveWflowName.value,
-                onInput: (value) => {
-                    if (value.trim() !== "") {
-                        saveWflowName.value = value.trim();
-                    }
-                    else {
-                        saveWflowName.value = TaskID.value;
-                    }
-                },
-                onFocus: () => { isEditing.value = true },
-                onBlur: () => { isEditing.value = false },
-            }, {}
-            )),
-        positiveText: '保存',
-        negativeText: '取消',
-        onPositiveClick: async () => {
-            await saveWorkflow(saveWflowName.value, {
-                success: () => {
-                    message.success(`【${saveWflowName.value}】保存成功`);
-                },
-                error: (err) => {
-                    message.error(`【${saveWflowName.value}】保存失败: ${err}`)
-                },
-            });
-        },
-        onNegativeClick: () => { },
-    }
-    );
-}
-
-const restore_loading = ref(false)
-const onRestore = async (flowKey) => {
-    restore_loading.value = true;
-    removeNodes(getNodes.value);
-    await nextTick();
-    const flow = JSON.parse(localStorage.getItem(flowKey));
-    if (flow) {
-        for (const node of flow.nodes) {
-            resetNodeState(node);
-        }
-        fromObject(flow);
-        buildNestedNodeGraph();
-        reBuildCounter();
-    }
-    restore_loading.value = false;
-}
+const isShowWFSaver = ref(false);
+provide("isShowWFSaver", isShowWFSaver);
 
 const run_loading = ref(false)
 const click2runflow = async () => {
@@ -102,6 +50,8 @@ const click2runflow = async () => {
                 run_loading.value = false;
                 if (data.success) {
                     message.success('已发送运行');
+                    TaskID.value = data.tid;
+                    if (!TaskName.value) TaskName.value = data.tid;
                 }
                 else {
                     message.error(`工作流验证失败，请检查`);
@@ -114,14 +64,13 @@ const click2runflow = async () => {
         },
     );
     console.log(res);
-    TaskID.value = res.tid;
 }
 onUnmounted(() => { })
 </script>
 
 <template>
     <n-flex justify="flex-end">
-        <n-button class="glow-btn" strong tertiary round type="success" @click="onSave">保存</n-button>
+        <n-button class="glow-btn" strong tertiary round type="success" @click="isShowWFSaver = true">保存</n-button>
         <!-- <n-button class="glow-btn" strong tertiary round type="success" @click="onRestore('vueflow-store')"
             :loading="restore_loading">载入</n-button> -->
         <n-button class="glow-btn" strong tertiary round type="success" @click="click2runflow"
@@ -131,6 +80,7 @@ onUnmounted(() => { })
         <n-button class="glow-btn" strong tertiary round type="success" @click="testclick">工具</n-button>
         <n-button class="glow-btn" strong tertiary round type="success" @click="testclick">检查清单</n-button> -->
     </n-flex>
+    <FlowSaver />
 </template>
 <style scoped>
 .glow-btn:hover {

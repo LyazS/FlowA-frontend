@@ -58,7 +58,7 @@ provide('isShowFlowHistorys', isShowFlowHistorys);
         </n-flex>
     </Panel>
     <Panel position="top-right" :style="{ width: 'auto' }">
-        <ctrlpanel :nodeId="nodeId" />
+        <ctrlpanel />
     </Panel>
     <Panel class="nodepanel" position="top-right">
         <nodepanel v-if="!!nodeId" :nodeId="nodeId" />
