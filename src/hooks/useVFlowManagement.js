@@ -1,18 +1,23 @@
-import { ref, reactive } from 'vue';
+import { ref, watch, onMounted, onUnmounted, nextTick } from 'vue';
 import { useVueFlow } from '@vue-flow/core';
-import { useVFlowInitial } from './useVFlowInitial.js';
-import { getUuid } from '../utils/tools.js';
-
+import { useVFlowInitial } from '@/hooks/useVFlowInitial.js';
+import { useRequestMethod } from '@/services/useRequestMethod';
+import { getUuid, setValueByPath } from '@/utils/tools.js';
+import { useMessage } from 'naive-ui';
+import { resetState } from "@/components/nodes/NodeOperator.js"
 // 单例模式
 let instance = null;
 export const useVFlowManagement = () => {
     if (instance) return instance;
+    const message = useMessage();
+    
     const {
         getAddNodeList,
         getVFNodeTypes,
         cloneVFNodeInitInfo,
         getVFNodeCount,
         increaseVFNodeCount,
+        reBuildCounter,
     } = useVFlowInitial();
     const {
         getNodes,
@@ -20,7 +25,10 @@ export const useVFlowManagement = () => {
         findNode,
         removeNodes,
         addEdges,
+        toObject,
+        fromObject,
     } = useVueFlow();
+    const { getData, postData } = useRequestMethod();
 
     const NestedNodeGraph = ref({});
 
@@ -216,6 +224,9 @@ export const useVFlowManagement = () => {
         removeNodes(node, true, true);
     };
 
+    const resetNodeState = (node) => {
+        resetState(node);
+    }
 
     const addEdgeToVFlow = (params) => {
         let is_match_port = (params.sourceHandle.startsWith("output") && params.targetHandle.startsWith("input"))
@@ -242,6 +253,7 @@ export const useVFlowManagement = () => {
         recursiveAddNodeToVFlow,
         addNodeToVFlow,
         removeNodeFromVFlow,
+        resetNodeState,
         addEdgeToVFlow,
     }
     return instance;

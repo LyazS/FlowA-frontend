@@ -125,10 +125,19 @@ const RunningAttribute = {
     },
 }
 const StateAttribute = {
-    state: {              // 节点状态
+    // 节点状态
+    state: {
         status: 'Default',
-        error: null,
-        lastUpdated: null
+        // 嵌套里的复制体
+        copy: {
+            //"<nid>": { status: "" },
+        },
+        // 统计复制体数量
+        copyCount: {
+            Running: 0, // Pending|Running|
+            Success: 0, // Success|
+            Error: 0, // Error|Canceled|
+        }
     },
     // 节点配置项 ==========
     config: {             // 节点级配置
@@ -259,3 +268,6 @@ export const rmResult = (_Node, rid) => {
         _Node.data.results.order.splice(_Node.data.results.order.indexOf(rid), 1);
     }
 };
+export const resetState = (_Node) => { 
+    Object.assign(_Node.data, cloneDeep(StateAttribute));
+}

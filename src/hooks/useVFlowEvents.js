@@ -6,7 +6,7 @@ import { useContextMenu } from './useContextMenu.js'
 
 // 单例模式
 let instance = null;
-export const useFlowEvents = () => {
+export const useVFlowEvents = () => {
     if (instance) return instance;
     const {
         getNestedNodeById,

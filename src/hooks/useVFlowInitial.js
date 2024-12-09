@@ -14,7 +14,6 @@ export const useVFlowInitial = () => {
   const AllNodeCounters = ref([]);
   const AllVFNodeTypes = reactive({});
   const AddNodeListFromInitInfos = ref([]);
-  const TaskID = ref(null);
 
   const initAllNodeInfos = async () => {
     const modules = import.meta.glob("../components/nodes/all_node_js/**.js");
@@ -70,7 +69,6 @@ export const useVFlowInitial = () => {
   };
 
   instance = {
-    TaskID,
     AllVFNodeTypes,
     initAllNodeInfos,
     getAddNodeList,

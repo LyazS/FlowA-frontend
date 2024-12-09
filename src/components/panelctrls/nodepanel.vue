@@ -38,6 +38,7 @@ const thisnode = computed(() => {
 // 节点标题相关 ======================================
 const isEditingTitle = ref(false);
 const titleInputRef = ref(null);
+const titleInputText = ref(thisnode.value.data.label);
 const startEditTilte = () => {
     isEditingTitle.value = true;
     isEditing.value = true;
@@ -46,7 +47,7 @@ const startEditTilte = () => {
 const saveTitle = () => {
     isEditing.value = false;
     isEditingTitle.value = false;
-    const newLabel = thisnode.value.data.label.trim();
+    const newLabel = titleInputText.value.trim();
     thisnode.value.data.label = newLabel || thisnode.value.data.placeholderlabel;
 }
 
@@ -246,7 +247,7 @@ onUnmounted(() => {
                         <CreateOutline />
                     </n-icon>
                 </n-h2>
-                <n-input v-else v-model:value="thisnode.data.label" :placeholder="thisnode.data.placeholderlabel"
+                <n-input v-else v-model:value="titleInputText" :placeholder="thisnode.data.placeholderlabel"
                     ref="titleInputRef" :bordered="false" @blur="saveTitle" class="title-input" />
             </template>
             <n-flex vertical :key="`${nodeId}-main`">

@@ -1,115 +1,57 @@
 <script setup>
-import { computed, ref, watch, onMounted, onUnmounted } from 'vue';
+import { computed, provide, ref, h, watch, inject, onMounted, onUnmounted, nextTick } from 'vue';
 import {
     useMessage,
+    useDialog,
     darkTheme,
     NConfigProvider,
     NMessageProvider,
     NCard,
     NButton,
+    NInput,
     NFlex,
 } from 'naive-ui';
 import { useVueFlow } from '@vue-flow/core'
 import { useVFlowManagement } from '@/hooks/useVFlowManagement';
 import { useVFlowInitial } from '@/hooks/useVFlowInitial'
-import { useFlowAOperation } from '@/services/run_flow'
-import { SubscribeSSE } from '@/services/useSSE'
+import { useFlowAOperation } from '@/services/useFlowAOperation'
 import { setValueByPath } from "@/utils/tools"
-const { runflow } = useFlowAOperation();
+import FlowSaver from "@/components/panelctrls/FlowSaver.vue"
+const { TaskID, TaskName, runflow, saveWorkflow } = useFlowAOperation();
 const message = useMessage();
+const dialog = useDialog()
+const isEditing = inject("isEditing");
 
-const { buildNestedNodeGraph } = useVFlowManagement()
-const { reBuildCounter, TaskID } = useVFlowInitial()
+const {
+    buildNestedNodeGraph,
+    resetNodeState,
+} = useVFlowManagement()
+const { reBuildCounter } = useVFlowInitial()
 
-const { toObject, fromObject, findNode } = useVueFlow()
+const { getNodes, toObject, fromObject, findNode, removeNodes } = useVueFlow()
 
-function onSave(flowKey) {
-    localStorage.setItem(flowKey, JSON.stringify(toObject()));
-}
+const isShowWFSaver = ref(false);
+provide("isShowWFSaver", isShowWFSaver);
 
-function onRestore(flowKey) {
-    const flow = JSON.parse(localStorage.getItem(flowKey));
-
-    if (flow) {
-        for (const node of flow.nodes) {
-            if (node.data.state?.status) { node.data.state.status = "Default"; }
-        }
-        fromObject(flow);
-        buildNestedNodeGraph();
-        reBuildCounter();
-    }
-}
-const updateNodeFromSSE = (data) => {
-    const nid = data.nid;
-    const updatedatas = data.data;
-    for (const udata of updatedatas) {
-        const data = udata.data;
-        const path = udata.path;
-        const type = udata.type;
-        if (type === "overwrite") {
-            const thenode = findNode(nid);
-            if (thenode) {
-                setValueByPath(thenode.data, path, data);
-            }
-        }
-        else if (type === "append") { }
-        else if (type === "remove") { }
-    }
-}
-const { subscribe, unsubscribe } = SubscribeSSE(
-    'GET',
-    null,
-    null,
-    // onOpen
-    async (response) => {
-        console.log("onopen SSE", response.ok);
-    },
-    // onMessage
-    async (event) => {
-        console.log("onmessage SSE");
-        if (event.event === "updatenode") {
-            let data = JSON.parse(event.data);
-            console.log(data);
-            updateNodeFromSSE(data);
-        }
-        else if (event.event === "batchupdatenode") {
-            let datas = JSON.parse(event.data);
-            for (const data of datas) {
-                updateNodeFromSSE(data);
-            }
-        }
-        else if (event.event === "internalerror") {
-            let data = JSON.parse(event.data);
-            console.log(data);
-            message.error(`内部错误: ${data}`);
-        }
-        else if (event.event === "flowfinish") {
-            message.success('工作流运行完成');
-            unsubscribe();
-        }
-    },
-    // onClose
-    async () => {
-        console.log("onclose SSE");
-    },
-    // onError
-    async (err) => {
-        console.log("onerror SSE", err);
-    },
-);
 const run_loading = ref(false)
 const click2runflow = async () => {
+    for (const node of getNodes.value) {
+        resetNodeState(node);
+    }
+    await nextTick();
     const vflow = toObject();
     const res = await runflow(
-        vflow,
+        { name: TaskName.value, vflow: vflow },
         {
-            before: () => {
+            before: async () => {
                 run_loading.value = true;
             },
             success: (data) => {
                 run_loading.value = false;
                 if (data.success) {
                     message.success('已发送运行');
+                    TaskID.value = data.tid;
+                    if (!TaskName.value) TaskName.value = data.tid;
                 }
                 else {
                     message.error(`工作流验证失败，请检查`);
@@ -122,22 +64,15 @@ const click2runflow = async () => {
         },
     );
     console.log(res);
-    if (res.success) {
-        TaskID.value = res.tid;
-        console.log("TaskID ", TaskID.value);
-        subscribe(`${import.meta.env.VITE_API_URL}/api/progress?taskid=${TaskID.value}`)
-    }
 }
-onUnmounted(() => {
-    unsubscribe();
-})
+onUnmounted(() => { })
 </script>
 
 <template>
     <n-flex justify="flex-end">
-        <n-button class="glow-btn" strong tertiary round type="success" @click="onSave('vueflow-store')">自动保存</n-button>
-        <n-button class="glow-btn" strong tertiary round type="success"
-            @click="onRestore('vueflow-store')">载入</n-button>
+        <n-button class="glow-btn" strong tertiary round type="success" @click="isShowWFSaver = true">保存</n-button>
+        <!-- <n-button class="glow-btn" strong tertiary round type="success" @click="onRestore('vueflow-store')"
+            :loading="restore_loading">载入</n-button> -->
         <n-button class="glow-btn" strong tertiary round type="success" @click="click2runflow"
             :loading="run_loading">运行</n-button>
         <!-- <n-button class="glow-btn" strong tertiary round type="success" @click="testclick">导入</n-button>
@@ -145,6 +80,7 @@ onUnmounted(() => {
         <n-button class="glow-btn" strong tertiary round type="success" @click="testclick">工具</n-button>
         <n-button class="glow-btn" strong tertiary round type="success" @click="testclick">检查清单</n-button> -->
     </n-flex>
+    <FlowSaver />
 </template>
 <style scoped>
 .glow-btn:hover {
