@@ -47,7 +47,7 @@ provide('isShowFlowHistorys', isShowFlowHistorys);
     </Panel>
     <Panel position="top-center" :style="{ width: 'auto' }">
         <n-flex justify="center">
-            <n-button quaternary type="primary" @click="isShowFlowHistorys = true">
+            <n-button quaternary type="primary" style="min-width: 200px;" @click="isShowFlowHistorys = true">
                 <n-ellipsis v-if="TaskName" style="max-width: 240px">
                     {{ TaskName }}
                 </n-ellipsis>
