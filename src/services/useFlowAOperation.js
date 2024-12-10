@@ -126,7 +126,12 @@ export const useFlowAOperation = () => {
   };
 
   const getWorkflows = async () => {
-    return await getData("workflow/workflows");
+    const res = await getData("workflow/readall");
+    if (!res.success) {
+      message.error(res.message);
+      return [];
+    }
+    return res.data;
   };
 
   const loadWorkflow = async (wid) => {
@@ -142,7 +147,10 @@ export const useFlowAOperation = () => {
     else {
       const res = await postData(`workflow/read`, { wid: wid, locations: ["name", "vflow"] });
       console.log(`read Workflow ${wid}: `, res);
-      if (!res.success) return;
+      if (!res.success) {
+        loadWorkflow(null);
+        return;
+      }
 
       const name = res.data[0];
       const flow = res.data[1];

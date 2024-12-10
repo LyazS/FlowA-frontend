@@ -87,7 +87,7 @@ const updateWorkflows = debounce(async () => {
 }, 500);
 watch(isShowFlowHistorys, async (newVal) => {
     if (newVal) {
-        updateHistorys();
+        // updateHistorys();
         updateWorkflows();
     }
 });
