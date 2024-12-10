@@ -17,7 +17,7 @@ import { useVFlowInitial } from '@/hooks/useVFlowInitial'
 import { useFlowAOperation } from '@/services/useFlowAOperation'
 import { setValueByPath } from "@/utils/tools"
 import FlowSaver from "@/components/panelctrls/FlowSaver.vue"
-const { TaskID, TaskName, runflow, saveWorkflow } = useFlowAOperation();
+const { TaskID, WorkflowName, runflow, saveWorkflow } = useFlowAOperation();
 const message = useMessage();
 const dialog = useDialog()
 const isEditing = inject("isEditing");
@@ -41,7 +41,7 @@ const click2runflow = async () => {
     await nextTick();
     const vflow = toObject();
     const res = await runflow(
-        { name: TaskName.value, vflow: vflow },
+        { name: WorkflowName.value, vflow: vflow },
         {
             before: async () => {
                 run_loading.value = true;
@@ -51,7 +51,7 @@ const click2runflow = async () => {
                 if (data.success) {
                     message.success('已发送运行');
                     TaskID.value = data.tid;
-                    if (!TaskName.value) TaskName.value = data.tid;
+                    if (!WorkflowName.value) WorkflowName.value = data.tid;
                 }
                 else {
                     message.error(`工作流验证失败，请检查`);

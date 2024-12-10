@@ -23,7 +23,8 @@ export const useFlowAOperation = () => {
   } = useVFlowManagement();
   const message = useMessage();
   const TaskID = ref(null);
-  const TaskName = ref(null);
+  const WorkflowID = ref(null);
+  const WorkflowName = ref(null);
 
   const runflow = async (
     data,
@@ -125,16 +126,31 @@ export const useFlowAOperation = () => {
   };
 
   const getWorkflows = async () => {
-    return await getData("manager/workflows");
+    return await getData("workflow/workflows");
   };
 
-  const loadWorkflow = async (name) => {
-    if (!name) return;
-    const flow = await postData(`manager/getworkflow?name=${name}`);
-    console.log(`load Workflow ${name}: `, flow);
-    loadVflow(flow.vflow);
-    TaskID.value = null;
-    TaskName.value = flow.name;
+  const loadWorkflow = async (wid) => {
+    if (!wid) {
+      const res = await postData(`workflow/create`, { name: '新建工作流' });
+      console.log(`create Workflow: `, res);
+      if (!res.success) return;
+
+      WorkflowID.value = res.data;
+      WorkflowName.value = '新建工作流';
+      localStorage.setItem('curWorkflowID', WorkflowID.value);
+    }
+    else {
+      const res = await postData(`workflow/read`, { wid: wid, locations: ["name", "vflow"] });
+      console.log(`read Workflow ${wid}: `, res);
+      if (!res.success) return;
+
+      const name = res.data[0];
+      const flow = res.data[1];
+      loadVflow(flow);
+      WorkflowID.value = wid;
+      WorkflowName.value = name;
+      localStorage.setItem('curWorkflowID', wid);
+    }
   };
 
   const getHistorys = async () => {
@@ -148,25 +164,25 @@ export const useFlowAOperation = () => {
     if (flow) {
       loadVflow(flow.vflow);
       TaskID.value = tid;
-      TaskName.value = flow.name;
+      WorkflowName.value = flow.name;
     }
   };
 
   onMounted(async () => {
-    // 打开网页就加载可能的历史taskid
-    const ls_tid = localStorage.getItem('curTaskID') || null;
-    await loadHistory(ls_tid);
+    // 打开网页就加载上一次的工作流，如果没有就新建一个空白的工作流
+    const ls_wid = localStorage.getItem('curWorkflowID') || null;
+    await loadWorkflow(ls_wid);
     // 监听TaskID变化，第一次即订阅以获取历史记录的工作流数据
-    watch(TaskID, (newVal) => {
-      if (newVal) {
-        setTimeout(() => {
-          console.log("curTaskID ", newVal);
-          localStorage.setItem('curTaskID', newVal);
-          subscribe(`${import.meta.env.VITE_API_URL}/api/progress?taskid=${newVal}`)
-          console.log("subscribeSSE Done.");
-        }, 1000);
-      }
-    }, { immediate: true });
+    // watch(TaskID, (newVal) => {
+    //   if (newVal) {
+    //     setTimeout(() => {
+    //       console.log("curTaskID ", newVal);
+    //       localStorage.setItem('curTaskID', newVal);
+    //       subscribe(`${import.meta.env.VITE_API_URL}/api/progress?taskid=${newVal}`)
+    //       console.log("subscribeSSE Done.");
+    //     }, 1000);
+    //   }
+    // }, { immediate: true });
   });
 
   onUnmounted(() => {
@@ -175,7 +191,7 @@ export const useFlowAOperation = () => {
 
   instance = {
     TaskID,
-    TaskName,
+    WorkflowName,
     runflow,
     saveWorkflow,
     getWorkflows,

@@ -16,11 +16,11 @@ import {
 } from 'naive-ui';
 import { useFlowAOperation } from '@/services/useFlowAOperation'
 
-const { TaskID, TaskName, saveWorkflow } = useFlowAOperation();
+const { TaskID, WorkflowName, saveWorkflow } = useFlowAOperation();
 const message = useMessage();
 const isEditing = inject("isEditing");
 const isShowWFSaver = inject("isShowWFSaver");
-const saveWflowName = ref(TaskName.value || "");
+const saveWflowName = ref(WorkflowName.value || "");
 const saveWflowNamePlaceHolder = computed(() => {
     return `默认为【${TaskID.value}】`
 });

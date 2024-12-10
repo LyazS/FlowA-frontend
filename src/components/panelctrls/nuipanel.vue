@@ -27,7 +27,7 @@ const props = defineProps({
         required: true
     }
 })
-const { TaskID, TaskName } = useFlowAOperation();
+const { TaskID, WorkflowName } = useFlowAOperation();
 const isShowCodeEditor = ref(false);
 const CodeEditorPath = ref([]);
 const CodeEditorLangType = ref('CodePython');
@@ -48,8 +48,8 @@ provide('isShowFlowHistorys', isShowFlowHistorys);
     <Panel position="top-center" :style="{ width: 'auto' }">
         <n-flex justify="center">
             <n-button quaternary type="primary" style="min-width: 200px;" @click="isShowFlowHistorys = true">
-                <n-ellipsis v-if="TaskName" style="max-width: 240px">
-                    {{ TaskName }}
+                <n-ellipsis v-if="WorkflowName" style="max-width: 240px">
+                    {{ WorkflowName }}
                 </n-ellipsis>
                 <n-ellipsis v-else style="max-width: 240px">
                     工作流管理器
