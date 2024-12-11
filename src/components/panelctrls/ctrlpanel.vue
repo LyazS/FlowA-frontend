@@ -16,8 +16,10 @@ import { useVFlowManagement } from '@/hooks/useVFlowManagement';
 import { useVFlowInitial } from '@/hooks/useVFlowInitial'
 import { useFlowAOperation } from '@/services/useFlowAOperation'
 import { setValueByPath } from "@/utils/tools"
-import FlowSaver from "@/components/panelctrls/FlowSaver.vue"
-const { TaskID, WorkflowName, runflow, saveWorkflow } = useFlowAOperation();
+import FlowRename from "@/components/panelctrls/FlowRename.vue"
+import FlowCreator from '@/components/panelctrls/FlowCreator.vue';
+
+const { TaskID, WorkflowID, WorkflowName, runflow, createNewWorkflow } = useFlowAOperation();
 const message = useMessage();
 const dialog = useDialog()
 const isEditing = inject("isEditing");
@@ -30,8 +32,10 @@ const { reBuildCounter } = useVFlowInitial()
 
 const { getNodes, toObject, fromObject, findNode, removeNodes } = useVueFlow()
 
-const isShowWFSaver = ref(false);
-provide("isShowWFSaver", isShowWFSaver);
+const isShowWFRename = ref(false);
+provide("isShowWFRename", isShowWFRename);
+const isShowWFCreator = ref(false);
+provide("isShowWFCreator", isShowWFCreator);
 
 const run_loading = ref(false)
 const click2runflow = async () => {
@@ -41,7 +45,7 @@ const click2runflow = async () => {
     await nextTick();
     const vflow = toObject();
     const res = await runflow(
-        { name: WorkflowName.value, vflow: vflow },
+        { wid: WorkflowID.value, vflow: vflow },
         {
             before: async () => {
                 run_loading.value = true;
@@ -51,7 +55,6 @@ const click2runflow = async () => {
                 if (data.success) {
                     message.success('已发送运行');
                     TaskID.value = data.tid;
-                    if (!WorkflowName.value) WorkflowName.value = data.tid;
                 }
                 else {
                     message.error(`工作流验证失败，请检查`);
@@ -65,12 +68,18 @@ const click2runflow = async () => {
     );
     console.log(res);
 }
-onUnmounted(() => { })
+
+const newWorkflow = async () => {
+    dialog.info({
+
+    })
+}
 </script>
 
 <template>
     <n-flex justify="flex-end">
-        <n-button class="glow-btn" strong tertiary round type="success" @click="isShowWFSaver = true">保存</n-button>
+        <n-button class="glow-btn" strong tertiary round type="success" @click="isShowWFCreator = true">新建</n-button>
+        <n-button class="glow-btn" strong tertiary round type="success" @click="isShowWFRename = true">重命名</n-button>
         <!-- <n-button class="glow-btn" strong tertiary round type="success" @click="onRestore('vueflow-store')"
             :loading="restore_loading">载入</n-button> -->
         <n-button class="glow-btn" strong tertiary round type="success" @click="click2runflow"
@@ -80,7 +89,8 @@ onUnmounted(() => { })
         <n-button class="glow-btn" strong tertiary round type="success" @click="testclick">工具</n-button>
         <n-button class="glow-btn" strong tertiary round type="success" @click="testclick">检查清单</n-button> -->
     </n-flex>
-    <FlowSaver />
+    <FlowRename />
+    <FlowCreator />
 </template>
 <style scoped>
 .glow-btn:hover {

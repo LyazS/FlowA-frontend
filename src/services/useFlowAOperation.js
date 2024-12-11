@@ -7,6 +7,7 @@ import { getUuid, setValueByPath } from "@/utils/tools";
 import { useRequestMethod } from "@/services/useRequestMethod";
 import { useVFlowManagement } from "@/hooks/useVFlowManagement";
 import { SubscribeSSE } from '@/services/useSSE'
+import { debounce } from 'lodash';
 import { useMessage } from 'naive-ui';
 
 let instance = null;
@@ -25,6 +26,7 @@ export const useFlowAOperation = () => {
   const TaskID = ref(null);
   const WorkflowID = ref(null);
   const WorkflowName = ref(null);
+  const AutoSaveMessage = ref("");
 
   const runflow = async (
     data,
@@ -105,9 +107,9 @@ export const useFlowAOperation = () => {
   );
 
   const loadVflow = async (flow) => {
+    removeNodes(getNodes.value);
+    await nextTick();
     if (flow) {
-      removeNodes(getNodes.value);
-      await nextTick();
       for (const node of flow.nodes) {
         resetNodeState(node);
       }
@@ -116,14 +118,31 @@ export const useFlowAOperation = () => {
       reBuildCounter();
     }
   }
-
-  const saveWorkflow = async (name, callback) => {
+  const debouncedAutoSaveWorkflow = debounce(async () => {
+    if (!WorkflowID.value) return;
     const data = {
-      name: name,
-      vflow: toObject(),
+      wid: WorkflowID.value,
+      location: "vflow",
+      data: toObject(),
     }
-    await postData("manager/saveworkflow", data, callback);
-  };
+    const res = await postData("workflow/update", data, null);
+    if (res.success) {
+      AutoSaveMessage.value = `已自动保存 ${new Date().toLocaleTimeString()}`;
+    }
+  }, 5 * 1000);
+
+  const renameWorkflow = async (name, callback) => {
+    if (!WorkflowID.value) return;
+    const data = {
+      wid: WorkflowID.value,
+      location: "name",
+      data: name,
+    }
+    const res = await postData("workflow/update", data, callback);
+    if (res.success) {
+      WorkflowName.value = name;
+    }
+  }
 
   const getWorkflows = async () => {
     const res = await getData("workflow/readall");
@@ -134,41 +153,47 @@ export const useFlowAOperation = () => {
     return res.data;
   };
 
+  const createNewWorkflow = async (name) => {
+    const res = await postData(`workflow/create`, { name: name });
+    console.log(`create Workflow: `, res);
+    if (!res.success) return;
+
+    WorkflowID.value = res.data;
+    WorkflowName.value = name;
+    localStorage.setItem('curWorkflowID', WorkflowID.value);
+  }
   const loadWorkflow = async (wid) => {
     if (!wid) {
-      const res = await postData(`workflow/create`, { name: '新建工作流' });
-      console.log(`create Workflow: `, res);
-      if (!res.success) return;
-
-      WorkflowID.value = res.data;
-      WorkflowName.value = '新建工作流';
-      localStorage.setItem('curWorkflowID', WorkflowID.value);
+      await createNewWorkflow('新建工作流');
     }
     else {
       const res = await postData(`workflow/read`, { wid: wid, locations: ["name", "vflow"] });
       console.log(`read Workflow ${wid}: `, res);
       if (!res.success) {
-        loadWorkflow(null);
-        return;
+        await createNewWorkflow('新建工作流');
       }
-
-      const name = res.data[0];
-      const flow = res.data[1];
-      loadVflow(flow);
-      WorkflowID.value = wid;
-      WorkflowName.value = name;
-      localStorage.setItem('curWorkflowID', wid);
+      else {
+        const name = res.data[0];
+        const flow = res.data[1];
+        loadVflow(flow);
+        WorkflowID.value = wid;
+        WorkflowName.value = name;
+        localStorage.setItem('curWorkflowID', wid);
+      }
     }
   };
 
-  const getHistorys = async () => {
-    return await getData("manager/historys");
+  const getResults = async () => {
+    if (!WorkflowID.value) return [];
+    const res = await getData(`workflow/readallresults?wid=${WorkflowID.value}`);
+    if (!res.success) return [];
+    return res.data;
   };
 
-  const loadHistory = async (tid) => {
+  const loadResult = async (tid) => {
     if (!tid) return;
-    const flow = await postData(`manager/loadhistory?tid=${tid}`);
-    console.log(`load History ${tid}: `, flow);
+    const flow = await postData(`workflow/loadresult?wid=${WorkflowID.value}&tid=${tid}`);
+    console.log(`load Result ${tid}: `, flow);
     if (flow) {
       loadVflow(flow.vflow);
       TaskID.value = tid;
@@ -199,13 +224,17 @@ export const useFlowAOperation = () => {
 
   instance = {
     TaskID,
+    WorkflowID,
     WorkflowName,
+    AutoSaveMessage,
     runflow,
-    saveWorkflow,
+    debouncedAutoSaveWorkflow,
+    createNewWorkflow,
+    renameWorkflow,
     getWorkflows,
     loadWorkflow,
-    getHistorys,
-    loadHistory,
+    getResults,
+    loadResult,
   };
   return instance;
 };

@@ -20,34 +20,34 @@ import { useFlowAOperation } from '@/services/useFlowAOperation'
 import nodepanel from './nodepanel.vue'
 import ctrlpanel from './ctrlpanel.vue';
 const AceCodeEditor = defineAsyncComponent(() => import('./AceCodeEditor.vue'));
-const FlowHistorys = defineAsyncComponent(() => import('./FlowHistorys.vue'));
+const FlowResults = defineAsyncComponent(() => import('./FlowResults.vue'));
 const props = defineProps({
     nodeId: {
         type: [String, null],
         required: true
     }
 })
-const { TaskID, WorkflowName } = useFlowAOperation();
+const { TaskID, WorkflowName, AutoSaveMessage } = useFlowAOperation();
 const isShowCodeEditor = ref(false);
 const CodeEditorPath = ref([]);
 const CodeEditorLangType = ref('CodePython');
 provide('isShowCodeEditor', isShowCodeEditor);
 provide('CodeEditorPath', CodeEditorPath);
 provide('CodeEditorLangType', CodeEditorLangType);
-const isShowFlowHistorys = ref(false);
-provide('isShowFlowHistorys', isShowFlowHistorys);
+const isShowFlowResults = ref(false);
+provide('isShowFlowResults', isShowFlowResults);
 
 </script>
 
 <template>
     <Panel position="top-left" :style="{ width: 'auto' }">
         <n-flex justify="flex-start">
-            <n-text>自动保存</n-text>
+            <n-text>{{ AutoSaveMessage }}</n-text>
         </n-flex>
     </Panel>
     <Panel position="top-center" :style="{ width: 'auto' }">
         <n-flex justify="center">
-            <n-button quaternary type="primary" style="min-width: 200px;" @click="isShowFlowHistorys = true">
+            <n-button quaternary type="primary" style="min-width: 200px;" @click="isShowFlowResults = true">
                 <n-ellipsis v-if="WorkflowName" style="max-width: 240px">
                     {{ WorkflowName }}
                 </n-ellipsis>
@@ -64,7 +64,7 @@ provide('isShowFlowHistorys', isShowFlowHistorys);
         <nodepanel v-if="!!nodeId" :nodeId="nodeId" />
     </Panel>
     <AceCodeEditor v-if="!!nodeId" :nodeId="nodeId" :path="CodeEditorPath" :langtype="CodeEditorLangType" />
-    <FlowHistorys />
+    <FlowResults />
 </template>
 
 <style scoped>
