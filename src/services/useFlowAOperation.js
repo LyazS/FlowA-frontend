@@ -27,6 +27,7 @@ export const useFlowAOperation = () => {
   const WorkflowID = ref(null);
   const WorkflowName = ref(null);
   const AutoSaveMessage = ref("");
+  const isEditorMode = ref(false);
 
   const runflow = async (
     data,
@@ -232,6 +233,7 @@ export const useFlowAOperation = () => {
     WorkflowID,
     WorkflowName,
     AutoSaveMessage,
+    isEditorMode,
     runflow,
     debouncedAutoSaveWorkflow,
     createNewWorkflow,
