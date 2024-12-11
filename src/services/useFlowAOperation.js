@@ -118,7 +118,10 @@ export const useFlowAOperation = () => {
       reBuildCounter();
     }
   }
+
+  const canSaveWorkflow = ref(true);
   const debouncedAutoSaveWorkflow = debounce(async () => {
+    if (!canSaveWorkflow.value) return;
     if (!WorkflowID.value) return;
     const data = {
       wid: WorkflowID.value,
@@ -175,9 +178,11 @@ export const useFlowAOperation = () => {
       else {
         const name = res.data[0];
         const flow = res.data[1];
+        canSaveWorkflow.value = false;
         loadVflow(flow);
         WorkflowID.value = wid;
         WorkflowName.value = name;
+        canSaveWorkflow.value = true;
         localStorage.setItem('curWorkflowID', wid);
       }
     }
