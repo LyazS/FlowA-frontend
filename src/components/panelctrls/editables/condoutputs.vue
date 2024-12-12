@@ -3,7 +3,7 @@
         <!-- 添加条件分支按钮 -->
         <n-flex class="flexctitem" justify="space-between">
             <editable_header type="info">分支设计</editable_header>
-            <n-button type="primary" text @click="addBranch">
+            <n-button type="primary" text @click="addBranch" :disabled="!isEditorMode">
                 <template #icon>
                     <n-icon>
                         <Add />
@@ -23,13 +23,13 @@
             <template #header-extra>
                 <n-switch v-if="branch.data.data.conditions.length > 1" :value="branch.data.data.condType === 'AND'"
                     @update:value="(val) => updateCondType(branch.rid, val)" size="medium"
-                    :style="{ paddingRight: '40px' }" :rail-style="railStyle">
+                    :style="{ paddingRight: '40px' }" :rail-style="railStyle" :disabled="!isEditorMode">
                     <template #checked>AND</template>
                     <template #unchecked>OR</template>
                     <template #checked-icon>&</template>
                     <template #unchecked-icon>|</template>
                 </n-switch>
-                <n-button circle tertiary type="error" @click="rmBranch(branch.rid)">
+                <n-button circle tertiary type="error" @click="rmBranch(branch.rid)" :disabled="!isEditorMode">
                     <template #icon>
                         <n-icon>
                             <Close />
@@ -41,22 +41,24 @@
                 <n-flex class="flexctitem" :style="{ width: '100%' }" :wrap="false">
                     <n-flex vertical :style="{ width: '90%' }">
                         <n-flex :wrap="false">
-                            <n-select :style="{ width: '65%' }" size="small" placeholder="变量"
+                            <n-select :style="{ width: '65%' }" size="small" placeholder="变量" :disabled="!isEditorMode"
                                 v-model:value="cond.refdata" :options="selfVarSelections" :render-label="renderLabel" />
-                            <n-select :style="{ width: '35%' }" size="small" placeholder="操作"
+                            <n-select :style="{ width: '35%' }" size="small" placeholder="操作" :disabled="!isEditorMode"
                                 :options="buildOpTypeSelections(cond.refdata)" v-model:value="cond.operator" />
                         </n-flex>
                         <n-flex :wrap="false">
-                            <n-select :style="{ width: '35%' }" size="small" placeholder="类型"
+                            <n-select :style="{ width: '35%' }" size="small" placeholder="类型" :disabled="!isEditorMode"
                                 :options="compTypeSelections" v-model:value="cond.comparetype" />
                             <n-select v-if="cond.comparetype === 'ref'" :style="{ width: '65%' }" size="small"
-                                placeholder="比较变量" :options="selfVarSelections" :render-label="renderLabel"
-                                v-model:value="cond.value" />
+                                :disabled="!isEditorMode" placeholder="比较变量" :options="selfVarSelections"
+                                :render-label="renderLabel" v-model:value="cond.value" />
                             <n-input v-else :style="{ width: '65%' }" size="small" placeholder="数值"
-                                v-model:value="cond.value" @blur="isEditing = false" @focus="isEditing = true" />
+                                :disabled="!isEditorMode" v-model:value="cond.value" @blur="isEditing = false"
+                                @focus="isEditing = true" />
                         </n-flex>
                     </n-flex>
-                    <n-button circle tertiary size="small" type="error" @click="rmBranchCondition(branch.rid, cindex)">
+                    <n-button circle tertiary size="small" type="error" @click="rmBranchCondition(branch.rid, cindex)"
+                        :disabled="!isEditorMode">
                         <template #icon>
                             <n-icon>
                                 <Close />
@@ -65,7 +67,7 @@
                     </n-button>
                 </n-flex>
             </n-card>
-            <n-button quaternary type="info" @click="addCondition(branch.rid)">
+            <n-button quaternary type="info" @click="addCondition(branch.rid)" :disabled="!isEditorMode">
                 <template #icon>
                     <n-icon>
                         <Add />
@@ -106,6 +108,7 @@ import {
     BooleanTypeSelections,
     compTypeSelections,
 } from '@/utils/schemas.js'
+import { useFlowAOperation } from '@/services/useFlowAOperation.js'
 
 
 const props = defineProps({
@@ -119,6 +122,7 @@ const props = defineProps({
     },
 })
 const isEditing = inject("isEditing");
+const { isEditorMode } = useFlowAOperation();
 // 获取节点数据
 const {
     findNode,

@@ -2,12 +2,13 @@
     <n-flex vertical>
         <n-text>输入</n-text>
         <n-input-group>
-            <n-input :style="{ width: '33%' }" placeholder="变量名字" />
-            <n-select :style="{ width: '22%' }" v-model:value="selectOption" :options="selectOptions" />
+            <n-input :style="{ width: '33%' }" placeholder="变量名字" :disabled="!isEditorMode" />
+            <n-select :style="{ width: '22%' }" v-model:value="selectOption" :options="selectOptions"
+                :disabled="!isEditorMode" />
 
             <n-select v-if="selectOption == 1" :style="{ width: '44%' }" v-model:value="refOption"
-                :options="refOptions" />
-            <n-input v-else :style="{ width: '44%' }" placeholder="变量值" />
+                :disabled="!isEditorMode" :options="refOptions" />
+            <n-input v-else :style="{ width: '44%' }" placeholder="变量值" :disabled="!isEditorMode" />
         </n-input-group>
     </n-flex>
 </template>
@@ -15,12 +16,14 @@
 <script setup>
 import { ref } from 'vue'
 import { NText, NInput, NSelect, NInputGroup, NFlex } from 'naive-ui'
+import { useFlowAOperation } from '@/services/useFlowAOperation.js'
 const props = defineProps({
     nodeId: {
         type: String,
         required: true
     }
 })
+const { isEditorMode } = useFlowAOperation();
 const selectOption = ref(1);
 const selectOptions = ref([
     // 整数、浮点数、字符串、布尔值、数组、字典、集合
