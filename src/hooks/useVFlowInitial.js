@@ -1,4 +1,4 @@
-import { ref, reactive, markRaw } from "vue";
+import { ref, reactive, markRaw, onBeforeMount } from "vue";
 import { cloneDeep } from "lodash";
 import { useVueFlow } from "@vue-flow/core";
 import { getUuid } from "@/utils/tools";
@@ -60,14 +60,14 @@ export const useVFlowInitial = () => {
   };
 
   const reBuildCounter = () => {
-    AllNodeCounters.value.forEach((item, index) => {
-      AllNodeCounters.value[index] = 0;
-    });
+    for(const key in AllNodeCounters.value){
+      AllNodeCounters.value[key] = 0;
+    }
     getNodes.value.forEach((node) => {
       AllNodeCounters.value[node.data.ntype]++;
     });
   };
-
+  
   instance = {
     AllVFNodeTypes,
     initAllNodeInfos,

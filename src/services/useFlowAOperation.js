@@ -1,5 +1,5 @@
 import axios from "axios";
-import { ref, watch, onMounted, onUnmounted, nextTick } from 'vue';
+import { ref, watch, computed, onMounted, onUnmounted, nextTick } from 'vue';
 import { fetchEventSource } from "@microsoft/fetch-event-source";
 import { useVueFlow } from "@vue-flow/core";
 import { useVFlowInitial } from "@/hooks/useVFlowInitial";
@@ -9,11 +9,12 @@ import { useVFlowManagement } from "@/hooks/useVFlowManagement";
 import { SubscribeSSE } from '@/services/useSSE'
 import { debounce } from 'lodash';
 import { useMessage } from 'naive-ui';
+import { call } from "naive-ui/es/_utils";
 
 let instance = null;
 export const useFlowAOperation = () => {
   if (instance) return instance;
-  const { findNode, getNodes, toObject, fromObject, removeNodes } = useVueFlow();
+  const { findNode, getNodes, toObject, fromObject, removeNodes, nodesDraggable, nodesConnectable } = useVueFlow();
   const { postData, getData } = useRequestMethod();
   const {
     reBuildCounter,
@@ -27,14 +28,10 @@ export const useFlowAOperation = () => {
   const WorkflowID = ref(null);
   const WorkflowName = ref(null);
   const AutoSaveMessage = ref("");
-  const isEditorMode = ref(false);
+  const isEditorMode = computed(() => {
+    return TaskID.value === null;
+  });
 
-  const runflow = async (
-    data,
-    callback = null,
-  ) => {
-    return await postData(`api/run`, data, callback);
-  };
 
   const updateNodeFromSSE = (data) => {
     const nid = data.nid;
@@ -71,14 +68,14 @@ export const useFlowAOperation = () => {
     null,
     // onOpen
     async (response) => {
-      // console.log("onopen SSE", response.ok);
+      console.log("onopen SSE", response.ok);
     },
     // onMessage
     async (event) => {
-      // console.log("onmessage SSE");
+      console.log("onmessage SSE", event.event);
       if (event.event === "updatenode") {
         let data = JSON.parse(event.data);
-        // console.log(data);
+        console.log(data);
         updateNodeFromSSE(data);
       }
       else if (event.event === "batchupdatenode") {
@@ -89,7 +86,7 @@ export const useFlowAOperation = () => {
       }
       else if (event.event === "internalerror") {
         let data = JSON.parse(event.data);
-        // console.log(data);
+        console.log(data);
         message.error(`内部错误: ${data}`);
       }
       else if (event.event === "flowfinish") {
@@ -122,7 +119,6 @@ export const useFlowAOperation = () => {
 
   const canSaveWorkflow = ref(true);
   const debouncedAutoSaveWorkflow = debounce(async () => {
-    if (!canSaveWorkflow.value) return;
     if (!WorkflowID.value) return;
     const data = {
       wid: WorkflowID.value,
@@ -134,6 +130,12 @@ export const useFlowAOperation = () => {
       AutoSaveMessage.value = `已自动保存 ${new Date().toLocaleTimeString()}`;
     }
   }, 5 * 1000);
+  const autoSaveWorkflow = () => {
+    if (!canSaveWorkflow.value) return;
+    if (!isEditorMode.value) return;
+    console.log("try to autoSaveWorkflow");
+    debouncedAutoSaveWorkflow();
+  }
 
   const renameWorkflow = async (name, callback) => {
     if (!WorkflowID.value) return;
@@ -158,6 +160,10 @@ export const useFlowAOperation = () => {
   };
 
   const createNewWorkflow = async (name) => {
+    canSaveWorkflow.value = false;
+    removeNodes(getNodes.value);
+    await nextTick();
+    canSaveWorkflow.value = true;
     const res = await postData(`workflow/create`, { name: name });
     console.log(`create Workflow: `, res);
     if (!res.success) return;
@@ -167,6 +173,7 @@ export const useFlowAOperation = () => {
     localStorage.setItem('curWorkflowID', WorkflowID.value);
   }
   const loadWorkflow = async (wid) => {
+    clearTaskID();
     if (!wid) {
       await createNewWorkflow('新建工作流');
     }
@@ -189,6 +196,59 @@ export const useFlowAOperation = () => {
     }
   };
 
+  const runflow = async (callback = null) => {
+    const vflow = toObject();
+    const re_callback = {
+      before: callback?.before,
+      success: (data) => {
+        if (callback?.success) callback.success(data);
+        if (data.success) {
+          console.log("start subscribe");
+          setTaskID(data.data["tid"]);
+          subscribe(`${import.meta.env.VITE_API_URL}/api/progress?taskid=${data.data["tid"]}`);
+        }
+        else {
+          message.error(data.data["validation_errors"]);
+        }
+      },
+      error: callback?.error,
+    }
+    return await postData(`api/run`, { wid: WorkflowID.value, vflow: vflow }, re_callback);
+  };
+
+  const deleteWorkflow = async (wid) => {
+    const res = await postData(`workflow/delete?wid=${wid}`);
+    console.log(`delete Workflow ${wid}: `, res);
+    if (res.success) {
+      if (WorkflowID.value === wid) {
+        canSaveWorkflow.value = false;
+        WorkflowID.value = null;
+        WorkflowName.value = null;
+        localStorage.removeItem('curWorkflowID');
+        removeNodes(getNodes.value);
+        canSaveWorkflow.value = true;
+      }
+    }
+  };
+
+  const setTaskID = (tid) => {
+    TaskID.value = tid;
+    nodesDraggable.value = false;
+    nodesConnectable.value = false;
+  }
+
+  const clearTaskID = () => {
+    TaskID.value = null;
+    nodesDraggable.value = true;
+    nodesConnectable.value = true;
+  }
+
+  const returnEditorMode = async () => {
+    clearTaskID();
+    unsubscribe();
+    await loadWorkflow(WorkflowID.value);
+  }
+
   const getResults = async () => {
     if (!WorkflowID.value) return [];
     const res = await getData(`workflow/readallresults?wid=${WorkflowID.value}`);
@@ -198,12 +258,15 @@ export const useFlowAOperation = () => {
 
   const loadResult = async (tid) => {
     if (!tid) return;
-    const flow = await postData(`workflow/loadresult?wid=${WorkflowID.value}&tid=${tid}`);
-    console.log(`load Result ${tid}: `, flow);
-    if (flow) {
-      loadVflow(flow.vflow);
+    const res = await postData(`workflow/loadresult?wid=${WorkflowID.value}&tid=${tid}`);
+    console.log(`load Result ${tid}: `, res);
+    if (res.success) {
+      loadVflow(res.data);
       TaskID.value = tid;
-      WorkflowName.value = flow.name;
+      nodesDraggable.value = false;
+      nodesConnectable.value = false;
+      console.log("loadResult Done.");
+      subscribe(`${import.meta.env.VITE_API_URL}/api/progress?taskid=${tid}`)
     }
   };
 
@@ -211,17 +274,7 @@ export const useFlowAOperation = () => {
     // 打开网页就加载上一次的工作流，如果没有就新建一个空白的工作流
     const ls_wid = localStorage.getItem('curWorkflowID') || null;
     await loadWorkflow(ls_wid);
-    // 监听TaskID变化，第一次即订阅以获取历史记录的工作流数据
-    // watch(TaskID, (newVal) => {
-    //   if (newVal) {
-    //     setTimeout(() => {
-    //       console.log("curTaskID ", newVal);
-    //       localStorage.setItem('curTaskID', newVal);
-    //       subscribe(`${import.meta.env.VITE_API_URL}/api/progress?taskid=${newVal}`)
-    //       console.log("subscribeSSE Done.");
-    //     }, 1000);
-    //   }
-    // }, { immediate: true });
+    console.log("loadWorkflow Done.");
   });
 
   onUnmounted(() => {
@@ -235,13 +288,15 @@ export const useFlowAOperation = () => {
     AutoSaveMessage,
     isEditorMode,
     runflow,
-    debouncedAutoSaveWorkflow,
+    autoSaveWorkflow,
     createNewWorkflow,
     renameWorkflow,
     getWorkflows,
     loadWorkflow,
     getResults,
     loadResult,
+    returnEditorMode,
+    deleteWorkflow,
   };
   return instance;
 };

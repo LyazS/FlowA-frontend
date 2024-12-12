@@ -33,7 +33,7 @@
 
 <script setup>
 import { cloneDeep } from 'lodash';
-import { ref, markRaw, onMounted, onBeforeUnmount, reactive, watch, provide } from 'vue'
+import { ref, markRaw, onMounted, onBeforeMount, onBeforeUnmount, reactive, watch, provide } from 'vue'
 import { ConnectionMode, VueFlow, Panel, useVueFlow } from '@vue-flow/core'
 import { Background } from '@vue-flow/background'
 import { ContextMenu } from '@imengyu/vue3-context-menu';
@@ -87,18 +87,12 @@ const {
 
 const {
     isEditing,
-    addKBEventListeners,
-    removeKBEventListeners,
 } = useKeyboardControls()
 
 provide('isEditing', isEditing);
-onMounted(async () => {
+
+onBeforeMount(async () => {
     await initAllNodeInfos();
     buildNestedNodeGraph();
-    addKBEventListeners();
 })
-onBeforeUnmount(() => {
-    removeKBEventListeners();
-})
-
 </script>

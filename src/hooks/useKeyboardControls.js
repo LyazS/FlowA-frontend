@@ -1,12 +1,12 @@
 // hooks/useKeyboardControls.js
-import { ref, provide, watch } from 'vue';
+import { ref, provide, watch, onBeforeMount, onBeforeUnmount } from 'vue';
 import { useVueFlow } from '@vue-flow/core';
 
 // 单例模式
 let instance = null;
 export const useKeyboardControls = () => {
   if (instance) return instance;
-  
+
   const {
     getNodes,
     getEdges,
@@ -96,11 +96,14 @@ export const useKeyboardControls = () => {
     document.removeEventListener('keyup', handleKeyUp);
     document.removeEventListener('mousemove', handleMouseMove);
   }
-
+  onBeforeMount(async () => {
+    addKBEventListeners();
+  })
+  onBeforeUnmount(() => {
+    removeKBEventListeners();
+  })
   instance = {
     isEditing,
-    addKBEventListeners,
-    removeKBEventListeners,
   };
   return instance;
 };

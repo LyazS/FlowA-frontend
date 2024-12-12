@@ -47,7 +47,7 @@ export const useVFlowEvents = () => {
         getViewport,
         setViewport,
     } = useVueFlow();
-    const { debouncedAutoSaveWorkflow } = useFlowAOperation();
+    const { autoSaveWorkflow } = useFlowAOperation();
     // 节点选择事件 =================================================
     const lastClickedNodeId = ref(null);
     const selcetNodeEvent = (event) => {
@@ -122,12 +122,12 @@ export const useVFlowEvents = () => {
 
     onNodesChange((event) => {
         // console.log("节点变化", event);
-        debouncedAutoSaveWorkflow();
+        autoSaveWorkflow();
     })
 
     onEdgesChange((event) => {
         // console.log("边变化", event);
-        debouncedAutoSaveWorkflow();
+        autoSaveWorkflow();
     })
 
     instance = {

@@ -24,7 +24,7 @@ const newWflowName = ref(WorkflowName.value || "");
 
 const onPositiveClick = async () => {
     if (newWflowName.value.trim() === "") {
-        newWflowName.value = TaskID.value;
+        newWflowName.value = WorkflowName.value;
     }
     await createNewWorkflow(newWflowName.value);
 }
