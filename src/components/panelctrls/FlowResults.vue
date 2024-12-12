@@ -1,15 +1,31 @@
 <script setup>
 import { ref, onMounted, reactive, inject, computed, watch } from 'vue';
 import { useVueFlow, useHandleConnections } from '@vue-flow/core'
-import { useDialog, NText, NButton, NIcon, NButtonGroup, NScrollbar, NModal, NCard, NFlex, NGrid, NGridItem, NDivider } from 'naive-ui'
+import {
+    useDialog,
+    NText,
+    NButton,
+    NIcon,
+    NButtonGroup,
+    NScrollbar,
+    NModal,
+    NCard,
+    NFlex,
+    NGrid,
+    NGridItem,
+    NDivider,
+    NEllipsis,
+} from 'naive-ui'
 import { debounce } from 'lodash'
 import { useVFlowManagement } from '@/hooks/useVFlowManagement'
 import { useFlowAOperation } from '@/services/useFlowAOperation'
-import { Add, Close } from '@vicons/ionicons5'
+import { Ellipse, Close } from '@vicons/ionicons5'
 const { findNode } = useVueFlow();
 // const { } = useVFlowManagement();
 const {
     TaskID,
+    WorkflowID,
+    WorkflowName,
     getWorkflows,
     loadWorkflow,
     getResults,
@@ -21,30 +37,39 @@ const isEditing = inject("isEditing");
 const isShowFlowResults = inject("isShowFlowResults");
 
 const titlename = computed(() => {
-    return `当前历史记录：${TaskID.value}`
+    return `工作量管理器`
+});
+const history_titlename = computed(() => {
+    return `【${WorkflowName.value}】的历史记录`
 });
 const loadResult_btn = async (tid) => {
-    await loadResult(tid);
+    if (TaskID.value !== tid) {
+        await loadResult(tid);
+    }
     isShowFlowResults.value = false;
 }
 const loadWorkflow_btn = async (wid) => {
-    await loadWorkflow(wid);
+    if (WorkflowID.value !== wid) {
+        await loadWorkflow(wid);
+    }
     isShowFlowResults.value = false;
 }
 
 const results = ref([]);
 const workflows = ref([]);
-const updateResults = debounce(async () => {
+const updateResults = async () => {
     const res = await getResults();
     // console.log(res);
     results.value = [];
     for (const item of res) {
         let result_type = "default";
-        if (item.status === 'Pending') { result_type = 'default'; }
-        else if (item.status === 'Running') { result_type = 'success'; }
-        else if (item.status === 'Success') { result_type = 'success'; }
-        else if (item.status === 'Canceled') { result_type = 'warning'; }
-        else if (item.status === 'Error') { result_type = 'error'; }
+        if (item.tid === TaskID.value) { result_type = 'success'; }
+        let status_color = "#d5d5d6";
+        if (item.status === 'Pending') { status_color = '#d5d5d6'; }
+        else if (item.status === 'Running') { status_color = '#70c0e8'; }
+        else if (item.status === 'Success') { status_color = '#63e2b7'; }
+        else if (item.status === 'Canceled') { status_color = '#f2c97d'; }
+        else if (item.status === 'Error') { status_color = '#e88080'; }
         let st_str = '', ed_str = '';
         if (item.starttime) {
             const sttime = new Date(item.starttime);
@@ -61,16 +86,22 @@ const updateResults = debounce(async () => {
         results.value.push({
             tid: item.tid,
             type: result_type,
+            status: status_color,
             label: `${st_str} -> ${ed_str}`,
         });
     }
-}, 500);
+};
 const updateWorkflows = async () => {
     const res = await getWorkflows();
     // console.log(res);
     workflows.value = [];
     for (const item of res) {
-        workflows.value.push(item);
+        let wf_type = "default";
+        if (item.wid == WorkflowID.value) { wf_type = 'success'; }
+        workflows.value.push({
+            ...item,
+            type: wf_type,
+        });
     }
 };
 const deleteWorkflow_btn = async (wid, wname) => {
@@ -104,9 +135,9 @@ onMounted(async () => { });
                         <n-flex vertical :style="{ width: '100%' }">
                             <template v-for="(item, idx) in workflows" :key="'workflow_' + idx">
                                 <n-flex :style="{ width: '100%' }" :warp="false">
-                                    <n-button @click="loadWorkflow_btn(item.wid)" tertiary type="default"
+                                    <n-button @click="loadWorkflow_btn(item.wid)" secondary :type="item.type"
                                         :style="{ flex: '1' }">
-                                        {{ item.name }}
+                                        <n-ellipsis style="max-width: 12em"> {{ item.name }}</n-ellipsis>
                                     </n-button>
                                     <n-button circle tertiary size="small" type="error"
                                         @click="deleteWorkflow_btn(item.wid, item.name)">
@@ -126,12 +157,17 @@ onMounted(async () => { });
                         <n-divider vertical :style="{ height: '100%' }" />
                     </n-flex>
                 </n-grid-item>
-                3 <n-grid-item :span="6">
-                    <n-text>历史记录</n-text>
+                <n-grid-item :span="6">
+                    <n-text>{{ history_titlename }}</n-text>
                     <n-scrollbar style="max-height: 50vh">
                         <n-flex vertical :style="{ width: '100%' }">
                             <n-button v-for="(item, idx) in results" :key="'result_' + idx"
-                                @click="loadResult_btn(item.tid)" secondary :type="item.type">
+                                @click="loadResult_btn(item.tid)" secondary :type="item.type" style="text-align: left;">
+                                <template #icon>
+                                    <n-icon size="10" :color="item.status">
+                                        <Ellipse />
+                                    </n-icon>
+                                </template>
                                 {{ item.label }}
                             </n-button>
                         </n-flex>

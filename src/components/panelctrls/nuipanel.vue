@@ -21,6 +21,8 @@ import nodepanel from './nodepanel.vue'
 import ctrlpanel from './ctrlpanel.vue';
 const AceCodeEditor = defineAsyncComponent(() => import('./AceCodeEditor.vue'));
 const FlowResults = defineAsyncComponent(() => import('./FlowResults.vue'));
+const FlowRename = defineAsyncComponent(() => import('@/components/panelctrls/FlowRename.vue'));
+const FlowCreator = defineAsyncComponent(() => import('@/components/panelctrls/FlowCreator.vue'));
 const props = defineProps({
     nodeId: {
         type: [String, null],
@@ -36,6 +38,10 @@ provide('CodeEditorPath', CodeEditorPath);
 provide('CodeEditorLangType', CodeEditorLangType);
 const isShowFlowResults = ref(false);
 provide('isShowFlowResults', isShowFlowResults);
+const isShowWFRename = ref(false);
+provide("isShowWFRename", isShowWFRename);
+const isShowWFCreator = ref(false);
+provide("isShowWFCreator", isShowWFCreator);
 
 </script>
 
@@ -43,18 +49,6 @@ provide('isShowFlowResults', isShowFlowResults);
     <Panel position="top-left" :style="{ width: 'auto' }">
         <n-flex justify="flex-start">
             <n-text>{{ AutoSaveMessage }}</n-text>
-        </n-flex>
-    </Panel>
-    <Panel position="top-center" :style="{ width: 'auto' }">
-        <n-flex justify="center">
-            <n-button quaternary type="primary" style="min-width: 200px;" @click="isShowFlowResults = true">
-                <n-ellipsis v-if="WorkflowName" style="max-width: 240px">
-                    {{ WorkflowName }}
-                </n-ellipsis>
-                <n-ellipsis v-else style="max-width: 240px">
-                    工作流管理器
-                </n-ellipsis>
-            </n-button>
         </n-flex>
     </Panel>
     <Panel position="top-right" :style="{ width: 'auto' }">
@@ -65,6 +59,8 @@ provide('isShowFlowResults', isShowFlowResults);
     </Panel>
     <AceCodeEditor v-if="!!nodeId" :nodeId="nodeId" :path="CodeEditorPath" :langtype="CodeEditorLangType" />
     <FlowResults />
+    <FlowRename />
+    <FlowCreator />
 </template>
 
 <style scoped>

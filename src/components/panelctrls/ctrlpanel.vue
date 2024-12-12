@@ -8,16 +8,19 @@ import {
     NMessageProvider,
     NCard,
     NButton,
+    NButtonGroup,
+    NDropdown,
     NInput,
     NFlex,
+    NIcon,
+    NEllipsis,
 } from 'naive-ui';
+import { Add, CaretDown } from '@vicons/ionicons5'
 import { useVueFlow } from '@vue-flow/core'
 import { useVFlowManagement } from '@/hooks/useVFlowManagement';
 import { useVFlowInitial } from '@/hooks/useVFlowInitial'
 import { useFlowAOperation } from '@/services/useFlowAOperation'
 import { setValueByPath } from "@/utils/tools"
-import FlowRename from "@/components/panelctrls/FlowRename.vue"
-import FlowCreator from '@/components/panelctrls/FlowCreator.vue';
 
 const {
     TaskID,
@@ -40,10 +43,9 @@ const { reBuildCounter } = useVFlowInitial()
 
 const { getNodes, toObject, fromObject, findNode, removeNodes } = useVueFlow()
 
-const isShowWFRename = ref(false);
-provide("isShowWFRename", isShowWFRename);
-const isShowWFCreator = ref(false);
-provide("isShowWFCreator", isShowWFCreator);
+const isShowWFCreator = inject("isShowWFCreator");
+const isShowWFRename = inject("isShowWFRename");
+const isShowFlowResults = inject("isShowFlowResults");
 
 const run_loading = ref(false)
 const click2runflow = async () => {
@@ -71,36 +73,60 @@ const click2runflow = async () => {
     );
     console.log(res);
 }
-
-const newWorkflow = async () => {
-    dialog.info({
-
-    })
+const startOptions = [
+    {
+        label: '运行',
+        key: 'run_workflow'
+    },
+    {
+        label: '新建',
+        key: 'new_workflow',
+    },
+    {
+        label: '重命名',
+        key: 'rename_workflow'
+    },
+]
+const handleSelect = (key) => {
+    if (key === 'run_workflow') {
+        click2runflow();
+    }
+    else if (key === 'new_workflow') {
+        isShowWFCreator.value = true;
+    }
+    else if (key === 'rename_workflow') {
+        isShowWFRename.value = true;
+    }
 }
 </script>
 
 <template>
     <n-flex justify="flex-end">
+        <n-button quaternary type="primary" style="min-width: 200px;" @click="isShowFlowResults = true">
+            <n-ellipsis v-if="WorkflowName" style="max-width: 240px">
+                {{ WorkflowName }}
+            </n-ellipsis>
+            <n-ellipsis v-else style="max-width: 240px">
+                工作流管理器
+            </n-ellipsis>
+        </n-button>
         <template v-if="isEditorMode">
-            <n-button class="glow-btn" strong tertiary round type="success"
-                @click="isShowWFCreator = true">新建</n-button>
-            <n-button class="glow-btn" strong tertiary round type="success"
-                @click="isShowWFRename = true">重命名</n-button>
-            <!-- <n-button class="glow-btn" strong tertiary round type="success" @click="onRestore('vueflow-store')"
-            :loading="restore_loading">载入</n-button> -->
-            <n-button class="glow-btn" strong tertiary round type="success" @click="click2runflow"
-                :loading="run_loading">运行</n-button>
-            <!-- <n-button class="glow-btn" strong tertiary round type="success" @click="testclick">导入</n-button>
-        <n-button class="glow-btn" strong tertiary round type="success" @click="testclick">导出</n-button>
-        <n-button class="glow-btn" strong tertiary round type="success" @click="testclick">工具</n-button>
-        <n-button class="glow-btn" strong tertiary round type="success" @click="testclick">检查清单</n-button> -->
+            <n-dropdown placement="bottom-start" trigger="hover" size="small" :options="startOptions"
+                @select="handleSelect">
+                <n-button class="glow-btn" circle secondary type="success">
+                    <template #icon>
+                        <n-icon>
+                            <CaretDown />
+                        </n-icon>
+                    </template>
+                </n-button>
+            </n-dropdown>
         </template>
         <template v-else>
             <n-button class="glow-btn" strong tertiary round type="success" @click="returnEditorMode">返回编辑模式</n-button>
         </template>
     </n-flex>
-    <FlowRename />
-    <FlowCreator />
+
 </template>
 <style scoped>
 .glow-btn:hover {
