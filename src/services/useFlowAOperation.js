@@ -208,7 +208,7 @@ export const useFlowAOperation = () => {
             setTaskID(data.data["tid"]);
             subscribe(`${import.meta.env.VITE_API_URL}/api/progress?taskid=${data.data["tid"]}`);
           }
-          else{
+          else {
             console.log(data.data);
           }
         }
@@ -275,12 +275,12 @@ export const useFlowAOperation = () => {
     }
   };
 
-  onMounted(async () => {
+  const onMountedFunc = async () => {
     // 打开网页就加载上一次的工作流，如果没有就新建一个空白的工作流
     const ls_wid = localStorage.getItem('curWorkflowID') || null;
     await loadWorkflow(ls_wid);
     console.log("loadWorkflow Done.");
-  });
+  };
 
   onUnmounted(() => {
     unsubscribe();
@@ -302,6 +302,7 @@ export const useFlowAOperation = () => {
     loadResult,
     returnEditorMode,
     deleteWorkflow,
+    onMountedFunc,
   };
   return instance;
 };
