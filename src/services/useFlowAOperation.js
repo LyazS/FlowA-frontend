@@ -127,7 +127,7 @@ export const useFlowAOperation = () => {
     }
     const res = await postData("workflow/update", data, null);
     if (res.success) {
-      AutoSaveMessage.value = `已自动保存 ${new Date().toLocaleTimeString()}`;
+      AutoSaveMessage.value = `自动保存 ${new Date().toLocaleTimeString()}`;
     }
   }, 5 * 1000);
   const autoSaveWorkflow = () => {

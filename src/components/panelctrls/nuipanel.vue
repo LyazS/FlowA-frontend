@@ -48,7 +48,7 @@ provide("isShowWFCreator", isShowWFCreator);
 <template>
     <Panel position="top-left" :style="{ width: 'auto' }">
         <n-flex justify="flex-start">
-            <n-text>{{ AutoSaveMessage }}</n-text>
+            <n-text depth="3">{{ AutoSaveMessage }}</n-text>
         </n-flex>
     </Panel>
     <Panel position="top-right" :style="{ width: 'auto' }">
