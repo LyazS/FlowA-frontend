@@ -19,7 +19,7 @@ export const VariableTypes = deepFreeze([
     { label: "整数 Integer", value: "Integer" },
     { label: "数字 Number", value: "Number" },
     { label: "布尔 Boolean", value: "Boolean" },
-    { label: "对象 Object", value: "Object" },
+    { label: "字典 Dictionary", value: "Dict" },
     { label: "列表 List", value: "List" },
 ]);
 
