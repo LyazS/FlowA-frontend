@@ -15,7 +15,7 @@ import {
     NIcon,
     NEllipsis,
 } from 'naive-ui';
-import { Add, CaretDown } from '@vicons/ionicons5'
+import { Add, CaretForward, ArrowUndo } from '@vicons/ionicons5'
 import { useVueFlow } from '@vue-flow/core'
 import { useVFlowManagement } from '@/hooks/useVFlowManagement';
 import { useVFlowInitial } from '@/hooks/useVFlowInitial'
@@ -77,15 +77,7 @@ const startOptions = [
     {
         label: '运行',
         key: 'run_workflow'
-    },
-    {
-        label: '新建',
-        key: 'new_workflow',
-    },
-    {
-        label: '重命名',
-        key: 'rename_workflow'
-    },
+    }
 ]
 const handleSelect = (key) => {
     if (key === 'run_workflow') {
@@ -102,7 +94,8 @@ const handleSelect = (key) => {
 
 <template>
     <n-flex justify="flex-end">
-        <n-button quaternary type="primary" style="min-width: 200px;" @click="isShowFlowResults = true">
+        <n-button class="glow-btn" round tertiary type="primary" style="min-width: 200px;"
+            @click="isShowFlowResults = true">
             <n-ellipsis v-if="WorkflowName" style="max-width: 240px">
                 {{ WorkflowName }}
             </n-ellipsis>
@@ -111,19 +104,24 @@ const handleSelect = (key) => {
             </n-ellipsis>
         </n-button>
         <template v-if="isEditorMode">
-            <n-dropdown placement="bottom-start" trigger="hover" size="small" :options="startOptions"
-                @select="handleSelect">
-                <n-button class="glow-btn" circle secondary type="success">
-                    <template #icon>
-                        <n-icon>
-                            <CaretDown />
-                        </n-icon>
-                    </template>
-                </n-button>
-            </n-dropdown>
+            <n-button class="glow-btn" round tertiary type="success" @click="click2runflow">
+                <template #icon>
+                    <n-icon>
+                        <CaretForward />
+                    </n-icon>
+                </template>
+                运行
+            </n-button>
         </template>
         <template v-else>
-            <n-button class="glow-btn" strong tertiary round type="success" @click="returnEditorMode">返回编辑模式</n-button>
+            <n-button class="glow-btn" tertiary round type="success" @click="returnEditorMode">
+                <template #icon>
+                    <n-icon>
+                        <ArrowUndo />
+                    </n-icon>
+                </template>
+                返回编辑
+            </n-button>
         </template>
     </n-flex>
 

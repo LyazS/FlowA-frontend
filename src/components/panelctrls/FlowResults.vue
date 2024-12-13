@@ -19,7 +19,7 @@ import {
 import { debounce } from 'lodash'
 import { useVFlowManagement } from '@/hooks/useVFlowManagement'
 import { useFlowAOperation } from '@/services/useFlowAOperation'
-import { Ellipse, Close } from '@vicons/ionicons5'
+import { Ellipse, Close, Add, Pencil } from '@vicons/ionicons5'
 const { findNode } = useVueFlow();
 // const { } = useVFlowManagement();
 const {
@@ -35,6 +35,8 @@ const {
 const dialog = useDialog();
 const isEditing = inject("isEditing");
 const isShowFlowResults = inject("isShowFlowResults");
+const isShowWFRename = inject("isShowWFRename");
+const isShowWFCreator = inject("isShowWFCreator");
 
 const titlename = computed(() => {
     return `工作量管理器`
@@ -122,35 +124,52 @@ watch(isShowFlowResults, async (newVal) => {
         updateWorkflows();
     }
 });
-onMounted(async () => { });
+
 </script>
 <template>
-    <n-modal v-model:show="isShowFlowResults" :close-on-esc="true">
+    <n-modal v-model:show="isShowFlowResults" :close-on-esc="true" transform-origin="center">
         <n-card :title="titlename" closable @close="isShowFlowResults = false"
             :style="{ width: '80%', maxWidth: '800px' }">
-            <n-grid x-gap="0" :cols="13">
-                <n-grid-item :span="6">
-                    <n-text>本地工作流</n-text>
-                    <n-scrollbar style="max-height: 50vh">
-                        <n-flex vertical :style="{ width: '100%' }">
-                            <template v-for="(item, idx) in workflows" :key="'workflow_' + idx">
-                                <n-flex :style="{ width: '100%' }" :warp="false">
-                                    <n-button @click="loadWorkflow_btn(item.wid)" secondary :type="item.type"
-                                        :style="{ flex: '1' }">
-                                        <n-ellipsis style="max-width: 12em"> {{ item.name }}</n-ellipsis>
-                                    </n-button>
-                                    <n-button circle tertiary size="small" type="error"
-                                        @click="deleteWorkflow_btn(item.wid, item.name)">
-                                        <template #icon>
-                                            <n-icon>
-                                                <Close />
-                                            </n-icon>
-                                        </template>
-                                    </n-button>
-                                </n-flex>
+            <n-grid x-gap="0" :cols="15">
+                <n-grid-item :span="8">
+                    <n-flex>
+                        <n-text>本地工作流</n-text>
+                        <n-scrollbar style="max-height: 50vh">
+                            <n-flex vertical :style="{ width: '100%' }">
+                                <template v-for="(item, idx) in workflows" :key="'workflow_' + idx">
+                                    <n-flex class="flexctitem" :style="{ width: '100%' }" :warp="false">
+                                        <n-button @click="loadWorkflow_btn(item.wid)" secondary :type="item.type"
+                                            :style="{ flex: '1' }">
+                                            <n-ellipsis style="max-width: 12em"> {{ item.name }}</n-ellipsis>
+                                        </n-button>
+                                        <n-button circle quaternary size="small" @click="isShowWFRename = true">
+                                            <template #icon>
+                                                <n-icon>
+                                                    <Pencil />
+                                                </n-icon>
+                                            </template>
+                                        </n-button>
+                                        <n-button circle quaternary size="small" type="error"
+                                            @click="deleteWorkflow_btn(item.wid, item.name)">
+                                            <template #icon>
+                                                <n-icon>
+                                                    <Close />
+                                                </n-icon>
+                                            </template>
+                                        </n-button>
+                                    </n-flex>
+                                </template>
+                            </n-flex>
+                        </n-scrollbar>
+                        <n-button type="info" text @click="isShowWFCreator = true">
+                            <template #icon>
+                                <n-icon>
+                                    <Add />
+                                </n-icon>
                             </template>
-                        </n-flex>
-                    </n-scrollbar>
+                            新建工作流
+                        </n-button>
+                    </n-flex>
                 </n-grid-item>
                 <n-grid-item :span="1">
                     <n-flex justify="center" align="center" :style="{ height: '100%' }">
@@ -177,3 +196,10 @@ onMounted(async () => { });
         </n-card>
     </n-modal>
 </template>
+
+<style scoped>
+.flexctitem {
+    align-content: center;
+    align-items: center;
+}
+</style>
