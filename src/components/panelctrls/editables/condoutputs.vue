@@ -244,20 +244,16 @@ const buildOpTypeSelections = (refdata) => {
         ];
     }
     const rtype = thenode.data[r_content].byId[rid].type;
-    let case_type = rtype;
-    if (case_type.startsWith("Array")) {
-        case_type = "Array";
-    }
-    if (case_type === 'String') {
+    if (rtype === 'String') {
         return [...StartEndTypeSelections, ...EqualTypeSelections, ...ContainsTypeSelections, ...LengthTypeSelections, ...NullTypeSelections];
     }
-    else if (case_type === 'Integer' || case_type === 'Number') {
+    else if (rtype === 'Integer' || rtype === 'Number') {
         return [...EqualTypeSelections, ...NotEuqalTypeSelections, ...NullTypeSelections];
     }
-    else if (case_type === 'Boolean') {
+    else if (rtype === 'Boolean') {
         return [...EqualTypeSelections, ...BooleanTypeSelections, ...NullTypeSelections];
     }
-    else if (case_type === 'Array') {
+    else if (rtype === 'List') {
         return [...ContainsTypeSelections, ...LengthTypeSelections, ...NullTypeSelections];
     }
     else {

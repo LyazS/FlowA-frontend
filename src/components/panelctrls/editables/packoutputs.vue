@@ -85,8 +85,7 @@ function updateResultType(rid, value) {
     const thedata = thenode.data[dpath].byId[did];
     if (thisnode.value.data.results.byId[rid]) {
         thisnode.value.data.results.byId[rid].config.ref = value;
-        // thisnode.value.data.results.byId[rid].type = `Array${thedata.type}`;
-        thisnode.value.data.results.byId[rid].type = `ArrayObject`;
+        thisnode.value.data.results.byId[rid].type = `List`;
     }
 }
 

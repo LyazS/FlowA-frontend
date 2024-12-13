@@ -75,7 +75,7 @@ export const useFlowAOperation = () => {
       console.log("onmessage SSE", event.event);
       if (event.event === "updatenode") {
         let data = JSON.parse(event.data);
-        console.log(data);
+        // console.log(data);
         updateNodeFromSSE(data);
       }
       else if (event.event === "batchupdatenode") {
@@ -86,7 +86,7 @@ export const useFlowAOperation = () => {
       }
       else if (event.event === "internalerror") {
         let data = JSON.parse(event.data);
-        console.log(data);
+        // console.log(data);
         message.error(`内部错误: ${data}`);
       }
       else if (event.event === "flowfinish") {
@@ -204,8 +204,13 @@ export const useFlowAOperation = () => {
         if (callback?.success) callback.success(data);
         if (data.success) {
           console.log("start subscribe");
-          setTaskID(data.data["tid"]);
-          subscribe(`${import.meta.env.VITE_API_URL}/api/progress?taskid=${data.data["tid"]}`);
+          if (data.data.hasOwnProperty("tid")) {
+            setTaskID(data.data["tid"]);
+            subscribe(`${import.meta.env.VITE_API_URL}/api/progress?taskid=${data.data["tid"]}`);
+          }
+          else{
+            console.log(data.data);
+          }
         }
         else {
           message.error(data.data["validation_errors"]);
