@@ -4,6 +4,7 @@ import { useVueFlow } from '@vue-flow/core'
 import { NText, NCode, NIcon, NButton, NH6, NInput, NSelect, NInputGroup, NFlex, NDivider } from 'naive-ui'
 import editable_header from './header.vue'
 import { CreateOutline } from '@vicons/ionicons5'
+import { useFlowAOperation } from '@/services/useFlowAOperation.js'
 
 const props = defineProps({
     nodeId: {
@@ -16,6 +17,7 @@ const props = defineProps({
     }
 })
 const { findNode } = useVueFlow();
+const { isEditorMode } = useFlowAOperation();
 
 const isShowCodeEditor = inject("isShowCodeEditor");
 const CodeEditorPath = inject("CodeEditorPath");
@@ -51,7 +53,7 @@ const language = computed(() => {
             <editable_header type="info">
                 {{ thisnode.data.payloads.byId[pid].label }}
             </editable_header>
-            <n-button text type="info" @click="editCode">
+            <n-button :disabled="!isEditorMode" text type="info" @click="editCode">
                 <template #icon>
                     <n-icon>
                         <CreateOutline />

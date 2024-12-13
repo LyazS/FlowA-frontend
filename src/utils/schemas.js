@@ -19,12 +19,8 @@ export const VariableTypes = deepFreeze([
     { label: "整数 Integer", value: "Integer" },
     { label: "数字 Number", value: "Number" },
     { label: "布尔 Boolean", value: "Boolean" },
-    { label: "对象 Object", value: "Object" },
-    { label: "字符数组 ArrayString", value: "ArrayString" },
-    { label: "整数数组 ArrayInteger", value: "ArrayInteger" },
-    { label: "数字数组 ArrayNumber", value: "ArrayNumber" },
-    { label: "布尔数组 ArrayBoolean", value: "ArrayBoolean" },
-    { label: "对象数组 ArrayObject", value: "ArrayObject" },
+    { label: "字典 Dictionary", value: "Dict" },
+    { label: "列表 List", value: "List" },
 ]);
 
 export const FileVariableTypes = deepFreeze([
@@ -37,15 +33,6 @@ export const FileVariableTypes = deepFreeze([
     { label: "压缩包 Zip", value: "Zip" },
     { label: "视频 Video", value: "Video" },
     { label: "PDF文件 PDF", value: "PDF" },
-    { label: "图片数组 ArrayImage", value: "ArrayImage" },
-    { label: "Word文档数组 ArrayDocx", value: "ArrayDocx" },
-    { label: "PowerPoint数组 ArrayPPT", value: "ArrayPPT" },
-    { label: "文本文件数组 ArrayTxt", value: "ArrayTxt" },
-    { label: "Excel表格数组 ArrayExcel", value: "ArrayExcel" },
-    { label: "音频数组 ArrayAudio", value: "ArrayAudio" },
-    { label: "压缩包数组 ArrayZip", value: "ArrayZip" },
-    { label: "视频数组 ArrayVideo", value: "ArrayVideo" },
-    { label: "PDF文件数组 ArrayPDF", value: "ArrayPDF" },
 ]);
 
 export const LengthTypeSelections = deepFreeze([

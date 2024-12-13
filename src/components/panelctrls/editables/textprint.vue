@@ -4,7 +4,7 @@
             <editable_header>
                 {{ thisnode.data.payloads.byId[pid].label }}
             </editable_header>
-            <n-select multiple clearable v-model:value="selectValue" :options="selfVarSelections"
+            <n-select multiple clearable v-model:value="selectValue" :options="selfVarSelections" :disabled="!isEditorMode" 
                 :render-tag="renderTag"></n-select>
         </n-flex>
         <n-text v-for="printtext in printtexts" :key="printtext">
@@ -17,6 +17,7 @@
 import { ref, computed, inject, watch, nextTick, h } from 'vue'
 import { NText, NTag, NH6, NInput, NSelect, NInputGroup, NFlex } from 'naive-ui'
 import { Panel, useVueFlow, useHandleConnections } from '@vue-flow/core'
+import { useFlowAOperation } from '@/services/useFlowAOperation.js'
 import editable_header from './header.vue'
 const props = defineProps({
     nodeId: {
@@ -34,6 +35,7 @@ const props = defineProps({
 })
 const { findNode } = useVueFlow();
 const isEditing = inject("isEditing");
+const { isEditorMode } = useFlowAOperation();
 
 const thisnode = computed(() => {
     return findNode(props.nodeId);

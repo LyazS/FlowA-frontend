@@ -4,7 +4,7 @@
             <editable_header type="success">
                 Prompts设计
             </editable_header>
-            <n-button text type="success" @click="addVariable">
+            <n-button text type="success" @click="addVariable" :disabled="!isEditorMode">
                 <template #icon>
                     <n-icon>
                         <Add />
@@ -19,8 +19,8 @@
                 :wrap="false">
                 <n-flex :style="{ width: '90%' }" class="flexctitem" justify="space-between" :wrap="false">
                     <n-select :style="{ width: '130px' }" size="small" placeholder="类型" :options="roleSelections"
-                        v-model:value="pvar.role" />
-                    <n-button text size="small" type="info" @click="openEditor(vindex)">
+                        :disabled="!isEditorMode" v-model:value="pvar.role" />
+                    <n-button text size="small" type="info" @click="openEditor(vindex)" :disabled="!isEditorMode">
                         <template #icon>
                             <n-icon>
                                 <CreateOutline />
@@ -29,7 +29,8 @@
                         放大编辑
                     </n-button>
                 </n-flex>
-                <n-button circle tertiary size="small" type="error" @click="rmVariable(vindex)">
+                <n-button circle tertiary size="small" type="error" @click="rmVariable(vindex)"
+                    :disabled="!isEditorMode">
                     <template #icon>
                         <n-icon>
                             <Close />
@@ -37,7 +38,7 @@
                     </template>
                 </n-button>
             </n-flex>
-            <n-input type="textarea" placeholder="请输入Prompt" clearable :autosize="{
+            <n-input type="textarea" placeholder="请输入Prompt" clearable :disabled="!isEditorMode" :autosize="{
                 minRows: 3,
                 maxRows: 5,
             }" v-model:value="pvar.content" @blur="isEditing = false" @focus="isEditing = true" />
@@ -53,6 +54,7 @@ import { Add, Close } from '@vicons/ionicons5'
 import { useVueFlow } from '@vue-flow/core'
 import editable_header from './header.vue'
 import { CreateOutline } from '@vicons/ionicons5'
+import { useFlowAOperation } from '@/services/useFlowAOperation.js'
 
 const props = defineProps({
     nodeId: {
@@ -71,6 +73,7 @@ const CodeEditorLangType = inject("CodeEditorLangType");
 
 // 获取节点数据
 const { findNode } = useVueFlow()
+const { isEditorMode } = useFlowAOperation();
 const thisnode = computed(() => findNode(props.nodeId))
 
 const roleSelections = [

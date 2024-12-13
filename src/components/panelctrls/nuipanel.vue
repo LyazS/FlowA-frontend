@@ -20,41 +20,35 @@ import { useFlowAOperation } from '@/services/useFlowAOperation'
 import nodepanel from './nodepanel.vue'
 import ctrlpanel from './ctrlpanel.vue';
 const AceCodeEditor = defineAsyncComponent(() => import('./AceCodeEditor.vue'));
-const FlowHistorys = defineAsyncComponent(() => import('./FlowHistorys.vue'));
+const FlowResults = defineAsyncComponent(() => import('./FlowResults.vue'));
+const FlowRename = defineAsyncComponent(() => import('@/components/panelctrls/FlowRename.vue'));
+const FlowCreator = defineAsyncComponent(() => import('@/components/panelctrls/FlowCreator.vue'));
 const props = defineProps({
     nodeId: {
         type: [String, null],
         required: true
     }
 })
-const { TaskID, TaskName } = useFlowAOperation();
+const { TaskID, WorkflowName, AutoSaveMessage } = useFlowAOperation();
 const isShowCodeEditor = ref(false);
 const CodeEditorPath = ref([]);
 const CodeEditorLangType = ref('CodePython');
 provide('isShowCodeEditor', isShowCodeEditor);
 provide('CodeEditorPath', CodeEditorPath);
 provide('CodeEditorLangType', CodeEditorLangType);
-const isShowFlowHistorys = ref(false);
-provide('isShowFlowHistorys', isShowFlowHistorys);
+const isShowFlowResults = ref(false);
+provide('isShowFlowResults', isShowFlowResults);
+const isShowWFRename = ref(false);
+provide("isShowWFRename", isShowWFRename);
+const isShowWFCreator = ref(false);
+provide("isShowWFCreator", isShowWFCreator);
 
 </script>
 
 <template>
     <Panel position="top-left" :style="{ width: 'auto' }">
         <n-flex justify="flex-start">
-            <n-text>自动保存</n-text>
-        </n-flex>
-    </Panel>
-    <Panel position="top-center" :style="{ width: 'auto' }">
-        <n-flex justify="center">
-            <n-button quaternary type="primary" style="min-width: 200px;" @click="isShowFlowHistorys = true">
-                <n-ellipsis v-if="TaskName" style="max-width: 240px">
-                    {{ TaskName }}
-                </n-ellipsis>
-                <n-ellipsis v-else style="max-width: 240px">
-                    工作流管理器
-                </n-ellipsis>
-            </n-button>
+            <n-text>{{ AutoSaveMessage }}</n-text>
         </n-flex>
     </Panel>
     <Panel position="top-right" :style="{ width: 'auto' }">
@@ -64,7 +58,9 @@ provide('isShowFlowHistorys', isShowFlowHistorys);
         <nodepanel v-if="!!nodeId" :nodeId="nodeId" />
     </Panel>
     <AceCodeEditor v-if="!!nodeId" :nodeId="nodeId" :path="CodeEditorPath" :langtype="CodeEditorLangType" />
-    <FlowHistorys />
+    <FlowResults />
+    <FlowRename />
+    <FlowCreator />
 </template>
 
 <style scoped>

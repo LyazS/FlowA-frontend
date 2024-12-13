@@ -4,7 +4,7 @@
             {{ thisnode.data.payloads.byId[pid].label }}
         </editable_header>
         <n-input type="textarea" :autosize="{ minRows: 3, maxRows: 20 }" v-model:value="text_value"
-            @blur="isEditing = false" @focus="isEditing = true" placeholder="输入点内容吧" />
+            :disabled="!isEditorMode" @blur="isEditing = false" @focus="isEditing = true" placeholder="输入点内容吧" />
     </n-flex>
 </template>
 <style scoped></style>
@@ -12,6 +12,7 @@
 import { ref, computed, inject } from 'vue'
 import { NText, NH6, NInput, NSelect, NInputGroup, NFlex } from 'naive-ui'
 import { useVueFlow, useHandleConnections } from '@vue-flow/core'
+import { useFlowAOperation } from '@/services/useFlowAOperation.js'
 import editable_header from './header.vue'
 const props = defineProps({
     nodeId: {
@@ -25,6 +26,7 @@ const props = defineProps({
 })
 const { findNode } = useVueFlow();
 const isEditing = inject("isEditing");
+const { isEditorMode } = useFlowAOperation();
 
 const thisnode = computed(() => {
     return findNode(props.nodeId);

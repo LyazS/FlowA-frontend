@@ -1,7 +1,7 @@
 <template>
     <VueFlow class="basic-flow" :connection-mode="ConnectionMode.Strict" :connection-radius="30"
         zoom-activation-key-code="Space" :nodeTypes="AllVFNodeTypes" fit-view-on-init :max-zoom="4" :min-zoom="0.1"
-        :select-nodes-on-drag="false" elevate-edges-on-select>
+        :select-nodes-on-drag="false" elevate-edges-on-select multi-selection-key-code="Control" delete-key-code="Delete">
         <Background />
         <!-- <miniMap /> -->
         <miniMapCtrl />
@@ -33,7 +33,7 @@
 
 <script setup>
 import { cloneDeep } from 'lodash';
-import { ref, markRaw, onMounted, onBeforeUnmount, reactive, watch, provide } from 'vue'
+import { ref, markRaw, onMounted, onBeforeMount, onBeforeUnmount, reactive, watch, provide } from 'vue'
 import { ConnectionMode, VueFlow, Panel, useVueFlow } from '@vue-flow/core'
 import { Background } from '@vue-flow/background'
 import { ContextMenu } from '@imengyu/vue3-context-menu';
@@ -87,18 +87,12 @@ const {
 
 const {
     isEditing,
-    addKBEventListeners,
-    removeKBEventListeners,
 } = useKeyboardControls()
 
 provide('isEditing', isEditing);
-onMounted(async () => {
+
+onBeforeMount(async () => {
     await initAllNodeInfos();
     buildNestedNodeGraph();
-    addKBEventListeners();
 })
-onBeforeUnmount(() => {
-    removeKBEventListeners();
-})
-
 </script>

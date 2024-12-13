@@ -38,7 +38,10 @@ const thisnode = computed(() => {
 // 节点标题相关 ======================================
 const isEditingTitle = ref(false);
 const titleInputRef = ref(null);
-const titleInputText = ref(thisnode.value.data.label);
+const titleInputText = ref("");
+watch(() => props.nodeId, (newVal) => {
+    titleInputText.value = thisnode.value.data.label;
+}, { immediate: true })
 const startEditTilte = () => {
     isEditingTitle.value = true;
     isEditing.value = true;

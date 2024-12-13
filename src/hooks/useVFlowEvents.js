@@ -2,7 +2,7 @@ import { ref, reactive, watch } from 'vue';
 import { useVueFlow } from '@vue-flow/core';
 import { useVFlowManagement } from './useVFlowManagement.js'
 import { useContextMenu } from './useContextMenu.js'
-
+import { useFlowAOperation } from '@/services/useFlowAOperation.js';
 
 // 单例模式
 let instance = null;
@@ -47,7 +47,7 @@ export const useVFlowEvents = () => {
         getViewport,
         setViewport,
     } = useVueFlow();
-
+    const { autoSaveWorkflow } = useFlowAOperation();
     // 节点选择事件 =================================================
     const lastClickedNodeId = ref(null);
     const selcetNodeEvent = (event) => {
@@ -118,6 +118,16 @@ export const useVFlowEvents = () => {
 
     onConnect((event) => {
         addEdgeToVFlow(event);
+    })
+
+    onNodesChange((event) => {
+        // console.log("节点变化", event);
+        autoSaveWorkflow();
+    })
+
+    onEdgesChange((event) => {
+        // console.log("边变化", event);
+        autoSaveWorkflow();
     })
 
     instance = {
