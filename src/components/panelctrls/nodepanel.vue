@@ -241,7 +241,7 @@ onUnmounted(() => {
 </script>
 
 <template>
-    <n-scrollbar style="max-height: calc(100vh - 80px);">
+    <n-scrollbar style="max-height: calc(100vh - 80px); border-radius:10px;">
         <n-card header-style="height: 70px;">
             <template #header>
                 <n-h2 prefix="bar" align-text v-if="!isEditingTitle" class="card-title" @click="startEditTilte">
