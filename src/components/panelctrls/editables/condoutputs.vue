@@ -67,7 +67,7 @@
                     </n-button>
                 </n-flex>
             </n-card>
-            <n-button quaternary type="info" @click="addCondition(branch.rid)" :disabled="!isEditorMode">
+            <n-button text type="info" @click="addCondition(branch.rid)" :disabled="!isEditorMode">
                 <template #icon>
                     <n-icon>
                         <Add />

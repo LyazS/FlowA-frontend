@@ -71,15 +71,15 @@ export const isPathConnected = (obj, path) => {
 };
 
 export function SubscribeSSE(
-        url,
-        method,
-        headers,
-        body,
-        onOpen,
-        onMessage,
-        onClose,
-        onError,
-    ) {
+    url,
+    method,
+    headers,
+    body,
+    onOpen,
+    onMessage,
+    onClose,
+    onError,
+) {
     const controller = new AbortController();
     const signal = controller.signal;
     async function subscribe() {
@@ -120,5 +120,12 @@ export function SubscribeSSE(
     return {
         subscribe,
         unsubscribe,
+    }
+}
+
+export const mapVarItemToSelect = (item) => {
+    return {
+        label: `${item.nlabel}/${item.dlabel}/${item.dkey}/${item.dtype}`,
+        value: `${item.nodeId}/${item.dpath[0]}/${item.dpath[1]}`,
     }
 }
