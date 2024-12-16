@@ -2,7 +2,7 @@
     <n-flex vertical>
         <editable_header type="info">聚合设计</editable_header>
         <VueDraggable ghostClass="ghost" :animation="150" v-model="branchesData" :disabled="!isEditorMode">
-            <n-flex v-for="(item, index) in branchesData" :key="index"
+            <n-flex v-for="(item, index) in branchesData" :key="`branch-${index}-${Date.now()}`"
                 :style="{ flexWrap: 'nowrap', paddingBottom: '5px', alignItems: 'center' }">
                 <n-icon size="16">
                     <EllipsisVerticalIcon />
