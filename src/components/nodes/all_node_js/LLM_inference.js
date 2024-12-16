@@ -41,16 +41,23 @@ addHandle(_initInfo, "callbackUsers", "callbackUser");
 addHandle(_initInfo, "callbackFuncs", "callbackFunc");
 
 addConnection(_initInfo, "self", "self", { type: "FromOuter", inputKey: "input" });
-addPayload(_initInfo, { label: "输入变量", type: "LLMInput", key: "inputvars", data: [
-    { key: "text", type: "value", value: "good assistant" },
-    { key: "ask", type: "value", value: "hi" },
-], uitype: "llminputs" });
-addPayload(_initInfo, { label: "LLM Prompt", type: "Prompts", key: "prompts", data: [
-    { role: "system", content: "You are a {{text}}." },
-    { role: "user", content: "{{ask}}" },
-], uitype: "llmprompts" });
+addPayload(_initInfo, {
+    label: "输入变量", type: "LLMInput", key: "inputvars", data: [
+        { key: "text", type: "value", value: "good assistant" },
+        { key: "ask", type: "value", value: "hi" },
+    ], uitype: "llminputs"
+});
+addPayload(_initInfo, {
+    label: "LLM Prompt", type: "Prompts", key: "prompts", data: [
+        { role: "system", content: "You are a {{text}}." },
+        { role: "user", content: "{{ask}}" },
+    ], uitype: "llmprompts"
+});
 setOutputsUIType(_initInfo, "tagoutputs");
-addResultWConnect(_initInfo, { label: "推理结果", type: "String", key: "output", data: "" }, "output");
+addResultWConnect(_initInfo, { label: "推理结果", type: "String", key: "response", data: "" }, "output", "D_RESPONSE");
+addResultWConnect(_initInfo, { label: "LLM模型", type: "String", key: "model", data: "" }, "output", "D_MODEL");
+addResultWConnect(_initInfo, { label: "输入Token", type: "Integer", key: "input_token", data: 0 }, "output", "D_IN_TOKEN");
+addResultWConnect(_initInfo, { label: "输出Token", type: "Integer", key: "output_token", data: 0 }, "output", "D_OUT_TOKEN");
 
 export const initInfo = cloneDeep(_initInfo);
 
