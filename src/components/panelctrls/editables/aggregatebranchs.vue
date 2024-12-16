@@ -1,21 +1,20 @@
 <template>
     <n-flex vertical>
         <editable_header type="info">聚合设计</editable_header>
-        <VueDraggable ghostClass="ghost" :animation="150" v-model="thisnode.data.payloads.byId['branches'].data"
-            :disabled="!isEditorMode">
-            <n-flex v-for="(item, index) in thisnode.data.payloads.byId['branches'].data"
+        <VueDraggable ghostClass="ghost" :animation="150" v-model="branchesData" :disabled="!isEditorMode">
+            <n-flex v-for="(item, index) in branchesData" :key="index"
                 :style="{ flexWrap: 'nowrap', paddingBottom: '5px', alignItems: 'center' }">
                 <n-icon size="16">
-                    <EllipsisVertical />
+                    <EllipsisVerticalIcon />
                 </n-icon>
-                <n-select :style="{ width: '40%' }" size="small" :options="inputNodesOptions" v-model:value="item.node"
-                    @update:value="" />
-                <n-select :style="{ width: '60%' }" size="small" :options="buildNodeOutVars(item.node)"
+                <n-select :style="{ width: '40%' }" size="small" :options="inputNodesOptions"
+                    v-model:value="item.node" />
+                <n-select :style="{ width: '60%' }" size="small" :options="getBuildNodeOutVars(item.node)"
                     v-model:value="item.refdata" :render-label="renderLabel" />
                 <n-button circle tertiary type="error" @click="removeVar(index)">
                     <template #icon>
                         <n-icon>
-                            <Close />
+                            <CloseIcon />
                         </n-icon>
                     </template>
                 </n-button>
@@ -25,48 +24,50 @@
             <n-button text type="info" @click="addVar">
                 <template #icon>
                     <n-icon>
-                        <Add />
+                        <AddIcon />
                     </n-icon>
                 </template>
                 添加分支变量
             </n-button>
         </n-flex>
     </n-flex>
-
 </template>
 
 <script setup>
-import { ref, computed, h, inject, watch } from 'vue'
+import { ref, computed, h, inject, watch } from 'vue';
 import {
-    useMessage,
-    NSwitch,
     NFlex,
     NIcon,
-    NText,
+    NSelect,
     NButton,
+    NText,
+    NSwitch,
     NCard,
     NForm,
     NFormItem,
     NGrid,
     NGridItem,
     NInput,
-    NSelect,
     NSpace,
     NTag
-} from 'naive-ui'
-import { Add, Close, EllipsisVertical } from '@vicons/ionicons5'
-import { useVueFlow } from '@vue-flow/core'
-import editable_header from './header.vue'
+} from 'naive-ui';
 import {
-    VueDraggable
-} from 'vue-draggable-plus'
+    Add as AddIcon,
+    Close as CloseIcon,
+    EllipsisVertical as EllipsisVerticalIcon
+} from '@vicons/ionicons5';
+import { useVueFlow } from '@vue-flow/core';
+import editable_header from './header.vue';
 import { mapVarItemToSelect } from '@/utils/tools'
-import { useFlowAOperation } from '@/services/useFlowAOperation.js'
+import { VueDraggable } from 'vue-draggable-plus';
+import { useFlowAOperation } from '@/services/useFlowAOperation.js';
 import { useVFlowManagement } from '@/hooks/useVFlowManagement';
+
 const {
     findVarFromIO,
-    recursiveFindVariables,
+    recursiveFindVariables
 } = useVFlowManagement();
+
 const props = defineProps({
     nodeId: {
         type: String,
@@ -80,18 +81,22 @@ const props = defineProps({
         type: Object,
         required: true
     }
-})
+});
+
 const isEditing = inject("isEditing");
 const { isEditorMode } = useFlowAOperation();
-// 获取节点数据
-const {
-    findNode,
-    getHandleConnections,
-    updateNodeInternals,
-    removeEdges,
-    getEdges,
-} = useVueFlow()
-const thisnode = computed(() => findNode(props.nodeId))
+
+const { findNode, getHandleConnections, updateNodeInternals, removeEdges, getEdges } = useVueFlow();
+const thisnode = computed(() => findNode(props.nodeId));
+
+const branchesData = computed({
+    get() {
+        return thisnode.value.data.payloads.byId.branches.data || [];
+    },
+    set(value) {
+        thisnode.value.data.payloads.byId.branches.data = value;
+    }
+});
 
 const inputNodesOptions = computed(() => {
     const options = [];
@@ -109,41 +114,39 @@ const inputNodesOptions = computed(() => {
     return options;
 })
 
-const buildNodeOutVars = (nid_ohid) => {
+const getBuildNodeOutVars = (nid_ohid) => {
     const [nid, ohid] = nid_ohid.split('/');
-    const thenode = findNode(nid);
-    const outvars = [];
-    if (thenode) {
-        outvars.push(...recursiveFindVariables(nid, [], [], [], false, [], false, [ohid])
-            .map((item) => mapVarItemToSelect(item)));
-    }
-    return outvars;
-}
-const addVar = () => {
-    if (thisnode.value.data.payloads.byId['branches'].data) {
-        thisnode.value.data.payloads.byId['branches'].data.push({
-            node: '',
-            refdata: ''
-        });
-    }
-};
-const removeVar = (index) => {
-    if (thisnode.value.data.payloads.byId['branches'].data) {
-        thisnode.value.data.payloads.byId['branches'].data.splice(index, 1);
-    }
+    const node = findNode(nid);
+    if (!node) return [];
+    return recursiveFindVariables(nid, [], [], [], false, [], false, [ohid])
+        .map(mapVarItemToSelect);
 };
 
-watch(() => thisnode.value.data.payloads.byId['branches'].data, (newLists) => {
-    if (newLists.length > 0) {
-        const [nid, cname, rid] = thisnode.value.data.payloads.byId['branches'].data[0].refdata.split('/');
-        const thenode = findNode(nid);
-        thisnode.value.data.results.byId['output'].type = thenode.data[cname].byId[rid].type;
-    }
-}, { immediate: true });
+const addVar = () => {
+    branchesData.value.push({ node: '', refdata: '' });
+};
+
+const removeVar = (index) => {
+    branchesData.value.splice(index, 1);
+};
+
+watch(
+    () => branchesData.value,
+    (newLists) => {
+        if (Array.isArray(newLists) && newLists.length > 0) {
+            const firstElement = newLists[0];
+            if (firstElement.refdata) {
+                const [nid, dpath, rid] = firstElement.refdata.split('/');
+                const node = findNode(nid);
+                thisnode.value.data.results.byId.output.type = node?.data[dpath].byId[rid].type;
+            }
+        }
+    },
+    { immediate: true, deep: true }
+);
 
 const renderLabel = (option) => {
     const [nlabel, dlabel, dkey, dtype] = option.label.split("/");
-
     const isError = !props.selfVarSelections.some(select => select.value === option.value);
     if (isError) {
         return h(NText, { type: "error", strong: true }, { default: () => `❓${nlabel}` });

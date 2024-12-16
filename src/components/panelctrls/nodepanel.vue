@@ -10,7 +10,6 @@ const {
     recursiveFindVariables,
 } = useVFlowManagement();
 
-const editable_input = defineAsyncComponent(() => import('./editables/input.vue'));
 const editable_tagoutputs = defineAsyncComponent(() => import('./editables/tagoutputs.vue'));
 const editable_packoutputs = defineAsyncComponent(() => import('./editables/packoutputs.vue'));
 const editable_condoutputs = defineAsyncComponent(() => import('./editables/condoutputs.vue'));
@@ -25,6 +24,7 @@ const editable_codeinputs = defineAsyncComponent(() => import('./editables/codei
 const editable_llminputs = defineAsyncComponent(() => import('./editables/llminputs.vue'));
 const editable_llmprompts = defineAsyncComponent(() => import('./editables/llmprompts.vue'));
 const editable_aggregatebranchs = defineAsyncComponent(() => import('./editables/aggregatebranchs.vue'));
+const editable_aggregateoutput = defineAsyncComponent(() => import('./editables/aggregateoutput.vue'));
 
 const props = defineProps({
     nodeId: {
@@ -144,6 +144,9 @@ const outputsComponents = computed(() => {
     }
     else if (uitype === 'codeoutputs') {
         return h(editable_codeoutputs, { nodeId: props.nodeId });
+    }
+    else if (uitype === 'aggregateoutput') {
+        return h(editable_aggregateoutput, { nodeId: props.nodeId, rid: "output" });
     }
     return null;
 });
