@@ -129,7 +129,7 @@ export const useFlowAOperation = () => {
     if (res.success) {
       AutoSaveMessage.value = `自动保存 ${new Date().toLocaleTimeString()}`;
     }
-  }, 5 * 1000);
+  }, 1000);
   const autoSaveWorkflow = () => {
     if (!canSaveWorkflow.value) return;
     if (!isEditorMode.value) return;
