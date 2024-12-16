@@ -1,3 +1,21 @@
+import { ref, computed, h, inject, watch } from 'vue';
+import {
+    NFlex,
+    NIcon,
+    NSelect,
+    NButton,
+    NText,
+    NSwitch,
+    NCard,
+    NForm,
+    NFormItem,
+    NGrid,
+    NGridItem,
+    NInput,
+    NSpace,
+    NTag
+} from 'naive-ui';
+
 const getFullUuid = () => {
     if (typeof crypto === 'object') {
         if (typeof crypto.randomUUID === 'function') {
@@ -129,3 +147,16 @@ export const mapVarItemToSelect = (item) => {
         value: `${item.nodeId}/${item.dpath[0]}/${item.dpath[1]}`,
     }
 }
+
+export const renderLabel4Select = (nlabel, dlabel, dtype, isError) => {
+    if (isError) {
+        return h(NText, { type: "error", strong: true }, { default: () => `❓${nlabel}` });
+
+    }
+    return [
+        h(NText, { type: "default", strong: true }, { default: () => `${nlabel}` }),
+        h(NText, { type: "default" }, { default: () => "/ " }),
+        h(NText, { type: "info", }, { default: () => dlabel }),
+        h(NText, { type: "info", }, { default: () => ` ${dtype}` }),
+    ]
+};

@@ -7,11 +7,11 @@
                 <n-icon size="16">
                     <EllipsisVerticalIcon />
                 </n-icon>
-                <n-select :style="{ width: '40%' }" size="small" :options="inputNodesOptions"
+                <n-select :style="{ width: '40%' }" size="small" :options="inputNodesOptions" :disabled="!isEditorMode"
                     v-model:value="item.node" />
                 <n-select :style="{ width: '60%' }" size="small" :options="getBuildNodeOutVars(item.node)"
-                    v-model:value="item.refdata" :render-label="renderLabel" />
-                <n-button circle tertiary type="error" @click="removeVar(index)">
+                    :disabled="!isEditorMode" v-model:value="item.refdata" :render-label="renderLabel" />
+                <n-button circle tertiary type="error" @click="removeVar(index)" :disabled="!isEditorMode">
                     <template #icon>
                         <n-icon>
                             <CloseIcon />
@@ -21,7 +21,7 @@
             </n-flex>
         </VueDraggable>
         <n-flex justify="flex-start">
-            <n-button text type="info" @click="addVar">
+            <n-button text type="info" @click="addVar" :disabled="!isEditorMode">
                 <template #icon>
                     <n-icon>
                         <AddIcon />
@@ -58,7 +58,7 @@ import {
 } from '@vicons/ionicons5';
 import { useVueFlow } from '@vue-flow/core';
 import editable_header from './header.vue';
-import { mapVarItemToSelect } from '@/utils/tools'
+import { mapVarItemToSelect, renderLabel4Select } from '@/utils/tools'
 import { VueDraggable } from 'vue-draggable-plus';
 import { useFlowAOperation } from '@/services/useFlowAOperation.js';
 import { useVFlowManagement } from '@/hooks/useVFlowManagement';
@@ -148,16 +148,7 @@ watch(
 const renderLabel = (option) => {
     const [nlabel, dlabel, dkey, dtype] = option.label.split("/");
     const isError = !props.selfVarSelections.some(select => select.value === option.value);
-    if (isError) {
-        return h(NText, { type: "error", strong: true }, { default: () => `❓${nlabel}` });
-
-    }
-    return [
-        h(NText, { type: "default", strong: true }, { default: () => `${nlabel}` }),
-        h(NText, { type: "default" }, { default: () => "/ " }),
-        h(NText, { type: "info", }, { default: () => dlabel }),
-        h(NText, { type: "info", }, { default: () => ` ${dtype}` }),
-    ]
+    return renderLabel4Select(nlabel, dlabel, dtype, isError);
 };
 </script>
 
