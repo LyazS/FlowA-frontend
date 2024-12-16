@@ -105,10 +105,15 @@ const inputNodesOptions = computed(() => {
         const nid = node.srcid;
         const thenode = findNode(nid);
         if (thenode) {
+            let olabel = thenode.data.connections.outputs[node.srcohid].label;
+            const pattern = /^\d+\/[^/]*$/;
+            if (pattern.test(olabel)) {
+                olabel = olabel.split('/')[1];
+            }
             options.push({
-                label: thenode.data.label,
+                label: `${thenode.data.label}-${olabel.toUpperCase()}`,
                 value: `${nid}/${node.srcohid}`
-            })
+            });
         }
     }
     return options;
@@ -138,7 +143,8 @@ watch(
             if (firstElement.refdata) {
                 const [nid, dpath, rid] = firstElement.refdata.split('/');
                 const node = findNode(nid);
-                thisnode.value.data.results.byId['D_OUTPUT'].type = node?.data[dpath].byId[rid].type;
+
+                thisnode.value.data.results.byId['D_OUTPUT'].type = node?.data[dpath]?.byId[rid]?.type;
             }
         }
     },
