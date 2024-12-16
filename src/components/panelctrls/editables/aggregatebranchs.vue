@@ -91,10 +91,10 @@ const thisnode = computed(() => findNode(props.nodeId));
 
 const branchesData = computed({
     get() {
-        return thisnode.value.data.payloads.byId.branches.data || [];
+        return thisnode.value.data.payloads.byId['D_BRANCHES'].data || [];
     },
     set(value) {
-        thisnode.value.data.payloads.byId.branches.data = value;
+        thisnode.value.data.payloads.byId['D_BRANCHES'].data = value;
     }
 });
 
@@ -138,7 +138,7 @@ watch(
             if (firstElement.refdata) {
                 const [nid, dpath, rid] = firstElement.refdata.split('/');
                 const node = findNode(nid);
-                thisnode.value.data.results.byId.output.type = node?.data[dpath].byId[rid].type;
+                thisnode.value.data.results.byId['D_OUTPUT'].type = node?.data[dpath].byId[rid].type;
             }
         }
     },

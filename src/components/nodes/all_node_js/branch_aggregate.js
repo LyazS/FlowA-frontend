@@ -43,9 +43,9 @@ addPayload(_initInfo, {
         // { node: "1/1", refdata: "" },
         // { node: "2/2", refdata: "" },
     ], uitype: "aggregatebranch"
-}, "branches");
+}, "D_BRANCHES");
 
-addResultWConnect(_initInfo, { label: "输出变量", type: null, key: "output", data: null }, "output", "output");
+addResultWConnect(_initInfo, { label: "输出变量", type: null, key: "output", data: null }, "output", "D_OUTPUT");
 setOutputsUIType(_initInfo, "tagoutputs");
 export const initInfo = cloneDeep(_initInfo);
 export { NodeVue };
