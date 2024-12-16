@@ -1,3 +1,21 @@
+import { ref, computed, h, inject, watch } from 'vue';
+import {
+    NFlex,
+    NIcon,
+    NSelect,
+    NButton,
+    NText,
+    NSwitch,
+    NCard,
+    NForm,
+    NFormItem,
+    NGrid,
+    NGridItem,
+    NInput,
+    NSpace,
+    NTag
+} from 'naive-ui';
+
 const getFullUuid = () => {
     if (typeof crypto === 'object') {
         if (typeof crypto.randomUUID === 'function') {
@@ -71,15 +89,15 @@ export const isPathConnected = (obj, path) => {
 };
 
 export function SubscribeSSE(
-        url,
-        method,
-        headers,
-        body,
-        onOpen,
-        onMessage,
-        onClose,
-        onError,
-    ) {
+    url,
+    method,
+    headers,
+    body,
+    onOpen,
+    onMessage,
+    onClose,
+    onError,
+) {
     const controller = new AbortController();
     const signal = controller.signal;
     async function subscribe() {
@@ -122,3 +140,23 @@ export function SubscribeSSE(
         unsubscribe,
     }
 }
+
+export const mapVarItemToSelect = (item) => {
+    return {
+        label: `${item.nlabel}/${item.dlabel}/${item.dkey}/${item.dtype}`,
+        value: `${item.nodeId}/${item.dpath[0]}/${item.dpath[1]}`,
+    }
+}
+
+export const renderLabel4Select = (nlabel, dlabel, dtype, isError) => {
+    if (isError) {
+        return h(NText, { type: "error", strong: true }, { default: () => `❓${nlabel}` });
+
+    }
+    return [
+        h(NText, { type: "default", strong: true }, { default: () => `${nlabel}` }),
+        h(NText, { type: "default" }, { default: () => "/ " }),
+        h(NText, { type: "info", }, { default: () => dlabel }),
+        h(NText, { type: "info", }, { default: () => ` ${dtype}` }),
+    ]
+};

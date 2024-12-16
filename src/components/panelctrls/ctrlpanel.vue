@@ -15,7 +15,7 @@ import {
     NIcon,
     NEllipsis,
 } from 'naive-ui';
-import { Add, CaretForward, ArrowUndo } from '@vicons/ionicons5'
+import { Add, CaretForward, ArrowUndo, ArrowBack } from '@vicons/ionicons5'
 import { useVueFlow } from '@vue-flow/core'
 import { useVFlowManagement } from '@/hooks/useVFlowManagement';
 import { useVFlowInitial } from '@/hooks/useVFlowInitial'
@@ -117,7 +117,7 @@ const handleSelect = (key) => {
             <n-button class="glow-btn" tertiary round type="success" @click="returnEditorMode">
                 <template #icon>
                     <n-icon>
-                        <ArrowUndo />
+                        <ArrowBack />
                     </n-icon>
                 </template>
                 返回编辑
