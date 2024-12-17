@@ -5,6 +5,8 @@ import { Panel, useVueFlow, useHandleConnections } from '@vue-flow/core'
 import { CreateOutline } from '@vicons/ionicons5'
 import { useVFlowManagement } from '@/hooks/useVFlowManagement';
 import { mapVarItemToSelect } from '@/utils/tools'
+import { useFlowAOperation } from '@/services/useFlowAOperation.js'
+
 const {
     findVarFromIO,
     recursiveFindVariables,
@@ -24,7 +26,7 @@ const editable_codeinputs = defineAsyncComponent(() => import('./editables/codei
 const editable_llminputs = defineAsyncComponent(() => import('./editables/llminputs.vue'));
 const editable_llmprompts = defineAsyncComponent(() => import('./editables/llmprompts.vue'));
 const editable_aggregatebranchs = defineAsyncComponent(() => import('./editables/aggregatebranchs.vue'));
-
+const editable_llmmodel = defineAsyncComponent(() => import('./editables/llmmodel.vue'));
 const props = defineProps({
     nodeId: {
         type: String,
@@ -36,11 +38,15 @@ const {
     getHandleConnections,
 } = useVueFlow();
 const isEditing = inject("isEditing");
+const { isEditorMode, autoSaveWorkflow } = useFlowAOperation();
 
 // 获取节点
 const thisnode = computed(() => {
     return findNode(props.nodeId);
 });
+watch(() => thisnode.value.data, () => {
+    autoSaveWorkflow();
+}, { deep: true })
 // 节点标题相关 ======================================
 const isEditingTitle = ref(false);
 const titleInputRef = ref(null);
@@ -49,6 +55,7 @@ watch(() => props.nodeId, (newVal) => {
     titleInputText.value = thisnode.value.data.label;
 }, { immediate: true })
 const startEditTilte = () => {
+    if (!isEditorMode.value) return;
     isEditingTitle.value = true;
     isEditing.value = true;
     nextTick(() => { titleInputRef.value?.focus(); });
@@ -59,10 +66,6 @@ const saveTitle = () => {
     const newLabel = titleInputText.value.trim();
     thisnode.value.data.label = newLabel || thisnode.value.data.placeholderlabel;
 }
-
-// 可供该节点使用的变量 ==================================================
-
-
 
 // 输出变量字典{列表}
 const outputVarSelections = computed(() => {
@@ -125,6 +128,9 @@ const payloadComponents = computed(() => {
         }
         else if (uitype === 'aggregatebranch') {
             acc[pid] = h(editable_aggregatebranchs, { nodeId: props.nodeId, pid, selfVarSelections: selfVarSelections.value, inputNodes: inputNodes.value });
+        }
+        else if (uitype === 'llmmodel') {
+            acc[pid] = h(editable_llmmodel, { nodeId: props.nodeId, pid });
         }
         return acc;
     }, {});

@@ -73,6 +73,10 @@ const props = defineProps({
         type: String,
         required: true
     },
+    pid: {
+        type: String,
+        required: true
+    },
     selfVarSelections: {
         type: Array,
         required: true
@@ -91,10 +95,10 @@ const thisnode = computed(() => findNode(props.nodeId));
 
 const branchesData = computed({
     get() {
-        return thisnode.value.data.payloads.byId['D_BRANCHES'].data || [];
+        return thisnode.value.data.payloads.byId[props.pid].data || [];
     },
     set(value) {
-        thisnode.value.data.payloads.byId['D_BRANCHES'].data = value;
+        thisnode.value.data.payloads.byId[props.pid].data = value;
     }
 });
 
