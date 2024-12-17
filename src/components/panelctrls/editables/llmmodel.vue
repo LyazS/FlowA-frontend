@@ -2,68 +2,67 @@
     <n-flex vertical>
         <editable_header type="success">
             模型设置
-            <n-collapse>
-                <n-collapse-item :title="thisConfig_model">
-                    <n-flex vertical>
-                        <n-flex class="flexctitem" :wrap="false">
-                            <n-tag :bordered="false" type="info">模型选择</n-tag>
-                            <n-select v-model:value="thisConfig_model" :options="modelSelections" size="tiny" />
-                        </n-flex>
-                        <n-flex class="flexctitem" :wrap="false">
-                            <n-tag :bordered="false" type="info">流式传输</n-tag>
-                            <n-switch v-model:value="thisConfig_stream" />
-                        </n-flex>
-                        <n-flex class="flexctitem" :wrap="false">
-                            <n-tag :bordered="false" type="info">最长回复</n-tag>
-                            <n-switch v-model:value="thisConfig_max_tokens_switch" />
-                            <n-slider v-if="thisConfig_max_tokens_switch" v-model:value="thisConfig_max_tokens"
-                                :min="256" :max="8192" />
-                            <n-input-number v-if="thisConfig_max_tokens_switch" v-model:value="thisConfig_max_tokens"
-                                size="tiny" />
-                        </n-flex>
-                        <n-flex class="flexctitem" :wrap="false">
-                            <n-tag :bordered="false" type="info">温度设置</n-tag>
-                            <n-switch v-model:value="thisConfig_temperature_switch" />
-                            <n-slider v-if="thisConfig_temperature_switch" v-model:value="thisConfig_temperature"
-                                :min="0.0" :max="1.0" :step="0.01" />
-                            <n-input-number v-if="thisConfig_temperature_switch" v-model:value="thisConfig_temperature"
-                                size="tiny" :step="0.01" />
-                        </n-flex>
-                        <n-flex class="flexctitem" :wrap="false">
-                            <n-tag :bordered="false" type="info">Top_p</n-tag>
-                            <n-switch v-model:value="thisConfig_top_p_switch" />
-                            <n-slider v-if="thisConfig_top_p_switch" v-model:value="thisConfig_top_p" :min="0.0"
-                                :max="1.0" :step="0.01" />
-                            <n-input-number v-if="thisConfig_top_p_switch" v-model:value="thisConfig_top_p" size="tiny"
-                                :step="0.01" />
-                        </n-flex>
-                        <n-flex class="flexctitem" :wrap="false">
-                            <n-tag :bordered="false" type="info">Top_k</n-tag>
-                            <n-switch v-model:value="thisConfig_top_k_switch" />
-                            <n-slider v-if="thisConfig_top_k_switch" v-model:value="thisConfig_top_k" :min="0"
-                                :max="100" :step="1" />
-                            <n-input-number v-if="thisConfig_top_k_switch" v-model:value="thisConfig_top_k" size="tiny"
-                                :step="1" />
-                        </n-flex>
-                        <n-flex class="flexctitem" :wrap="false">
-                            <n-tag :bordered="false" type="info">frequency_penalty</n-tag>
-                            <n-switch v-model:value="thisConfig_frequency_penalty_switch" />
-                            <n-slider v-if="thisConfig_frequency_penalty_switch"
-                                v-model:value="thisConfig_frequency_penalty" :min="0.0" :max="1.0" :step="0.01" />
-                            <n-input-number v-if="thisConfig_frequency_penalty_switch"
-                                v-model:value="thisConfig_frequency_penalty" size="tiny" :step="0.01" />
-                        </n-flex>
-                        <n-flex class="flexctitem" :wrap="false">
-                            <n-tag :bordered="false" type="info">response_format</n-tag>
-                            <n-switch v-model:value="thisConfig_response_format_switch" />
-                            <n-select v-if="thisConfig_response_format_switch"
-                                v-model:value="thisConfig_response_format" :options="response_format_selections"
-                                size="tiny" />
-                        </n-flex>
-                    </n-flex>
-                </n-collapse-item>
-            </n-collapse>
         </editable_header>
+        <n-collapse>
+            <n-collapse-item :title="thisConfig_model">
+                <n-flex vertical>
+                    <n-flex class="flexctitem" :wrap="false">
+                        <n-tag :bordered="false" type="info">模型选择</n-tag>
+                        <n-select v-model:value="thisConfig_model" :options="modelSelections" size="tiny" />
+                    </n-flex>
+                    <n-flex class="flexctitem" :wrap="false">
+                        <n-tag :bordered="false" type="info">流式传输</n-tag>
+                        <n-switch v-model:value="thisConfig_stream" />
+                    </n-flex>
+                    <n-flex class="flexctitem" :wrap="false">
+                        <n-tag :bordered="false" type="info">最长回复</n-tag>
+                        <n-switch v-model:value="thisConfig_max_tokens_switch" />
+                        <n-slider v-if="thisConfig_max_tokens_switch" v-model:value="thisConfig_max_tokens" :min="256"
+                            :max="8192" />
+                        <n-input-number v-if="thisConfig_max_tokens_switch" v-model:value="thisConfig_max_tokens"
+                            size="tiny" />
+                    </n-flex>
+                    <n-flex class="flexctitem" :wrap="false">
+                        <n-tag :bordered="false" type="info">温度设置</n-tag>
+                        <n-switch v-model:value="thisConfig_temperature_switch" />
+                        <n-slider v-if="thisConfig_temperature_switch" v-model:value="thisConfig_temperature" :min="0.0"
+                            :max="1.0" :step="0.01" />
+                        <n-input-number v-if="thisConfig_temperature_switch" v-model:value="thisConfig_temperature"
+                            size="tiny" :step="0.01" />
+                    </n-flex>
+                    <n-flex class="flexctitem" :wrap="false">
+                        <n-tag :bordered="false" type="info">Top_p</n-tag>
+                        <n-switch v-model:value="thisConfig_top_p_switch" />
+                        <n-slider v-if="thisConfig_top_p_switch" v-model:value="thisConfig_top_p" :min="0.0" :max="1.0"
+                            :step="0.01" />
+                        <n-input-number v-if="thisConfig_top_p_switch" v-model:value="thisConfig_top_p" size="tiny"
+                            :step="0.01" />
+                    </n-flex>
+                    <n-flex class="flexctitem" :wrap="false">
+                        <n-tag :bordered="false" type="info">Top_k</n-tag>
+                        <n-switch v-model:value="thisConfig_top_k_switch" />
+                        <n-slider v-if="thisConfig_top_k_switch" v-model:value="thisConfig_top_k" :min="0" :max="100"
+                            :step="1" />
+                        <n-input-number v-if="thisConfig_top_k_switch" v-model:value="thisConfig_top_k" size="tiny"
+                            :step="1" />
+                    </n-flex>
+                    <n-flex class="flexctitem" :wrap="false">
+                        <n-tag :bordered="false" type="info">frequency_penalty</n-tag>
+                        <n-switch v-model:value="thisConfig_frequency_penalty_switch" />
+                        <n-slider v-if="thisConfig_frequency_penalty_switch"
+                            v-model:value="thisConfig_frequency_penalty" :min="0.0" :max="1.0" :step="0.01" />
+                        <n-input-number v-if="thisConfig_frequency_penalty_switch"
+                            v-model:value="thisConfig_frequency_penalty" size="tiny" :step="0.01" />
+                    </n-flex>
+                    <n-flex class="flexctitem" :wrap="false">
+                        <n-tag :bordered="false" type="info">response_format</n-tag>
+                        <n-switch v-model:value="thisConfig_response_format_switch" />
+                        <n-select v-if="thisConfig_response_format_switch" v-model:value="thisConfig_response_format"
+                            :options="response_format_selections" size="tiny" />
+                    </n-flex>
+                </n-flex>
+            </n-collapse-item>
+        </n-collapse>
 
     </n-flex>
 
