@@ -1,3 +1,5 @@
+import {  cloneDeep } from 'lodash';
+
 function deepFreeze(obj) {
     // 获取对象的属性名称
     const propNames = Object.getOwnPropertyNames(obj);
@@ -76,7 +78,12 @@ export const BooleanTypeSelections = deepFreeze([
     { label: "为false", value: "isfalse" },
 ]);
 
-export const compTypeSelections = deepFreeze([
+export const typeSelections = deepFreeze([
     { label: "引用", value: "ref" },
     { label: "数值", value: "value" },
 ]);
+export const compTypeSelections = cloneDeep(typeSelections);
+export const llmTypeSelections = [
+    ...typeSelections,
+    { label: "缺省", value: "null" },
+]

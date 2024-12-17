@@ -130,7 +130,7 @@ const payloadComponents = computed(() => {
             acc[pid] = h(editable_aggregatebranchs, { nodeId: props.nodeId, pid, selfVarSelections: selfVarSelections.value, inputNodes: inputNodes.value });
         }
         else if (uitype === 'llmmodel') {
-            acc[pid] = h(editable_llmmodel, { nodeId: props.nodeId, pid });
+            acc[pid] = h(editable_llmmodel, { nodeId: props.nodeId, pid, selfVarSelections: selfVarSelections.value });
         }
         return acc;
     }, {});

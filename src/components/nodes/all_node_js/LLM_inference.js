@@ -45,13 +45,13 @@ addPayload(_initInfo, {
     label: "模型设置", type: "LLMModel", key: "modelconfig", data: {
         model: "DeepSeekV2.5",
         stream: false,
-        max_tokens: { enable: false, value: 4096 },
-        temperature: { enable: false, value: 0.75 },
-        top_p: { enable: false, value: 0.9 },
-        top_k: { enable: false, value: 50 },
-        frequency_penalty: { enable: false, value: 0.5 },
-        response_format: { enable: false, value: "json" },// json
-        stop: { enable: false, value: null },// string|string[]|null
+        max_tokens: { type: "null", value: 4096 },
+        temperature: { type: "null", value: 0.75 },
+        top_p: { type: "null", value: 0.9 },
+        top_k: { type: "null", value: 50 },
+        frequency_penalty: { type: "null", value: 0.5 },
+        response_format: { type: "null", value: "json" },// json
+        stop: { type: "null", value: null },// string|string[]|null
     }, uitype: "llmmodel"
 });
 addPayload(_initInfo, {

@@ -14,56 +14,22 @@
                         <n-tag :bordered="false" type="info">流式传输</n-tag>
                         <n-switch v-model:value="thisConfig_stream" />
                     </n-flex>
-                    <n-flex class="flexctitem" :wrap="false">
-                        <n-tag :bordered="false" type="info">最长回复</n-tag>
-                        <n-switch v-model:value="thisConfig_max_tokens_switch" />
-                        <n-slider v-if="thisConfig_max_tokens_switch" v-model:value="thisConfig_max_tokens" :min="256"
-                            :max="8192" />
-                        <n-input-number v-if="thisConfig_max_tokens_switch" v-model:value="thisConfig_max_tokens"
-                            size="tiny" />
-                    </n-flex>
-                    <n-flex class="flexctitem" :wrap="false">
-                        <n-tag :bordered="false" type="info">温度设置</n-tag>
-                        <n-switch v-model:value="thisConfig_temperature_switch" />
-                        <n-slider v-if="thisConfig_temperature_switch" v-model:value="thisConfig_temperature" :min="0.0"
-                            :max="1.0" :step="0.01" />
-                        <n-input-number v-if="thisConfig_temperature_switch" v-model:value="thisConfig_temperature"
-                            size="tiny" :step="0.01" />
-                    </n-flex>
-                    <n-flex class="flexctitem" :wrap="false">
-                        <n-tag :bordered="false" type="info">Top_p</n-tag>
-                        <n-switch v-model:value="thisConfig_top_p_switch" />
-                        <n-slider v-if="thisConfig_top_p_switch" v-model:value="thisConfig_top_p" :min="0.0" :max="1.0"
-                            :step="0.01" />
-                        <n-input-number v-if="thisConfig_top_p_switch" v-model:value="thisConfig_top_p" size="tiny"
-                            :step="0.01" />
-                    </n-flex>
-                    <n-flex class="flexctitem" :wrap="false">
-                        <n-tag :bordered="false" type="info">Top_k</n-tag>
-                        <n-switch v-model:value="thisConfig_top_k_switch" />
-                        <n-slider v-if="thisConfig_top_k_switch" v-model:value="thisConfig_top_k" :min="0" :max="100"
-                            :step="1" />
-                        <n-input-number v-if="thisConfig_top_k_switch" v-model:value="thisConfig_top_k" size="tiny"
-                            :step="1" />
-                    </n-flex>
-                    <n-flex class="flexctitem" :wrap="false">
-                        <n-tag :bordered="false" type="info">frequency_penalty</n-tag>
-                        <n-switch v-model:value="thisConfig_frequency_penalty_switch" />
-                        <n-slider v-if="thisConfig_frequency_penalty_switch"
-                            v-model:value="thisConfig_frequency_penalty" :min="0.0" :max="1.0" :step="0.01" />
-                        <n-input-number v-if="thisConfig_frequency_penalty_switch"
-                            v-model:value="thisConfig_frequency_penalty" size="tiny" :step="0.01" />
-                    </n-flex>
-                    <n-flex class="flexctitem" :wrap="false">
-                        <n-tag :bordered="false" type="info">response_format</n-tag>
-                        <n-switch v-model:value="thisConfig_response_format_switch" />
-                        <n-select v-if="thisConfig_response_format_switch" v-model:value="thisConfig_response_format"
-                            :options="response_format_selections" size="tiny" />
+                    <n-flex v-for="config in configs" class="flexctitem" :wrap="false">
+                        <n-tag :bordered="false" type="info">{{ config.label }}</n-tag>
+                        <n-select v-model:value="config.cpType" :options="llmTypeSelections" size="tiny" />
+                        <!-- <template v-if="config.cpType === 'value'">
+                            <n-slider v-model:value="config.cpValue" :min="config.min" :max="config.max"
+                                :step="config.step" />
+                            <n-input-number v-model:value="config.cpValue" size="tiny" :min="config.min"
+                                :max="config.max" :step="config.step" />
+                        </template>
+                        <template v-else-if="config.cpType === 'ref'">
+                            <n-select v-model:value="config.cpValue" :options="selfVarSelections" size="tiny" />
+                        </template> -->
                     </n-flex>
                 </n-flex>
             </n-collapse-item>
         </n-collapse>
-
     </n-flex>
 
 </template>
@@ -95,7 +61,7 @@ import { Add, Close } from '@vicons/ionicons5'
 import { useVueFlow } from '@vue-flow/core'
 import editable_header from './header.vue'
 import { useFlowAOperation } from '@/services/useFlowAOperation.js'
-
+import { llmTypeSelections } from '@/utils/schemas'
 const props = defineProps({
     nodeId: {
         type: String,
@@ -104,7 +70,11 @@ const props = defineProps({
     pid: {
         type: String,
         required: true
-    }
+    },
+    selfVarSelections: {
+        type: Array,
+        required: true
+    },
 })
 const isEditing = inject("isEditing");
 const { isEditorMode } = useFlowAOperation();
@@ -123,13 +93,13 @@ const createComputedConfig = (prop, defaultValue = null) => {
     });
 };
 
-const createComputedSwitch = (prop) => {
+const createComputedType = (prop) => {
     return computed({
         get() {
-            return thisnode.value.data.payloads.byId[props.pid].data[prop].enable;
+            return thisnode.value.data.payloads.byId[props.pid].data[prop].type;
         },
         set(value) {
-            thisnode.value.data.payloads.byId[props.pid].data[prop].enable = value;
+            thisnode.value.data.payloads.byId[props.pid].data[prop].type = value;
         }
     });
 };
@@ -159,19 +129,17 @@ const thisConfig_stream = computed({
         thisnode.value.data.payloads.byId[props.pid].data.stream = value;
     }
 });
-const thisConfig_max_tokens_switch = createComputedSwitch("max_tokens");
-const thisConfig_max_tokens = createComputedConfig("max_tokens", 4096);
-const thisConfig_temperature_switch = createComputedSwitch("temperature");
-const thisConfig_temperature = createComputedConfig("temperature", 0.8);
-const thisConfig_top_p_switch = createComputedSwitch("top_p");
-const thisConfig_top_p = createComputedConfig("top_p", 0.9);
-const thisConfig_top_k_switch = createComputedSwitch("top_k");
-const thisConfig_top_k = createComputedConfig("top_k", 50);
-const thisConfig_frequency_penalty_switch = createComputedSwitch("frequency_penalty");
-const thisConfig_frequency_penalty = createComputedConfig("frequency_penalty", 0.5);
-const thisConfig_response_format_switch = createComputedSwitch("response_format");
+
 const thisConfig_response_format = createComputedConfig("response_format", "json");
 const thisConfig_stop = createComputedConfig("stop", null);
+
+const configs = [
+    { label: '最长回复', cpType: createComputedType("max_tokens"), cpValue: createComputedConfig("max_tokens", 4096), min: 256, max: 8192, step: 1 },
+    { label: '温度', cpType: createComputedType("temperature"), cpValue: createComputedConfig("temperature", 0.8), min: 0, max: 1, step: 0.1 },
+    { label: 'Top P', cpType: createComputedType("top_p"), cpValue: createComputedConfig("top_p", 0.9), min: 0, max: 1, step: 0.1 },
+    { label: 'Top K', cpType: createComputedType("top_k"), cpValue: createComputedConfig("top_k", 50), min: 0, max: 100, step: 1 },
+    { label: '频率惩罚', cpType: createComputedType("frequency_penalty"), cpValue: createComputedConfig("frequency_penalty", 0.5), min: 0, max: 1, step: 0.1 },
+];
 </script>
 
 <style scoped>
