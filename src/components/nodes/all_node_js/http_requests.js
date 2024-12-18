@@ -41,36 +41,16 @@ addHandle(_initInfo, "callbackUsers", "callbackUser");
 addHandle(_initInfo, "callbackFuncs", "callbackFunc");
 
 addConnection(_initInfo, "self", "self", { type: "FromOuter", inputKey: "input" });
-addPayload(_initInfo, {
-    label: "模型设置", type: "LLMModel", key: "modelconfig", data: {
-        model: { type: "value", value: "DeepSeekV2.5" },
-        stream: false,
-        max_tokens: { type: "null", value: 4096 },
-        temperature: { type: "null", value: 0.75 },
-        top_p: { type: "null", value: 0.9 },
-        top_k: { type: "null", value: 50 },
-        frequency_penalty: { type: "null", value: 0.5 },
-        response_format: { type: "null", value: "text" },// json
-        stop: { type: "null", value: null },// string|string[]|null
-    }, uitype: "llmmodel"
-});
+
 addPayload(_initInfo, {
     label: "输入变量", type: "VarsInput", key: "inputvars", data: [
         { key: "text", type: "value", value: "good assistant" },
         { key: "ask", type: "value", value: "hi" },
     ], uitype: "vars_input"
 });
-addPayload(_initInfo, {
-    label: "LLM Prompt", type: "Prompts", key: "prompts", data: [
-        { role: "system", content: "You are a {{text}}." },
-        { role: "user", content: "{{ask}}" },
-    ], uitype: "llmprompts"
-});
+
 setOutputsUIType(_initInfo, "tagoutputs");
 addResultWConnect(_initInfo, { label: "推理结果", type: "String", key: "answer", data: "" }, "output", "D_ANSWER");
-addResultWConnect(_initInfo, { label: "LLM模型", type: "String", key: "model", data: "" }, "output", "D_MODEL");
-addResultWConnect(_initInfo, { label: "输入Token", type: "Integer", key: "input_token", data: 0 }, "output", "D_IN_TOKEN");
-addResultWConnect(_initInfo, { label: "输出Token", type: "Integer", key: "output_token", data: 0 }, "output", "D_OUT_TOKEN");
 
 export const initInfo = cloneDeep(_initInfo);
 
