@@ -58,7 +58,7 @@ addPayload(_initInfo, {
     label: "输入变量", type: "LLMInput", key: "inputvars", data: [
         { key: "text", type: "value", value: "good assistant" },
         { key: "ask", type: "value", value: "hi" },
-    ], uitype: "llminputs"
+    ], uitype: "vars_input"
 });
 addPayload(_initInfo, {
     label: "LLM Prompt", type: "Prompts", key: "prompts", data: [

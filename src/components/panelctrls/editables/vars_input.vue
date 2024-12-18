@@ -47,6 +47,7 @@ import { useMessage, NSwitch, NFlex, NText, NIcon, NButton, NCard, NForm, NFormI
 import { Add, Close } from '@vicons/ionicons5'
 import { useVueFlow } from '@vue-flow/core'
 import { mapVarItemToSelect, renderLabel4Select } from '@/utils/tools'
+import { typeSelections } from '@/utils/schemas'
 import editable_header from './header.vue'
 import { useFlowAOperation } from '@/services/useFlowAOperation.js'
 
@@ -69,11 +70,6 @@ const { isEditorMode } = useFlowAOperation();
 // 获取节点数据
 const { findNode } = useVueFlow()
 const thisnode = computed(() => findNode(props.nodeId))
-
-const typeSelections = [
-    { label: "引用", value: "ref" },
-    { label: "数值", value: "value" },
-]
 
 const addVariable = () => {
     const newVar = { key: "", type: "value", value: "" };
