@@ -222,11 +222,11 @@ export const rmConnection = (_Node, handletype, handleId, cid) => {
         delete _Node.data.connections[handletype][handleId].data[cid];
     }
 };
-export const addPayload = (_Node, payload) => {
-    const pid = getUuid();
-    _Node.data.payloads.byId[pid] = cloneDeep(payload);
-    _Node.data.payloads.order.push(pid);
-    return pid;
+export const addPayload = (_Node, payload, pid = null) => {
+    const _pid = pid || getUuid();
+    _Node.data.payloads.byId[_pid] = cloneDeep(payload);
+    _Node.data.payloads.order.push(_pid);
+    return _pid;
 };
 export const rmPayload = (_Node, pid) => {
     if (_Node.data.payloads.byId.hasOwnProperty(pid)) {
@@ -268,6 +268,6 @@ export const rmResult = (_Node, rid) => {
         _Node.data.results.order.splice(_Node.data.results.order.indexOf(rid), 1);
     }
 };
-export const resetState = (_Node) => { 
+export const resetState = (_Node) => {
     Object.assign(_Node.data, cloneDeep(StateAttribute));
 }

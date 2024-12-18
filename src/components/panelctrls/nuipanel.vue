@@ -67,6 +67,7 @@ provide("isShowWFCreator", isShowWFCreator);
 .nodepanel {
     margin-top: 65px;
     width: 600px;
+    border-radius: 10px;
 }
 
 .nodepanel:hover {

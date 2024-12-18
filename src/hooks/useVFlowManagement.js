@@ -10,7 +10,7 @@ let instance = null;
 export const useVFlowManagement = () => {
     if (instance) return instance;
     const message = useMessage();
-    
+
     const {
         getAddNodeList,
         getVFNodeTypes,
@@ -27,6 +27,7 @@ export const useVFlowManagement = () => {
         addEdges,
         toObject,
         fromObject,
+        getHandleConnections,
     } = useVueFlow();
     const { getData, postData } = useRequestMethod();
 
@@ -246,6 +247,93 @@ export const useVFlowManagement = () => {
         }
     };
 
+    const findVarFromIO = (nid, findconnect, hid) => {
+        const result = [];
+        const thenode = findNode(nid);
+        if (!thenode.data.connections.hasOwnProperty(findconnect)
+            || !thenode.data.connections[findconnect].hasOwnProperty(hid)) {
+            return result;
+        }
+
+        const connection = thenode.data.connections[findconnect][hid].data;
+        for (const c_data of Object.values(connection)) {
+            if (c_data.type === 'FromInner') {
+                result.push({
+                    nodeId: nid,
+                    nlabel: thenode.data.label,
+                    dpath: c_data.path,
+                    dlabel: thenode.data[c_data.path[0]].byId[c_data.path[1]].label,
+                    dkey: thenode.data[c_data.path[0]].byId[c_data.path[1]].key,
+                    dtype: thenode.data[c_data.path[0]].byId[c_data.path[1]].type,
+                });
+            }
+            else if (c_data.type === 'FromOuter') {
+                // 对于上一个节点，则递归搜索上个节点的对应输出handle
+                const in_hid = c_data.inputKey;
+                const edges = getHandleConnections({ id: in_hid, type: "target", nodeId: nid });
+                console.log("handle id: ", in_hid, "edges count: ", Object.keys(edges).length);
+                for (const [eidx, edge] of Object.entries(edges)) {
+                    const src_nid = edge.source;
+                    const src_hid = edge.sourceHandle;
+                    result.push(...recursiveFindVariables(src_nid, [], [], [], false, [], false, [src_hid]));
+                }
+            }
+            else if (c_data.type === 'FromAttached') {
+                // 对于子节点，
+                // 如果是输入节点，则搜索它的输出变量
+                // 如果是输出节点，则搜索它的自身可用变量
+                result.push(...recursiveFindVariables(
+                    thenode.data.nesting.attached_nodes[c_data.atype].nid,
+                    c_data.atype === 'attached_node_output' ? ['self'] : [],
+                    [],
+                    [],
+                    false,
+                    [],
+                    c_data.atype === 'attached_node_input',
+                    [],
+                ));
+            }
+            else if (c_data.type === 'FromParent') {
+                // 如果是父节点，则递归搜索父节点的所有输入handle
+                result.push(...recursiveFindVariables(thenode.parentNode, [], ['attach'], [], true, [], false, []));
+            }
+        }
+        return result;
+    }
+
+
+    const recursiveFindVariables = (
+        nid,
+        findSelf = [],
+        findAttach = [],
+        findNext = [],
+        findAllInput = false,
+        findInput = [],
+        findAllOutput = false,
+        findOutput = [],
+    ) => {
+        const result = [];
+        const thenode = findNode(nid);
+        if (findAllInput) { findInput = Object.keys(thenode.data.connections.inputs); }
+        if (findAllOutput) { findOutput = Object.keys(thenode.data.connections.outputs); }
+
+        for (const hid of findSelf) {
+            result.push(...findVarFromIO(nid, 'self', hid));
+        }
+        for (const hid of findAttach) {
+            result.push(...findVarFromIO(nid, 'attach', hid));
+        }
+        for (const hid of findNext) {
+            result.push(...findVarFromIO(nid, 'next', hid));
+        }
+        for (const hid of findInput) {
+            result.push(...findVarFromIO(nid, 'inputs', hid));
+        }
+        for (const hid of findOutput) {
+            result.push(...findVarFromIO(nid, 'outputs', hid));
+        }
+        return result;
+    };
     instance = {
         getNestedNodeById,
         buildNestedNodeGraph,
@@ -255,6 +343,8 @@ export const useVFlowManagement = () => {
         removeNodeFromVFlow,
         resetNodeState,
         addEdgeToVFlow,
-    }
+        findVarFromIO,
+        recursiveFindVariables,
+    };
     return instance;
 };

@@ -18,6 +18,7 @@ import {
     addResultWConnect,
     rmPayload,
     rmResultWConnect,
+    addResult,
     setOutputsUIType,
 } from '../NodeOperator.js'
 
@@ -28,18 +29,23 @@ const _initInfo = createBaseNodeInfo();
 initConnectionsAttribute(_initInfo);
 initRunningAttribute(_initInfo);
 initStateAttribute(_initInfo);
-setNodeType(_initInfo, "text_input");
+setNodeType(_initInfo, "branch_aggregate");
 setVueType(_initInfo, "basenode");
-setLabel(_initInfo, "文本输入");
+setLabel(_initInfo, "分支聚合");
 initSize(_initInfo, 80, 80);
 
+addHandle(_initInfo, "inputs", "input");
 addHandle(_initInfo, "outputs", "output");
 
-let pid = addPayload(_initInfo, { label: "文本内容", type: "String", key: "text", data: "", uitype: "textinput" });
-addConnection(_initInfo, "outputs", "output", { type: "FromInner", path: ["payloads", pid], useid: [] })
+addConnection(_initInfo, "self", "self", { type: "FromOuter", inputKey: "input" });
+addPayload(_initInfo, {
+    label: "聚合分支", type: "AggregateBranch", key: "branches", data: [
+        // { node: "1/1", refdata: "" },
+        // { node: "2/2", refdata: "" },
+    ], uitype: "aggregatebranch"
+});
+
+addResultWConnect(_initInfo, { label: "输出变量", type: null, key: "output", data: null }, "output", "D_OUTPUT");
 setOutputsUIType(_initInfo, "tagoutputs");
-
-
 export const initInfo = cloneDeep(_initInfo);
-
 export { NodeVue };
