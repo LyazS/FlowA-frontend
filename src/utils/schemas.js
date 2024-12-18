@@ -83,7 +83,7 @@ export const typeSelections = deepFreeze([
     { label: "数值", value: "value" },
 ]);
 export const compTypeSelections = cloneDeep(typeSelections);
-export const llmTypeSelections = [
+export const typeSelectionsWNull = [
     ...typeSelections,
     { label: "缺省", value: "null" },
 ]

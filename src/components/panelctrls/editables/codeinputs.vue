@@ -41,6 +41,7 @@ import { ref, computed, h, inject } from 'vue'
 import { useMessage, NSwitch, NFlex, NText, NIcon, NButton, NCard, NForm, NFormItem, NGrid, NGridItem, NInput, NSelect, NSpace, NTag } from 'naive-ui'
 import { Add, Close } from '@vicons/ionicons5'
 import { useVueFlow } from '@vue-flow/core'
+import { mapVarItemToSelect, renderLabel4Select } from '@/utils/tools'
 import editable_header from './header.vue'
 import {
     addResult,
@@ -92,18 +93,8 @@ const rmVariable = (index) => {
 };
 const renderLabel = (option) => {
     const [nlabel, dlabel, dkey, dtype] = option.label.split("/");
-
     const isError = !props.selfVarSelections.some(select => select.value === option.value);
-    if (isError) {
-        return h(NText, { type: "error", strong: true }, { default: () => `❓${nlabel}` });
-
-    }
-    return [
-        h(NText, { type: "default", strong: true }, { default: () => `${nlabel}` }),
-        h(NText, { type: "default" }, { default: () => "/ " }),
-        h(NText, { type: "info", }, { default: () => dlabel }),
-        h(NText, { type: "info", }, { default: () => ` ${dtype}` }),
-    ]
+    return renderLabel4Select(nlabel, dlabel, dtype, isError);
 };
 </script>
 

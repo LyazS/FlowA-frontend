@@ -43,14 +43,14 @@ addHandle(_initInfo, "callbackFuncs", "callbackFunc");
 addConnection(_initInfo, "self", "self", { type: "FromOuter", inputKey: "input" });
 addPayload(_initInfo, {
     label: "模型设置", type: "LLMModel", key: "modelconfig", data: {
-        model: "DeepSeekV2.5",
+        model: { type: "value", value: "DeepSeekV2.5" },
         stream: false,
         max_tokens: { type: "null", value: 4096 },
         temperature: { type: "null", value: 0.75 },
         top_p: { type: "null", value: 0.9 },
         top_k: { type: "null", value: 50 },
         frequency_penalty: { type: "null", value: 0.5 },
-        response_format: { type: "null", value: "json" },// json
+        response_format: { type: "null", value: "text" },// json
         stop: { type: "null", value: null },// string|string[]|null
     }, uitype: "llmmodel"
 });
