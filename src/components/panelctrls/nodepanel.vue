@@ -27,6 +27,8 @@ const editable_vars_input = defineAsyncComponent(() => import('./editables/vars_
 const editable_llmprompts = defineAsyncComponent(() => import('./editables/llmprompts.vue'));
 const editable_aggregatebranchs = defineAsyncComponent(() => import('./editables/aggregatebranchs.vue'));
 const editable_llmmodel = defineAsyncComponent(() => import('./editables/llmmodel.vue'));
+const editable_httprequests = defineAsyncComponent(() => import('./editables/httprequests.vue'));
+
 const props = defineProps({
     nodeId: {
         type: String,
@@ -131,6 +133,9 @@ const payloadComponents = computed(() => {
         }
         else if (uitype === 'llmmodel') {
             acc[pid] = h(editable_llmmodel, { nodeId: props.nodeId, pid, selfVarSelections: selfVarSelections.value });
+        }
+        else if (uitype === 'httprequests') {
+            acc[pid] = h(editable_httprequests, { nodeId: props.nodeId, pid });
         }
         return acc;
     }, {});

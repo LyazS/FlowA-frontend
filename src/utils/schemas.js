@@ -1,20 +1,6 @@
-import {  cloneDeep } from 'lodash';
+import { cloneDeep } from 'lodash';
+import { deepFreeze } from '@/utils/tools';
 
-function deepFreeze(obj) {
-    // 获取对象的属性名称
-    const propNames = Object.getOwnPropertyNames(obj);
-
-    // 递归地冻结每一个属性
-    for (const name of propNames) {
-        const value = obj[name];
-        if (typeof value === 'object' && value !== null) {
-            deepFreeze(value);
-        }
-    }
-
-    // 冻结对象本身（浅冻结加递归冻结属性）
-    return Object.freeze(obj);
-}
 
 export const VariableTypes = deepFreeze([
     { label: "字符串 String", value: "String" },
