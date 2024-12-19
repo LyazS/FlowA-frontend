@@ -2,8 +2,8 @@
     <n-flex vertical>
         <!-- 添加条件分支按钮 -->
         <n-flex class="flexctitem" justify="space-between">
-            <editable_header type="info">分支设计</editable_header>
-            <n-button type="primary" text @click="addBranch" :disabled="!isEditorMode">
+            <editable_header type="warning">分支设计</editable_header>
+            <n-button type="warning" text @click="addBranch" :disabled="!isEditorMode">
                 <template #icon>
                     <n-icon>
                         <Add />

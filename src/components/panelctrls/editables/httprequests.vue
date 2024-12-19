@@ -1,10 +1,7 @@
 <template>
     <n-flex vertical>
-        <editable_header type="success">
-            {{ thislabel }}
-        </editable_header>
         <n-flex vertical :style="{ width: '100%' }">
-            <editable_header type="info" :level="6">
+            <editable_header type="warning" :level="6">
                 请求 Method & URL
             </editable_header>
             <n-flex class="flexctitem" justify="space-between" :style="{ width: '100%' }" :wrap="false">
@@ -14,10 +11,10 @@
         </n-flex>
         <n-flex vertical :style="{ width: '100%' }">
             <n-flex class="flexctitem" justify="space-between">
-                <editable_header type="info" :level="6">
+                <editable_header type="warning" :level="6">
                     请求头 Header
                 </editable_header>
-                <n-button text type="info" :disabled="!isEditorMode">
+                <n-button text type="warning" :disabled="!isEditorMode">
                     <template #icon>
                         <n-icon>
                             <Add />

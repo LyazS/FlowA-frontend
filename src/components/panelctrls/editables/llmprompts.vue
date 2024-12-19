@@ -1,10 +1,10 @@
 <template>
     <n-flex vertical>
         <n-flex class="flexctitem" justify="space-between">
-            <editable_header type="success">
+            <editable_header type="warning">
                 Prompts设计
             </editable_header>
-            <n-button text type="success" @click="addVariable" :disabled="!isEditorMode">
+            <n-button text type="warning" @click="addVariable" :disabled="!isEditorMode">
                 <template #icon>
                     <n-icon>
                         <Add />
@@ -20,7 +20,7 @@
                 <n-flex :style="{ width: '90%' }" class="flexctitem" justify="space-between" :wrap="false">
                     <n-select :style="{ width: '130px' }" size="small" placeholder="类型" :options="roleSelections"
                         :disabled="!isEditorMode" v-model:value="pvar.role" />
-                    <n-button text size="small" type="info" @click="openEditor(vindex)" :disabled="!isEditorMode">
+                    <n-button text size="small" type="warning" @click="openEditor(vindex)" :disabled="!isEditorMode">
                         <template #icon>
                             <n-icon>
                                 <CreateOutline />
