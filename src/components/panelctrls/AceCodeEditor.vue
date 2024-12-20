@@ -23,6 +23,8 @@ import { VAceEditor } from 'vue3-ace-editor';
 import ace from 'ace-builds';
 import modePythonUrl from 'ace-builds/src-noconflict/mode-python?url';
 ace.config.setModuleUrl('ace/mode/python', modePythonUrl);
+import modeJsonUrl from 'ace-builds/src-noconflict/mode-json?url';
+ace.config.setModuleUrl('ace/mode/json', modeJsonUrl);
 import modeJavaScriptUrl from 'ace-builds/src-noconflict/mode-javascript?url';
 ace.config.setModuleUrl('ace/mode/javascript', modeJavaScriptUrl);
 import modeMarkdownUrl from 'ace-builds/src-noconflict/mode-markdown?url';
@@ -93,6 +95,8 @@ const language = computed(() => {
             return 'javascript';
         else if (match[1] === "Markdown")
             return 'markdown';
+        else if (match[1] === "JSON")
+            return 'json';
     } else {
         return 'text';
     };

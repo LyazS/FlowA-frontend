@@ -345,15 +345,22 @@ const buildHeaders = (cbheaders) => {
 }
 const [HeaderKeySelectGroup, HeaderValueSelect] = buildHeaders(combinedHeaders);
 
-const HttpMethodSelect=[
+const HttpMethodSelect = deepFreeze([
     { label: "GET", value: "GET" },
     { label: "POST", value: "POST" },
     { label: "PUT", value: "PUT" },
     { label: "DELETE", value: "DELETE" },
-    { label: "OPTIONS", value: "OPTIONS" },
     { label: "HEAD", value: "HEAD" },
     { label: "PATCH", value: "PATCH" },
-    { label: "TRACE", value: "TRACE" },
-]
+])
 
-export { HeaderKeySelectGroup, HeaderValueSelect,HttpMethodSelect }
+const HttpBodyTypeSelect = deepFreeze([
+    { label: "无", value: "none" },
+    { label: "JSON", value: "json" },
+    { label: "x-www-form-urlencoded", value: "x-www-form-urlencoded" },
+    { label: "form-data", value: "form-data" },
+    { label: "纯文本", value: "plain-text" },
+    { label: "文件", value: "file" },
+])
+
+export { HeaderKeySelectGroup, HeaderValueSelect, HttpMethodSelect, HttpBodyTypeSelect }

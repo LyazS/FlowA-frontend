@@ -135,7 +135,7 @@ const payloadComponents = computed(() => {
             acc[pid] = h(editable_llmmodel, { nodeId: props.nodeId, pid, selfVarSelections: selfVarSelections.value });
         }
         else if (uitype === 'httprequests') {
-            acc[pid] = h(editable_httprequests, { nodeId: props.nodeId, pid });
+            acc[pid] = h(editable_httprequests, { nodeId: props.nodeId, pid, selfVarSelections: selfVarSelections.value });
         }
         return acc;
     }, {});

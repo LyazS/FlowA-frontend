@@ -175,3 +175,24 @@ export function deepFreeze(obj) {
     // 冻结对象本身（浅冻结加递归冻结属性）
     return Object.freeze(obj);
 }
+export function isPlainObject(value) {
+    // 首先判断是否是对象类型
+    if (typeof value !== 'object' || value === null) {
+        return false;
+    }
+
+    // 判断对象的原型是否是 Object.prototype
+    const prototype = Object.getPrototypeOf(value);
+    return prototype === Object.prototype || prototype === null;
+}
+export function isString(value) {
+    return typeof value === 'string';
+}
+export function isJsonString(value) {
+    try {
+        JSON.parse(value);
+        return true;
+    } catch (e) {
+        return false;
+    }
+}

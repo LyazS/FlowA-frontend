@@ -53,17 +53,16 @@ addPayload(_initInfo, {
     label: "配置", type: "RequestConfig", key: "request", data: {
         method: "GET",
         url: "https://api.example.com/users",
+        queryParams: [
+            { key: "", value: "" },
+        ],
         headers: [
             { key: "Content-Type", value: "application/json" },
             { key: "Authorization", value: "Bearer ???" }
         ],
-        queryParams: [
-            { key: "page", value: 1 },
-            { key: "limit", value: 10 }
-        ],
         body: {
             type: "json",
-            content: {}
+            content: null,
         },
         cookies: [
             { key: "session", value: "abc123" }
