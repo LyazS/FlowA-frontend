@@ -50,10 +50,10 @@ const language = computed(() => {
 <template>
     <n-flex vertical>
         <n-flex class="flexctitem" justify="space-between">
-            <editable_header type="info">
+            <editable_header type="warning">
                 {{ thisnode.data.payloads.byId[pid].label }}
             </editable_header>
-            <n-button :disabled="!isEditorMode" text type="info" @click="editCode">
+            <n-button :disabled="!isEditorMode" text type="warning" @click="editCode">
                 <template #icon>
                     <n-icon>
                         <CreateOutline />

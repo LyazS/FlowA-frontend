@@ -1,6 +1,6 @@
 <template>
     <n-flex vertical>
-        <editable_header type="info">聚合设计</editable_header>
+        <editable_header type="warning">聚合设计</editable_header>
         <VueDraggable ghostClass="ghost" :animation="150" v-model="branchesData" :disabled="!isEditorMode">
             <n-flex v-for="(item, index) in branchesData" :key="`branch-${index}-${Date.now()}`"
                 :style="{ flexWrap: 'nowrap', paddingBottom: '5px', alignItems: 'center' }">
@@ -21,7 +21,7 @@
             </n-flex>
         </VueDraggable>
         <n-flex justify="flex-start">
-            <n-button text type="info" @click="addVar" :disabled="!isEditorMode">
+            <n-button text type="warning" @click="addVar" :disabled="!isEditorMode">
                 <template #icon>
                     <n-icon>
                         <AddIcon />
@@ -73,6 +73,10 @@ const props = defineProps({
         type: String,
         required: true
     },
+    pid: {
+        type: String,
+        required: true
+    },
     selfVarSelections: {
         type: Array,
         required: true
@@ -91,10 +95,10 @@ const thisnode = computed(() => findNode(props.nodeId));
 
 const branchesData = computed({
     get() {
-        return thisnode.value.data.payloads.byId['D_BRANCHES'].data || [];
+        return thisnode.value.data.payloads.byId[props.pid].data || [];
     },
     set(value) {
-        thisnode.value.data.payloads.byId['D_BRANCHES'].data = value;
+        thisnode.value.data.payloads.byId[props.pid].data = value;
     }
 });
 

@@ -160,3 +160,39 @@ export const renderLabel4Select = (nlabel, dlabel, dtype, isError) => {
         h(NText, { type: "info", }, { default: () => ` ${dtype}` }),
     ]
 };
+export function deepFreeze(obj) {
+    // 获取对象的属性名称
+    const propNames = Object.getOwnPropertyNames(obj);
+
+    // 递归地冻结每一个属性
+    for (const name of propNames) {
+        const value = obj[name];
+        if (typeof value === 'object' && value !== null) {
+            deepFreeze(value);
+        }
+    }
+
+    // 冻结对象本身（浅冻结加递归冻结属性）
+    return Object.freeze(obj);
+}
+export function isPlainObject(value) {
+    // 首先判断是否是对象类型
+    if (typeof value !== 'object' || value === null) {
+        return false;
+    }
+
+    // 判断对象的原型是否是 Object.prototype
+    const prototype = Object.getPrototypeOf(value);
+    return prototype === Object.prototype || prototype === null;
+}
+export function isString(value) {
+    return typeof value === 'string';
+}
+export function isJsonString(value) {
+    try {
+        JSON.parse(value);
+        return true;
+    } catch (e) {
+        return false;
+    }
+}

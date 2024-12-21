@@ -159,7 +159,7 @@ const downloadWorkflow_btn = async (wid) => { };
                         <n-scrollbar style="max-height: 50vh">
                             <n-flex vertical :style="{ width: '100%' }">
                                 <template v-for="(item, idx) in workflows" :key="'workflow_' + idx">
-                                    <n-flex class="flexctitem" :style="{ width: '100%' }" :warp="false">
+                                    <n-flex class="flexctitem" :style="{ width: '100%' }" :wrap="false">
                                         <n-button @click="loadWorkflow_btn(item.wid)" secondary :type="item.type"
                                             :style="{ flex: '1' }">
                                             <n-ellipsis style="max-width: 12em"> {{ item.name }}</n-ellipsis>

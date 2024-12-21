@@ -2,8 +2,8 @@
     <n-flex vertical>
         <!-- 添加条件分支按钮 -->
         <n-flex class="flexctitem" justify="space-between">
-            <editable_header type="info">分支设计</editable_header>
-            <n-button type="primary" text @click="addBranch" :disabled="!isEditorMode">
+            <editable_header type="warning">分支设计</editable_header>
+            <n-button type="warning" text @click="addBranch" :disabled="!isEditorMode">
                 <template #icon>
                     <n-icon>
                         <Add />
@@ -85,6 +85,7 @@ import { ref, computed, h, inject } from 'vue'
 import { useMessage, NSwitch, NFlex, NText, NIcon, NButton, NCard, NForm, NFormItem, NGrid, NGridItem, NInput, NSelect, NSpace, NTag } from 'naive-ui'
 import { Add, Close } from '@vicons/ionicons5'
 import { useVueFlow } from '@vue-flow/core'
+import { mapVarItemToSelect, renderLabel4Select } from '@/utils/tools'
 import editable_header from './header.vue'
 import {
     addResult,
@@ -141,18 +142,8 @@ const railStyle = ({ focused, checked }) => {
 
 const renderLabel = (option) => {
     const [nlabel, dlabel, dkey, dtype] = option.label.split("/");
-
     const isError = !props.selfVarSelections.some(select => select.value === option.value);
-    if (isError) {
-        return h(NText, { type: "error", strong: true }, { default: () => `❓${nlabel}` });
-
-    }
-    return [
-        h(NText, { type: "default", strong: true }, { default: () => `${nlabel}` }),
-        h(NText, { type: "default" }, { default: () => "/ " }),
-        h(NText, { type: "info", }, { default: () => dlabel }),
-        h(NText, { type: "info", }, { default: () => ` ${dtype}` }),
-    ]
+    return renderLabel4Select(nlabel, dlabel, dtype, isError);
 };
 const branches = computed(() => {
     const conddata = [];

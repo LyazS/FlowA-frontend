@@ -30,9 +30,9 @@ const _initInfo = createBaseNodeInfo();
 initConnectionsAttribute(_initInfo);
 initRunningAttribute(_initInfo);
 initStateAttribute(_initInfo);
-setNodeType(_initInfo, "LLM_inference");
+setNodeType(_initInfo, "http_requests");
 setVueType(_initInfo, "basenode");
-setLabel(_initInfo, "LLM推理");
+setLabel(_initInfo, "网络请求");
 initSize(_initInfo, 80, 80);
 
 addHandle(_initInfo, "inputs", "input");
@@ -41,36 +41,44 @@ addHandle(_initInfo, "callbackUsers", "callbackUser");
 addHandle(_initInfo, "callbackFuncs", "callbackFunc");
 
 addConnection(_initInfo, "self", "self", { type: "FromOuter", inputKey: "input" });
-addPayload(_initInfo, {
-    label: "模型设置", type: "LLMModel", key: "modelconfig", data: {
-        model: { type: "value", value: "DeepSeekV2.5" },
-        stream: false,
-        max_tokens: { type: "null", value: 4096 },
-        temperature: { type: "null", value: 0.75 },
-        top_p: { type: "null", value: 0.9 },
-        top_k: { type: "null", value: 50 },
-        frequency_penalty: { type: "null", value: 0.5 },
-        response_format: { type: "null", value: "text" },// json
-        stop: { type: "null", value: null },// string|string[]|null
-    }, uitype: "llmmodel"
-});
+
 addPayload(_initInfo, {
     label: "输入变量", type: "VarsInput", key: "inputvars", data: [
         { key: "text", type: "value", value: "good assistant" },
         { key: "ask", type: "value", value: "hi" },
     ], uitype: "vars_input"
 });
+
 addPayload(_initInfo, {
-    label: "LLM Prompt", type: "Prompts", key: "prompts", data: [
-        { role: "system", content: "You are a {{text}}." },
-        { role: "user", content: "{{ask}}" },
-    ], uitype: "llmprompts"
+    label: "配置", type: "RequestConfig", key: "request", data: {
+        method: "GET",
+        url: "https://api.example.com/users",
+        queryParams: [
+            { key: "", value: "" },
+        ],
+        headers: [
+            { key: "Content-Type", value: "application/json" },
+            { key: "Authorization", value: "Bearer ???" }
+        ],
+        body: {
+            type: "json",
+            content1: "",// json|text
+            content2: [
+                // { key: "", value: "" },
+            ],// x-www-form-urlencoded
+            content3: [
+                // { key: "", type: "file", value: "" },// text|file
+            ],// form-data
+        },
+        cookies: [
+            { key: "session", value: "abc123" }
+        ]
+    }, uitype: "httprequests"
 });
+
 setOutputsUIType(_initInfo, "tagoutputs");
-addResultWConnect(_initInfo, { label: "推理结果", type: "String", key: "answer", data: "" }, "output", "D_ANSWER");
-addResultWConnect(_initInfo, { label: "LLM模型", type: "String", key: "model", data: "" }, "output", "D_MODEL");
-addResultWConnect(_initInfo, { label: "输入Token", type: "Integer", key: "input_token", data: 0 }, "output", "D_IN_TOKEN");
-addResultWConnect(_initInfo, { label: "输出Token", type: "Integer", key: "output_token", data: 0 }, "output", "D_OUT_TOKEN");
+addResultWConnect(_initInfo, { label: "请求状态", type: "String", key: "answer", data: "" }, "output", "D_STATUS");
+addResultWConnect(_initInfo, { label: "请求结果", type: "Dict", key: "answer", data: {} }, "output", "D_RESPONSE");
 
 export const initInfo = cloneDeep(_initInfo);
 

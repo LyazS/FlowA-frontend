@@ -6,10 +6,10 @@ import { useVFlowInitial } from "@/hooks/useVFlowInitial";
 import { getUuid, setValueByPath } from "@/utils/tools";
 import { useRequestMethod } from "@/services/useRequestMethod";
 import { useVFlowManagement } from "@/hooks/useVFlowManagement";
+import { useKeyboardControls } from "@/hooks/useKeyboardControls";
 import { SubscribeSSE } from '@/services/useSSE'
 import { debounce } from 'lodash';
 import { useMessage } from 'naive-ui';
-import { call } from "naive-ui/es/_utils";
 
 let instance = null;
 export const useFlowAOperation = () => {

@@ -5,6 +5,8 @@ import { Panel, useVueFlow, useHandleConnections } from '@vue-flow/core'
 import { CreateOutline } from '@vicons/ionicons5'
 import { useVFlowManagement } from '@/hooks/useVFlowManagement';
 import { mapVarItemToSelect } from '@/utils/tools'
+import { useFlowAOperation } from '@/services/useFlowAOperation.js'
+
 const {
     findVarFromIO,
     recursiveFindVariables,
@@ -21,10 +23,11 @@ const editable_texttag = defineAsyncComponent(() => import('./editables/texttag.
 const editable_header = defineAsyncComponent(() => import('./editables/header.vue'));
 const editable_codeeditor = defineAsyncComponent(() => import('./editables/codeeditor.vue'));
 const editable_codeinputs = defineAsyncComponent(() => import('./editables/codeinputs.vue'));
-const editable_llminputs = defineAsyncComponent(() => import('./editables/llminputs.vue'));
+const editable_vars_input = defineAsyncComponent(() => import('./editables/vars_input.vue'));
 const editable_llmprompts = defineAsyncComponent(() => import('./editables/llmprompts.vue'));
 const editable_aggregatebranchs = defineAsyncComponent(() => import('./editables/aggregatebranchs.vue'));
-const editable_aggregateoutput = defineAsyncComponent(() => import('./editables/aggregateoutput.vue'));
+const editable_llmmodel = defineAsyncComponent(() => import('./editables/llmmodel.vue'));
+const editable_httprequests = defineAsyncComponent(() => import('./editables/httprequests.vue'));
 
 const props = defineProps({
     nodeId: {
@@ -37,11 +40,15 @@ const {
     getHandleConnections,
 } = useVueFlow();
 const isEditing = inject("isEditing");
+const { isEditorMode, autoSaveWorkflow } = useFlowAOperation();
 
 // 获取节点
 const thisnode = computed(() => {
     return findNode(props.nodeId);
 });
+watch(() => thisnode.value.data, () => {
+    autoSaveWorkflow();
+}, { deep: true })
 // 节点标题相关 ======================================
 const isEditingTitle = ref(false);
 const titleInputRef = ref(null);
@@ -50,6 +57,7 @@ watch(() => props.nodeId, (newVal) => {
     titleInputText.value = thisnode.value.data.label;
 }, { immediate: true })
 const startEditTilte = () => {
+    if (!isEditorMode.value) return;
     isEditingTitle.value = true;
     isEditing.value = true;
     nextTick(() => { titleInputRef.value?.focus(); });
@@ -60,10 +68,6 @@ const saveTitle = () => {
     const newLabel = titleInputText.value.trim();
     thisnode.value.data.label = newLabel || thisnode.value.data.placeholderlabel;
 }
-
-// 可供该节点使用的变量 ==================================================
-
-
 
 // 输出变量字典{列表}
 const outputVarSelections = computed(() => {
@@ -115,8 +119,8 @@ const payloadComponents = computed(() => {
         else if (uitype === 'codeinputs') {
             acc[pid] = h(editable_codeinputs, { nodeId: props.nodeId, pid, selfVarSelections: selfVarSelections.value });
         }
-        else if (uitype === 'llminputs') {
-            acc[pid] = h(editable_llminputs, { nodeId: props.nodeId, pid, selfVarSelections: selfVarSelections.value });
+        else if (uitype === 'vars_input') {
+            acc[pid] = h(editable_vars_input, { nodeId: props.nodeId, pid, selfVarSelections: selfVarSelections.value });
         }
         else if (uitype === 'llmprompts') {
             acc[pid] = h(editable_llmprompts, { nodeId: props.nodeId, pid });
@@ -126,6 +130,12 @@ const payloadComponents = computed(() => {
         }
         else if (uitype === 'aggregatebranch') {
             acc[pid] = h(editable_aggregatebranchs, { nodeId: props.nodeId, pid, selfVarSelections: selfVarSelections.value, inputNodes: inputNodes.value });
+        }
+        else if (uitype === 'llmmodel') {
+            acc[pid] = h(editable_llmmodel, { nodeId: props.nodeId, pid, selfVarSelections: selfVarSelections.value });
+        }
+        else if (uitype === 'httprequests') {
+            acc[pid] = h(editable_httprequests, { nodeId: props.nodeId, pid, selfVarSelections: selfVarSelections.value });
         }
         return acc;
     }, {});
@@ -144,9 +154,6 @@ const outputsComponents = computed(() => {
     }
     else if (uitype === 'codeoutputs') {
         return h(editable_codeoutputs, { nodeId: props.nodeId });
-    }
-    else if (uitype === 'aggregateoutput') {
-        return h(editable_aggregateoutput, { nodeId: props.nodeId, rid: "output" });
     }
     return null;
 });

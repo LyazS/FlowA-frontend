@@ -46,6 +46,8 @@ import { ref, computed, h, inject } from 'vue'
 import { useMessage, NSwitch, NFlex, NText, NIcon, NButton, NCard, NForm, NFormItem, NGrid, NGridItem, NInput, NSelect, NSpace, NTag } from 'naive-ui'
 import { Add, Close } from '@vicons/ionicons5'
 import { useVueFlow } from '@vue-flow/core'
+import { mapVarItemToSelect, renderLabel4Select } from '@/utils/tools'
+import { typeSelections } from '@/utils/schemas'
 import editable_header from './header.vue'
 import { useFlowAOperation } from '@/services/useFlowAOperation.js'
 
@@ -69,11 +71,6 @@ const { isEditorMode } = useFlowAOperation();
 const { findNode } = useVueFlow()
 const thisnode = computed(() => findNode(props.nodeId))
 
-const typeSelections = [
-    { label: "引用", value: "ref" },
-    { label: "数值", value: "value" },
-]
-
 const addVariable = () => {
     const newVar = { key: "", type: "value", value: "" };
     thisnode.value.data.payloads.byId[props.pid].data.push(newVar);
@@ -84,18 +81,8 @@ const rmVariable = (index) => {
 };
 const renderLabel = (option) => {
     const [nlabel, dlabel, dkey, dtype] = option.label.split("/");
-
     const isError = !props.selfVarSelections.some(select => select.value === option.value);
-    if (isError) {
-        return h(NText, { type: "error", strong: true }, { default: () => `❓${nlabel}` });
-
-    }
-    return [
-        h(NText, { type: "default", strong: true }, { default: () => `${nlabel}` }),
-        h(NText, { type: "default" }, { default: () => "/ " }),
-        h(NText, { type: "info", }, { default: () => dlabel }),
-        h(NText, { type: "info", }, { default: () => ` ${dtype}` }),
-    ]
+    return renderLabel4Select(nlabel, dlabel, dtype, isError);
 };
 </script>
 

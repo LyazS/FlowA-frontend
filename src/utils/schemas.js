@@ -1,18 +1,6 @@
-function deepFreeze(obj) {
-    // 获取对象的属性名称
-    const propNames = Object.getOwnPropertyNames(obj);
+import { cloneDeep } from 'lodash';
+import { deepFreeze } from '@/utils/tools';
 
-    // 递归地冻结每一个属性
-    for (const name of propNames) {
-        const value = obj[name];
-        if (typeof value === 'object' && value !== null) {
-            deepFreeze(value);
-        }
-    }
-
-    // 冻结对象本身（浅冻结加递归冻结属性）
-    return Object.freeze(obj);
-}
 
 export const VariableTypes = deepFreeze([
     { label: "字符串 String", value: "String" },
@@ -76,7 +64,12 @@ export const BooleanTypeSelections = deepFreeze([
     { label: "为false", value: "isfalse" },
 ]);
 
-export const compTypeSelections = deepFreeze([
+export const typeSelections = deepFreeze([
     { label: "引用", value: "ref" },
     { label: "数值", value: "value" },
 ]);
+export const compTypeSelections = cloneDeep(typeSelections);
+export const typeSelectionsWNull = [
+    ...typeSelections,
+    { label: "缺省", value: "null" },
+]
