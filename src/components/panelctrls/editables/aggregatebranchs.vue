@@ -9,8 +9,8 @@
                 </n-icon>
                 <n-select :style="{ width: '40%' }" size="small" :options="inputNodesOptions" :disabled="!isEditorMode"
                     v-model:value="item.node" />
-                <n-select :style="{ width: '60%' }" size="small" :options="getBuildNodeOutVars(item.node)"
-                    :disabled="!isEditorMode" v-model:value="item.refdata" :render-label="renderLabel" />
+                <cp_var_select :style="{ width: '60%' }" v-model:value="item.refdata"
+                    :options="getBuildNodeOutVars(item.node)" />
                 <n-button circle tertiary type="error" @click="removeVar(index)" :disabled="!isEditorMode">
                     <template #icon>
                         <n-icon>
@@ -34,7 +34,7 @@
 </template>
 
 <script setup>
-import { ref, computed, h, inject, watch } from 'vue';
+import { ref, computed, h, inject, watch, defineAsyncComponent } from 'vue';
 import {
     NFlex,
     NIcon,
@@ -58,11 +58,12 @@ import {
 } from '@vicons/ionicons5';
 import { useVueFlow } from '@vue-flow/core';
 import editable_header from './header.vue';
-import { mapVarItemToSelect, renderLabel4Select } from '@/utils/tools'
+import { mapVarItemToSelect } from '@/utils/tools'
 import { VueDraggable } from 'vue-draggable-plus';
 import { useFlowAOperation } from '@/services/useFlowAOperation.js';
 import { useVFlowManagement } from '@/hooks/useVFlowManagement';
 
+const cp_var_select = defineAsyncComponent(() => import('@/components/panelctrls/editables/common/var_select.vue'));
 const {
     findVarFromIO,
     recursiveFindVariables

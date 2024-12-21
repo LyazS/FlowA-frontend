@@ -148,18 +148,7 @@ export const mapVarItemToSelect = (item) => {
     }
 }
 
-export const renderLabel4Select = (nlabel, dlabel, dtype, isError) => {
-    if (isError) {
-        return h(NText, { type: "error", strong: true }, { default: () => `❓${nlabel}` });
 
-    }
-    return [
-        h(NText, { type: "default", strong: true }, { default: () => `${nlabel}` }),
-        h(NText, { type: "default" }, { default: () => "/ " }),
-        h(NText, { type: "info", }, { default: () => dlabel }),
-        h(NText, { type: "info", }, { default: () => ` ${dtype}` }),
-    ]
-};
 export function deepFreeze(obj) {
     // 获取对象的属性名称
     const propNames = Object.getOwnPropertyNames(obj);

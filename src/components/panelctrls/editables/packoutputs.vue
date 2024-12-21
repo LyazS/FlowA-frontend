@@ -16,10 +16,8 @@
                 <n-input :style="{ width: '25%' }" placeholder="输出变量Key" :value="thisnode.data.results.byId[rid].key"
                     :disabled="!isEditorMode" @blur="isEditing = false" @focus="isEditing = true"
                     @update:value="(val) => updateResultKey(rid, val)" />
-                <n-select :style="{ width: '60%' }" placeholder="选择变量"
-                    :value="thisnode.data.results.byId[rid].config.ref" :disabled="!isEditorMode"
-                    :options="selfVarSelections" @update:value="(val) => updateResultType(rid, val)"
-                    :render-tag="renderTag" />
+                <cp_var_select :style="{ width: '60%' }" v-model:value="thisnode.data.results.byId[rid].config.ref"
+                    :options="selfVarSelections" size="medium" />
                 <n-button :style="{ width: '15%' }" type="error" @click="() => handleRemove(rid)"
                     :disabled="!isEditorMode">
                     删除
@@ -37,7 +35,7 @@
 </style>
 
 <script setup>
-import { computed, ref, inject, h } from 'vue'
+import { computed, ref, inject, h, defineAsyncComponent } from 'vue'
 import { NText, NIcon, NFlex, NTag, NInputGroup, NInput, NSelect, NButton } from 'naive-ui'
 import { useVueFlow } from '@vue-flow/core'
 import { Add, Close } from '@vicons/ionicons5'
@@ -45,6 +43,7 @@ import { useFlowAOperation } from '@/services/useFlowAOperation.js'
 import editable_header from './header.vue'
 import { addResultWConnect, rmResultWConnect } from '../../nodes/NodeOperator.js'
 
+const cp_var_select = defineAsyncComponent(() => import('@/components/panelctrls/editables/common/var_select.vue'));
 const props = defineProps({
     nodeId: {
         type: String,
@@ -64,7 +63,7 @@ const thisnode = computed(() => findNode(props.nodeId))
 
 // 处理添加
 function handleAdd() {
-    const newResult = { label: "", type: "", key: "", data: [], config: { ref: "" } }
+    const newResult = { label: "", type: "List", key: "", data: [], config: { ref: "" } }
     addResultWConnect(thisnode.value, newResult, "output")
 }
 function handleRemove(rid) {
@@ -78,16 +77,6 @@ function updateResultKey(rid, value) {
     }
 }
 
-// 更新结果的类型
-function updateResultType(rid, value) {
-    const [nid, dpath, did] = value.split("/");
-    const thenode = findNode(nid);
-    const thedata = thenode.data[dpath].byId[did];
-    if (thisnode.value.data.results.byId[rid]) {
-        thisnode.value.data.results.byId[rid].config.ref = value;
-        thisnode.value.data.results.byId[rid].type = `List`;
-    }
-}
 
 const renderTag = ({ option, handleClose }) => {
     const [nlabel, dlabel, dkey, dtype] = option.label.split("/");
