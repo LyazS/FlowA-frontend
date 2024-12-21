@@ -185,7 +185,6 @@ import {
 import { Add, Close, CreateOutline } from '@vicons/ionicons5'
 import { useVueFlow } from '@vue-flow/core'
 import editable_header from './header.vue'
-import { mapVarItemToSelect, renderLabel4Select, isPlainObject, isString, isJsonString } from '@/utils/tools'
 import { useFlowAOperation } from '@/services/useFlowAOperation.js'
 import { typeSelectionsWNull, typeSelections } from '@/utils/schemas'
 import { HeaderKeySelectGroup, HeaderValueSelect, HttpMethodSelect, HttpBodyTypeSelect, FormDataContentTypeSelect } from '@/utils/http_schemas'
@@ -304,11 +303,6 @@ const addBody_kv = () => {
         addBody_FormData();
     }
 }
-const renderLabel = (option) => {
-    const [nlabel, dlabel, dkey, dtype] = option.label.split("/");
-    const isError = !props.selfVarSelections.some(select => select.value === option.value);
-    return renderLabel4Select(nlabel, dlabel, dtype, isError);
-};
 </script>
 
 <style scoped>

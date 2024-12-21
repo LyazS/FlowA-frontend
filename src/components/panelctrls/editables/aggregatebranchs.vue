@@ -155,12 +155,6 @@ watch(
     },
     { immediate: true, deep: true }
 );
-
-const renderLabel = (option) => {
-    const [nlabel, dlabel, dkey, dtype] = option.label.split("/");
-    const isError = !props.selfVarSelections.some(select => select.value === option.value);
-    return renderLabel4Select(nlabel, dlabel, dtype, isError);
-};
 </script>
 
 <style scoped>
