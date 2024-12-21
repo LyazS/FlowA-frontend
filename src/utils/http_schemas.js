@@ -363,4 +363,15 @@ const HttpBodyTypeSelect = deepFreeze([
     { label: "文件", value: "file" },
 ])
 
-export { HeaderKeySelectGroup, HeaderValueSelect, HttpMethodSelect, HttpBodyTypeSelect }
+const FormDataContentTypeSelect = deepFreeze([
+    { label: "text", value: "text" },
+    { label: "file", value: "file" },
+])
+
+export {
+    HeaderKeySelectGroup,
+    HeaderValueSelect,
+    HttpMethodSelect,
+    HttpBodyTypeSelect,
+    FormDataContentTypeSelect
+}

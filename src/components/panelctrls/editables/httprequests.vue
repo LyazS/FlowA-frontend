@@ -84,7 +84,8 @@
                     请求体 Body
                 </editable_header>
                 <n-flex class="flexctitem" justify="flex-end">
-                    <n-button v-if="isShowEditBtn" :disabled="!isEditorMode" text type="warning" @click="editBody_Json">
+                    <n-button v-if="isBodyContentText" :disabled="!isEditorMode" text type="warning"
+                        @click="editBody_Json">
                         <template #icon>
                             <n-icon>
                                 <CreateOutline />
@@ -92,12 +93,66 @@
                         </template>
                         放大编辑
                     </n-button>
+                    <n-button v-else-if="isBodyContentXWWWForm || isBodyContentFormData" :disabled="!isEditorMode" text
+                        type="warning" @click="addBody_kv">
+                        <template #icon>
+                            <n-icon>
+                                <Add />
+                            </n-icon>
+                        </template>
+                        添加
+                    </n-button>
                     <n-select v-model:value="thisBody.type" :options="HttpBodyTypeSelect" :consistent-menu-width="false"
-                        :style="{ width: 'auto' }" @update:value="updateBodyContentByType" />
+                        :style="{ width: 'auto' }" />
                 </n-flex>
             </n-flex>
-            <n-code v-if="isShowEditBtn && thisBody.content" :code="thisBody.content" :language="codeLang"
-                show-line-numbers />
+            <n-input v-if="isBodyContentText" v-model:value="thisBody.content1" type="textarea" size="small" :autosize="{
+                minRows: 3,
+                maxRows: 10,
+            }" />
+            <!-- <n-code v-if="isBodyContentText" :code="thisBody.content1" :language="codeLang" show-line-numbers /> -->
+            <template v-else-if="isBodyContentXWWWForm" v-for="(item, index) in thisBody.content2">
+                <n-flex class="flexctitem" justify="space-between" :style="{ width: '100%' }" :wrap="false">
+                    <n-flex class="flexctitem" :style="{ width: '95%' }" :wrap="false">
+                        <n-input size="small" v-model:value="item.key" :style="{ width: '50%' }" placeholder="键"
+                            @focus="isEditing = true" @blur="isEditing = false" />
+                        <n-input size="small" v-model:value="item.value" :style="{ width: '50%' }" placeholder="值"
+                            @focus="isEditing = true" @blur="isEditing = false" />
+                    </n-flex>
+                    <n-button circle tertiary size="small" type="error" @click="rmBody_XWWWForm(index)"
+                        :disabled="!isEditorMode">
+                        <template #icon>
+                            <n-icon>
+                                <Close />
+                            </n-icon>
+                        </template>
+                    </n-button>
+                </n-flex>
+            </template>
+            <template v-else-if="isBodyContentFormData" v-for="(item, index) in thisBody.content3">
+                <n-flex class="flexctitem" justify="space-between" :style="{ width: '100%' }" :wrap="false">
+                    <n-flex class="flexctitem" :style="{ width: '95%' }" :wrap="false">
+                        <n-input size="small" v-model:value="item.key" :style="{ width: '30%' }" placeholder="键"
+                            @focus="isEditing = true" @blur="isEditing = false" />
+                        <n-select v-model:value="item.type" :options="FormDataContentTypeSelect"
+                            :consistent-menu-width="false" :style="{ width: '20%' }" />
+                        <n-input v-if="item.type === 'text'" size="small" v-model:value="item.value"
+                            :style="{ width: '50%' }" placeholder="值" @focus="isEditing = true"
+                            @blur="isEditing = false" />
+                        <n-select v-else-if="item.type === 'file'" :style="{ width: '50%' }" size="small"
+                            placeholder="引用" :disabled="!isEditorMode" :options="selfVarSelections"
+                            :render-label="renderLabel" v-model:value="item.value" />
+                    </n-flex>
+                    <n-button circle tertiary size="small" type="error" @click="rmBody_FormData(index)"
+                        :disabled="!isEditorMode">
+                        <template #icon>
+                            <n-icon>
+                                <Close />
+                            </n-icon>
+                        </template>
+                    </n-button>
+                </n-flex>
+            </template>
         </n-flex>
     </n-flex>
 
@@ -134,7 +189,7 @@ import editable_header from './header.vue'
 import { mapVarItemToSelect, renderLabel4Select, isPlainObject, isString, isJsonString } from '@/utils/tools'
 import { useFlowAOperation } from '@/services/useFlowAOperation.js'
 import { typeSelectionsWNull, typeSelections } from '@/utils/schemas'
-import { HeaderKeySelectGroup, HeaderValueSelect, HttpMethodSelect, HttpBodyTypeSelect } from '@/utils/CmdHTTPConfiguration'
+import { HeaderKeySelectGroup, HeaderValueSelect, HttpMethodSelect, HttpBodyTypeSelect, FormDataContentTypeSelect } from '@/utils/http_schemas'
 
 const props = defineProps({
     nodeId: {
@@ -204,9 +259,17 @@ const isShowCodeEditor = inject("isShowCodeEditor");
 const CodeEditorPath = inject("CodeEditorPath");
 const CodeEditorLangType = inject("CodeEditorLangType");
 const thisBody = createComputedConfig('body');
-const isShowEditBtn = computed(() => {
+const isBodyContentText = computed(() => {
     if (thisBody.value.type === 'json') return true;
     if (thisBody.value.type === 'plain-text') return true;
+    return false;
+});
+const isBodyContentXWWWForm = computed(() => {
+    if (thisBody.value.type === 'x-www-form-urlencoded') return true;
+    return false;
+});
+const isBodyContentFormData = computed(() => {
+    if (thisBody.value.type === 'form-data') return true;
     return false;
 });
 const codeLang = computed(() => {
@@ -217,26 +280,35 @@ const codeLang = computed(() => {
     }
 })
 const editBody_Json = () => {
-    if (thisBody.value.content == null) thisBody.value.content = "{}";
-    CodeEditorPath.value = ["data", "payloads", "byId", props.pid, "data", "body", "content"];
+    CodeEditorPath.value = ["data", "payloads", "byId", props.pid, "data", "body", "content1"];
     isShowCodeEditor.value = true;
-    CodeEditorLangType.value = "CodeJSON";
+    CodeEditorLangType.value = codeLang == 'json' ? "CodeJSON" : "CodeText";
 }
-const updateBodyContentByType = (btype) => {
-    console.log(btype);
-    if (btype === 'json' && !isJsonString(thisBody.value.content)) {
-        thisBody.value.content = "{}";
-    }
-    else if (btype === 'plain-text' && !isString(thisBody.value.content)) {
-        thisBody.value.content = "";
-    }
-    else if (btype === 'x-www-form-urlencoded' && !Array.isArray(thisBody.value.content)) {
-        thisBody.value.content = [];
-    }
-    else if (btype === 'form-data' && !Array.isArray(thisBody.value.content)) {
-        thisBody.value.content = [];
+
+const addBody_XWWWForm = () => {
+    thisBody.value.content2.push({ key: '', value: '' });
+}
+const rmBody_XWWWForm = (index) => {
+    thisBody.value.content2.splice(index, 1);
+}
+const addBody_FormData = () => {
+    thisBody.value.content3.push({ key: '', type: 'text', value: '' });
+}
+const rmBody_FormData = (index) => {
+    thisBody.value.content3.splice(index, 1);
+}
+const addBody_kv = () => {
+    if (isBodyContentXWWWForm.value) {
+        addBody_XWWWForm();
+    } else {
+        addBody_FormData();
     }
 }
+const renderLabel = (option) => {
+    const [nlabel, dlabel, dkey, dtype] = option.label.split("/");
+    const isError = !props.selfVarSelections.some(select => select.value === option.value);
+    return renderLabel4Select(nlabel, dlabel, dtype, isError);
+};
 </script>
 
 <style scoped>

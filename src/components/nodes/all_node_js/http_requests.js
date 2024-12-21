@@ -62,7 +62,13 @@ addPayload(_initInfo, {
         ],
         body: {
             type: "json",
-            content: null,
+            content1: "",// json|text
+            content2: [
+                // { key: "", value: "" },
+            ],// x-www-form-urlencoded
+            content3: [
+                // { key: "", type: "file", value: "" },// text|file
+            ],// form-data
         },
         cookies: [
             { key: "session", value: "abc123" }
