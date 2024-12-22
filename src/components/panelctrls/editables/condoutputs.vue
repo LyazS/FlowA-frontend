@@ -41,17 +41,16 @@
                 <n-flex class="flexctitem" :style="{ width: '100%' }" :wrap="false">
                     <n-flex vertical :style="{ width: '90%' }">
                         <n-flex :wrap="false">
-                            <n-select :style="{ width: '65%' }" size="small" placeholder="变量" :disabled="!isEditorMode"
-                                v-model:value="cond.refdata" :options="selfVarSelections" :render-label="renderLabel" />
+                            <cp_var_select :style="{ width: '65%' }" v-model:value="cond.refdata"
+                                :options="selfVarSelections" placeholder="变量" />
                             <n-select :style="{ width: '35%' }" size="small" placeholder="操作" :disabled="!isEditorMode"
                                 :options="buildOpTypeSelections(cond.refdata)" v-model:value="cond.operator" />
                         </n-flex>
                         <n-flex :wrap="false">
                             <n-select :style="{ width: '35%' }" size="small" placeholder="类型" :disabled="!isEditorMode"
                                 :options="compTypeSelections" v-model:value="cond.comparetype" />
-                            <n-select v-if="cond.comparetype === 'ref'" :style="{ width: '65%' }" size="small"
-                                :disabled="!isEditorMode" placeholder="比较变量" :options="selfVarSelections"
-                                :render-label="renderLabel" v-model:value="cond.value" />
+                            <cp_var_select v-if="cond.comparetype === 'ref'" :style="{ width: '65%' }" size="small"
+                                placeholder="比较变量" :options="selfVarSelections" v-model:value="cond.value" />
                             <n-input v-else :style="{ width: '65%' }" size="small" placeholder="数值"
                                 :disabled="!isEditorMode" v-model:value="cond.value" @blur="isEditing = false"
                                 @focus="isEditing = true" />
@@ -81,11 +80,10 @@
 </template>
 
 <script setup>
-import { ref, computed, h, inject } from 'vue'
+import { ref, computed, h, inject, defineAsyncComponent } from 'vue'
 import { useMessage, NSwitch, NFlex, NText, NIcon, NButton, NCard, NForm, NFormItem, NGrid, NGridItem, NInput, NSelect, NSpace, NTag } from 'naive-ui'
 import { Add, Close } from '@vicons/ionicons5'
 import { useVueFlow } from '@vue-flow/core'
-import { mapVarItemToSelect, renderLabel4Select } from '@/utils/tools'
 import editable_header from './header.vue'
 import {
     addResult,
@@ -111,7 +109,7 @@ import {
 } from '@/utils/schemas.js'
 import { useFlowAOperation } from '@/services/useFlowAOperation.js'
 
-
+const cp_var_select = defineAsyncComponent(() => import('@/components/panelctrls/editables/common/var_select.vue'));
 const props = defineProps({
     nodeId: {
         type: String,
@@ -140,11 +138,6 @@ const railStyle = ({ focused, checked }) => {
     return style;
 };
 
-const renderLabel = (option) => {
-    const [nlabel, dlabel, dkey, dtype] = option.label.split("/");
-    const isError = !props.selfVarSelections.some(select => select.value === option.value);
-    return renderLabel4Select(nlabel, dlabel, dtype, isError);
-};
 const branches = computed(() => {
     const conddata = [];
     for (const rid of thisnode.value.data.results.order) {

@@ -18,9 +18,9 @@
             <n-flex vertical :style="{ width: '95%' }">
                 <n-flex :wrap="false">
                     <n-input :style="{ width: '35%' }" size="small" placeholder="变量名" v-model:value="pvar.key"
-                        @blur="isEditing = false" @focus="isEditing = true" :disabled="!isEditorMode"/>
-                    <n-select :style="{ width: '65%' }" size="small" placeholder="变量值" v-model:value="pvar.refdata"
-                        :options="selfVarSelections" :render-label="renderLabel" :disabled="!isEditorMode"/>
+                        @blur="isEditing = false" @focus="isEditing = true" :disabled="!isEditorMode" />
+                    <cp_var_select :style="{ width: '65%' }" v-model:value="pvar.refdata" :options="selfVarSelections"
+                        placeholder="变量值" />
                 </n-flex>
             </n-flex>
             <n-button circle tertiary size="small" type="error" @click="rmVariable(vindex)" :disabled="!isEditorMode">
@@ -37,11 +37,10 @@
 </template>
 
 <script setup>
-import { ref, computed, h, inject } from 'vue'
+import { ref, computed, h, inject, defineAsyncComponent } from 'vue'
 import { useMessage, NSwitch, NFlex, NText, NIcon, NButton, NCard, NForm, NFormItem, NGrid, NGridItem, NInput, NSelect, NSpace, NTag } from 'naive-ui'
 import { Add, Close } from '@vicons/ionicons5'
 import { useVueFlow } from '@vue-flow/core'
-import { mapVarItemToSelect, renderLabel4Select } from '@/utils/tools'
 import editable_header from './header.vue'
 import {
     addResult,
@@ -54,6 +53,7 @@ import {
 import { getUuid } from '@/utils/tools.js'
 import { useFlowAOperation } from '@/services/useFlowAOperation.js'
 
+const cp_var_select = defineAsyncComponent(() => import('@/components/panelctrls/editables/common/var_select.vue'));
 const props = defineProps({
     nodeId: {
         type: String,
@@ -71,13 +71,7 @@ const props = defineProps({
 const isEditing = inject("isEditing");
 const { isEditorMode } = useFlowAOperation();
 // 获取节点数据
-const {
-    findNode,
-    getHandleConnections,
-    updateNodeInternals,
-    removeEdges,
-    getEdges,
-} = useVueFlow()
+const { findNode } = useVueFlow()
 const thisnode = computed(() => findNode(props.nodeId))
 
 const addVariable = () => {
@@ -90,11 +84,6 @@ const addVariable = () => {
 
 const rmVariable = (index) => {
     thisnode.value.data.payloads.byId[props.pid].data.splice(index, 1);
-};
-const renderLabel = (option) => {
-    const [nlabel, dlabel, dkey, dtype] = option.label.split("/");
-    const isError = !props.selfVarSelections.some(select => select.value === option.value);
-    return renderLabel4Select(nlabel, dlabel, dtype, isError);
 };
 </script>
 

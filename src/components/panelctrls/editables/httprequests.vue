@@ -139,9 +139,8 @@
                         <n-input v-if="item.type === 'text'" size="small" v-model:value="item.value"
                             :style="{ width: '50%' }" placeholder="值" @focus="isEditing = true"
                             @blur="isEditing = false" />
-                        <n-select v-else-if="item.type === 'file'" :style="{ width: '50%' }" size="small"
-                            placeholder="引用" :disabled="!isEditorMode" :options="selfVarSelections"
-                            :render-label="renderLabel" v-model:value="item.value" />
+                        <cp_var_select v-else-if="item.type === 'file'" :style="{ width: '50%' }" size="small"
+                            :options="selfVarSelections" v-model:value="item.value" />
                     </n-flex>
                     <n-button circle tertiary size="small" type="error" @click="rmBody_FormData(index)"
                         :disabled="!isEditorMode">
@@ -159,7 +158,7 @@
 </template>
 
 <script setup>
-import { ref, computed, h, inject } from 'vue'
+import { ref, computed, h, inject, defineAsyncComponent } from 'vue'
 import {
     useMessage,
     NSwitch,
@@ -186,11 +185,11 @@ import {
 import { Add, Close, CreateOutline } from '@vicons/ionicons5'
 import { useVueFlow } from '@vue-flow/core'
 import editable_header from './header.vue'
-import { mapVarItemToSelect, renderLabel4Select, isPlainObject, isString, isJsonString } from '@/utils/tools'
 import { useFlowAOperation } from '@/services/useFlowAOperation.js'
 import { typeSelectionsWNull, typeSelections } from '@/utils/schemas'
 import { HeaderKeySelectGroup, HeaderValueSelect, HttpMethodSelect, HttpBodyTypeSelect, FormDataContentTypeSelect } from '@/utils/http_schemas'
 
+const cp_var_select = defineAsyncComponent(() => import('@/components/panelctrls/editables/common/var_select.vue'));
 const props = defineProps({
     nodeId: {
         type: String,
@@ -304,11 +303,6 @@ const addBody_kv = () => {
         addBody_FormData();
     }
 }
-const renderLabel = (option) => {
-    const [nlabel, dlabel, dkey, dtype] = option.label.split("/");
-    const isError = !props.selfVarSelections.some(select => select.value === option.value);
-    return renderLabel4Select(nlabel, dlabel, dtype, isError);
-};
 </script>
 
 <style scoped>

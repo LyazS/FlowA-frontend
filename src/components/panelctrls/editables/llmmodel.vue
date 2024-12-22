@@ -13,8 +13,8 @@
                                     size="tiny" />
                             </template>
                             <template v-else>
-                                <n-select v-model:value="modelConfig.cpValue.value" :options="selfVarSelections"
-                                    size="tiny" :render-label="renderLabel" />
+                                <cp_var_select v-model:value="modelConfig.cpValue.value" :options="selfVarSelections"
+                                    size="tiny" />
                             </template>
                         </n-flex>
                         <n-flex class="flexctitem" :wrap="false">
@@ -32,8 +32,8 @@
                                     :max="config.max" :step="config.step" />
                             </template>
                             <template v-else-if="config.cpType.value === 'ref'">
-                                <n-select v-model:value="config.cpValue.value" :options="selfVarSelections" size="tiny"
-                                    :render-label="renderLabel" />
+                                <cp_var_select v-model:value="config.cpValue.value" :options="selfVarSelections"
+                                    size="tiny" />
                             </template>
                         </n-flex>
                         <n-flex class="flexctitem" :wrap="false">
@@ -45,8 +45,8 @@
                                     :options="responseFormatConfig.options" size="tiny" />
                             </template>
                             <template v-else-if="responseFormatConfig.cpType.value === 'ref'">
-                                <n-select v-model:value="responseFormatConfig.cpValue.value"
-                                    :options="selfVarSelections" size="tiny" :render-label="renderLabel" />
+                                <cp_var_select v-model:value="responseFormatConfig.cpValue.value"
+                                    :options="selfVarSelections" size="tiny" />
                             </template>
                         </n-flex>
                     </n-flex>
@@ -58,7 +58,7 @@
 </template>
 
 <script setup>
-import { ref, computed, h, inject } from 'vue'
+import { ref, computed, h, inject, defineAsyncComponent } from 'vue'
 import {
     useMessage,
     NSwitch,
@@ -83,9 +83,10 @@ import {
 import { Add, Close } from '@vicons/ionicons5'
 import { useVueFlow } from '@vue-flow/core'
 import editable_header from './header.vue'
-import { mapVarItemToSelect, renderLabel4Select } from '@/utils/tools'
 import { useFlowAOperation } from '@/services/useFlowAOperation.js'
 import { typeSelectionsWNull, typeSelections } from '@/utils/schemas'
+
+const cp_var_select = defineAsyncComponent(() => import('@/components/panelctrls/editables/common/var_select.vue'));
 const props = defineProps({
     nodeId: {
         type: String,
@@ -157,12 +158,6 @@ const configs = [
     { label: '频率惩罚', cpType: createComputedType("frequency_penalty"), cpValue: createComputedConfig("frequency_penalty", 0.5), min: 0, max: 1, step: 0.1 },
 ];
 const responseFormatConfig = { label: '响应格式', cpType: createComputedType("response_format"), cpValue: createComputedConfig("response_format", "json"), options: response_format_selections };
-
-const renderLabel = (option) => {
-    const [nlabel, dlabel, dkey, dtype] = option.label.split("/");
-    const isError = !props.selfVarSelections.some(select => select.value === option.value);
-    return renderLabel4Select(nlabel, dlabel, dtype, isError);
-};
 </script>
 
 <style scoped>

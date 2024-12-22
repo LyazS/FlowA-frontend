@@ -21,9 +21,8 @@
                         :disabled="!isEditorMode" @blur="isEditing = false" @focus="isEditing = true" />
                     <n-select :style="{ width: '20%' }" size="small" placeholder="类型" :options="typeSelections"
                         :disabled="!isEditorMode" v-model:value="pvar.type" />
-                    <n-select v-if="pvar.type === 'ref'" :style="{ width: '50%' }" size="small" placeholder="引用"
-                        :disabled="!isEditorMode" :options="selfVarSelections" :render-label="renderLabel"
-                        v-model:value="pvar.value" />
+                    <cp_var_select v-if="pvar.type === 'ref'" :style="{ width: '50%' }" size="small"
+                        :options="selfVarSelections" v-model:value="pvar.value" />
                     <n-input v-else :style="{ width: '50%' }" size="small" placeholder="数值" v-model:value="pvar.value"
                         :disabled="!isEditorMode" @blur="isEditing = false" @focus="isEditing = true" />
                 </n-flex>
@@ -42,14 +41,14 @@
 </template>
 
 <script setup>
-import { ref, computed, h, inject } from 'vue'
+import { ref, computed, h, inject, defineAsyncComponent } from 'vue'
 import { useMessage, NSwitch, NFlex, NText, NIcon, NButton, NCard, NForm, NFormItem, NGrid, NGridItem, NInput, NSelect, NSpace, NTag } from 'naive-ui'
 import { Add, Close } from '@vicons/ionicons5'
 import { useVueFlow } from '@vue-flow/core'
-import { mapVarItemToSelect, renderLabel4Select } from '@/utils/tools'
 import { typeSelections } from '@/utils/schemas'
 import editable_header from './header.vue'
 import { useFlowAOperation } from '@/services/useFlowAOperation.js'
+const cp_var_select = defineAsyncComponent(() => import('@/components/panelctrls/editables/common/var_select.vue'));
 
 const props = defineProps({
     nodeId: {
@@ -78,11 +77,6 @@ const addVariable = () => {
 
 const rmVariable = (index) => {
     thisnode.value.data.payloads.byId[props.pid].data.splice(index, 1);
-};
-const renderLabel = (option) => {
-    const [nlabel, dlabel, dkey, dtype] = option.label.split("/");
-    const isError = !props.selfVarSelections.some(select => select.value === option.value);
-    return renderLabel4Select(nlabel, dlabel, dtype, isError);
 };
 </script>
 
