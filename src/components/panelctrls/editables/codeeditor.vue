@@ -30,22 +30,9 @@ const thisnode = computed(() => {
 const editCode = () => {
     CodeEditorPath.value = ["data", "payloads", "byId", props.pid, "data"];
     isShowCodeEditor.value = true;
-    CodeEditorLangType.value = thisnode.value.data.payloads.byId[props.pid].type;
+    CodeEditorLangType.value = 'python';
 }
-const language = computed(() => {
-    const regex = /Code([^>]+)/;
-    const match = thisnode.value.data.payloads.byId[props.pid].type.match(regex);
-    if (match) {
-        if (match[1] === "Python")
-            return 'python';
-        else if (match[1] === "JavaScript")
-            return 'javascript';
-        else if (match[1] === "Markdown")
-            return 'markdown';
-    } else {
-        return 'text';
-    };
-});
+
 </script>
 <template>
     <n-flex vertical>
@@ -62,7 +49,7 @@ const language = computed(() => {
                 编辑代码
             </n-button>
         </n-flex>
-        <n-code :code="thisnode.data.payloads.byId[pid].data" :language="language" show-line-numbers />
+        <n-code :code="thisnode.data.payloads.byId[pid].data" language="python" show-line-numbers />
     </n-flex>
 </template>
 

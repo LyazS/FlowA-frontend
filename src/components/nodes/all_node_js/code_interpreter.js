@@ -41,8 +41,17 @@ addHandle(_initInfo, "callbackUsers", "callbackUser");
 addHandle(_initInfo, "callbackFuncs", "callbackFunc");
 
 addConnection(_initInfo, "self", "self", { type: "FromOuter", inputKey: "input" });
-addPayload(_initInfo, { label: "输入变量", type: "CodeInput", key: "inputvars", data: [{ key: "arg1", refdata: "" }, { key: "arg2", refdata: "" },], uitype: "codeinputs" });
-addPayload(_initInfo, { label: "Python 代码", type: "CodePython", key: "Code", data: "#You can use numpy and cv2 by import\ndef main(arg1, arg2):\n    # do something\n    return {\n        \"output1\": arg1,\n        \"output2\": arg2\n    }", uitype: "codeeditor" });
+addPayload(_initInfo, {
+    label: "输入变量", type: "VarsInput", key: "inputvars", data: [
+        { key: "arg1", type: "String", value: "hello" },
+        { key: "arg2", type: "String", value: "world" },
+    ], uitype: "vars_input"
+}, 'D_VARSINPUT');
+addPayload(_initInfo, {
+    label: "Python 代码", type: "String", key: "Code",
+    data: "#You can use numpy and cv2 by import\ndef main(arg1, arg2):\n    # do something\n    return {\n        \"output1\": arg1,\n        \"output2\": arg2\n    }",
+    uitype: "codeeditor", config: { language: "python" }
+}, 'D_CODEPYTHON');
 setOutputsUIType(_initInfo, "codeoutputs");
 addResultWConnect(_initInfo, { label: "output1", type: "String", key: "output1", data: null, }, "output");
 addResultWConnect(_initInfo, { label: "output2", type: "String", key: "output2", data: null, }, "output");

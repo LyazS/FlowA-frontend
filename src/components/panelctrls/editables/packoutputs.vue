@@ -1,7 +1,7 @@
 <template>
     <n-flex vertical>
         <n-flex class="flexctitem" justify="space-between">
-            <editable_header type="info">封装输出数组</editable_header>
+            <editable_header type="info">输出数组</editable_header>
             <n-button type="primary" text @click="handleAdd" :disabled="!isEditorMode">
                 <template #icon>
                     <n-icon>
@@ -11,18 +11,24 @@
                 添加输出
             </n-button>
         </n-flex>
-        <n-flex vertical>
-            <n-input-group v-for="rid in thisnode.data.results.order" :key="rid">
-                <n-input :style="{ width: '25%' }" placeholder="输出变量Key" :value="thisnode.data.results.byId[rid].key"
-                    :disabled="!isEditorMode" @blur="isEditing = false" @focus="isEditing = true"
-                    @update:value="(val) => updateResultKey(rid, val)" />
-                <cp_var_select :style="{ width: '60%' }" v-model:value="thisnode.data.results.byId[rid].config.ref"
-                    :options="selfVarSelections" size="medium" />
-                <n-button :style="{ width: '15%' }" type="error" @click="() => handleRemove(rid)"
-                    :disabled="!isEditorMode">
-                    删除
-                </n-button>
-            </n-input-group>
+        <n-flex v-for="rid in thisnode.data.results.order" :key="rid" class="flexctitem" justify="space-between"
+            :style="{ width: '100%' }" :wrap="false">
+            <n-flex vertical :style="{ width: '95%' }">
+                <n-flex :wrap="false">
+                    <n-input :style="{ width: '50%' }" size="small" placeholder="变量名"
+                        :value="thisnode.data.results.byId[rid].key" @blur="isEditing = false" @focus="isEditing = true"
+                        @update:value="(v) => updateResultKey(rid, v)" :disabled="!isEditorMode" />
+                    <cp_var_select :style="{ width: '50%' }" v-model:value="thisnode.data.results.byId[rid].config.ref"
+                        :options="selfVarSelections" size="small" />
+                </n-flex>
+            </n-flex>
+            <n-button circle tertiary size="small" type="error" @click="handleRemove(rid)" :disabled="!isEditorMode">
+                <template #icon>
+                    <n-icon>
+                        <Close />
+                    </n-icon>
+                </template>
+            </n-button>
         </n-flex>
     </n-flex>
 </template>
@@ -76,39 +82,4 @@ function updateResultKey(rid, value) {
         thisnode.value.data.results.byId[rid].label = value;
     }
 }
-
-
-const renderTag = ({ option, handleClose }) => {
-    const [nlabel, dlabel, dkey, dtype] = option.label.split("/");
-
-    const isError = !props.selfVarSelections.some(select => select.value === option.value);
-    const tagtype = isError ? "error" : "default";
-    return h(
-        NTag,
-        {
-            type: tagtype,
-            closable: true,
-            onMousedown: (e) => {
-                e.preventDefault();
-            },
-            onClose: (e) => {
-                e.stopPropagation();
-                handleClose();
-            }
-        },
-        {
-            default: () => {
-                if (isError) {
-                    return `❓${nlabel}`;
-                }
-                return [
-                    h(NText, { type: "default", strong: true }, { default: () => `${nlabel}` }),
-                    h(NText, { type: "default" }, { default: () => "/ " }),
-                    h(NText, { type: "info", }, { default: () => dlabel }),
-                    h(NText, { type: "info", }, { default: () => ` ${dtype}` }),
-                ]
-            }
-        }
-    );
-};
 </script>

@@ -81,7 +81,7 @@ const props = defineProps({
 const isEditing = inject("isEditing");
 const { isEditorMode } = useFlowAOperation();
 
-const { findNode, getHandleConnections, updateNodeInternals, removeEdges, getEdges } = useVueFlow();
+const { findNode } = useVueFlow();
 const thisnode = computed(() => findNode(props.nodeId));
 
 const branchesData = computed({

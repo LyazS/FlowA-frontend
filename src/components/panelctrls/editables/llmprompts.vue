@@ -83,7 +83,7 @@ const roleSelections = [
 ]
 
 const addVariable = () => {
-    const newVar = { key: "", type: "value", value: "" };
+    const newVar = { role: "user", content: "" };
     thisnode.value.data.payloads.byId[props.pid].data.push(newVar);
 };
 

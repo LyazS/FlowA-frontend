@@ -1,12 +1,14 @@
 import { cloneDeep } from 'lodash';
 import { deepFreeze } from '@/utils/tools';
 
-
-export const VariableTypes = deepFreeze([
+export const BaseVariableTypes = deepFreeze([
     { label: "字符串 String", value: "String" },
     { label: "整数 Integer", value: "Integer" },
     { label: "数字 Number", value: "Number" },
     { label: "布尔 Boolean", value: "Boolean" },
+]);
+export const VariableTypes = deepFreeze([
+    ...BaseVariableTypes,
     { label: "字典 Dictionary", value: "Dict" },
     { label: "列表 List", value: "List" },
 ]);
@@ -67,6 +69,10 @@ export const BooleanTypeSelections = deepFreeze([
 export const typeSelections = deepFreeze([
     { label: "引用", value: "ref" },
     { label: "数值", value: "value" },
+]);
+export const typeSelectionsEx = deepFreeze([
+    { label: "引用", value: "ref" },
+    ...BaseVariableTypes,
 ]);
 export const compTypeSelections = cloneDeep(typeSelections);
 export const typeSelectionsWNull = [

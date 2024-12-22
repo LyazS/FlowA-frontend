@@ -49,7 +49,7 @@ addPayload(_initInfo, {
         { key: "token", type: "value", value: "xxx" },
         { key: "cooker", type: "value", value: "yyy" },
     ], uitype: "vars_input"
-});
+}, 'D_VARSINPUT');
 
 addPayload(_initInfo, {
     label: "配置", type: "RequestConfig", key: "request", data: {
@@ -73,7 +73,7 @@ addPayload(_initInfo, {
             { key: "cook", value: "{{cooker}}" }
         ]
     }, uitype: "httprequests"
-});
+}, 'D_CONFIG');
 
 setOutputsUIType(_initInfo, "tagoutputs");
 addResultWConnect(_initInfo, { label: "请求状态", type: "String", key: "answer", data: "" }, "output", "D_STATUS");

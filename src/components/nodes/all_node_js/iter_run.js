@@ -50,7 +50,7 @@ addConnection(_initInfo, "self", "self", { type: "FromOuter", inputKey: "input" 
 addConnection(_initInfo, "self", "attach_output", { type: "FromAttached", atype: "attached_node_output", useid: [] });
 addConnection(_initInfo, "next", "next", { type: "FromAttached", atype: "attached_node_next", useid: [] });
 
-addPayload(_initInfo, { label: "迭代数组", type: "List", key: "iter_var", data: "", uitype: "iter_input" });
+addPayload(_initInfo, { label: "迭代数组", type: "List", key: "iter_list", data: "", uitype: "iter_input" }, 'D_ITERLIST');
 let pid = addPayload(_initInfo, { label: "迭代索引", type: "IterIndex", key: "iter_index", data: null, uitype: "texttag" });
 addConnection(_initInfo, "attach", "attach", { type: "FromInner", path: ["payloads", pid], useid: [] });
 pid = addPayload(_initInfo, { label: "迭代项目", type: "IterItem", key: "iter_item", data: null, uitype: "texttag" });

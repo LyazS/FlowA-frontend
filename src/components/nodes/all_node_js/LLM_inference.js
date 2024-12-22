@@ -41,6 +41,13 @@ addHandle(_initInfo, "callbackUsers", "callbackUser");
 addHandle(_initInfo, "callbackFuncs", "callbackFunc");
 
 addConnection(_initInfo, "self", "self", { type: "FromOuter", inputKey: "input" });
+
+addPayload(_initInfo, {
+    label: "输入变量", type: "VarsInput", key: "inputvars", data: [
+        { key: "text", type: "value", value: "good assistant" },
+        { key: "ask", type: "value", value: "hi" },
+    ], uitype: "vars_input"
+}, 'D_VARSINPUT');
 addPayload(_initInfo, {
     label: "模型设置", type: "LLMModel", key: "modelconfig", data: {
         model: { type: "value", value: "DeepSeekV2.5" },
@@ -53,19 +60,13 @@ addPayload(_initInfo, {
         response_format: { type: "null", value: "text" },// json
         stop: { type: "null", value: null },// string|string[]|null
     }, uitype: "llmmodel"
-});
+}, 'D_MODELCONFIG');
 addPayload(_initInfo, {
-    label: "输入变量", type: "VarsInput", key: "inputvars", data: [
-        { key: "text", type: "value", value: "good assistant" },
-        { key: "ask", type: "value", value: "hi" },
-    ], uitype: "vars_input"
-});
-addPayload(_initInfo, {
-    label: "LLM Prompt", type: "Prompts", key: "prompts", data: [
+    label: "LLMPrompts", type: "Prompts", key: "prompts", data: [
         { role: "system", content: "You are a {{text}}." },
         { role: "user", content: "{{ask}}" },
     ], uitype: "llmprompts"
-});
+}, 'D_PROMPTS');
 setOutputsUIType(_initInfo, "tagoutputs");
 addResultWConnect(_initInfo, { label: "推理结果", type: "String", key: "answer", data: "" }, "output", "D_ANSWER");
 addResultWConnect(_initInfo, { label: "LLM模型", type: "String", key: "model", data: "" }, "output", "D_MODEL");

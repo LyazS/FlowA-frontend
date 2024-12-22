@@ -25,8 +25,6 @@ import modePythonUrl from 'ace-builds/src-noconflict/mode-python?url';
 ace.config.setModuleUrl('ace/mode/python', modePythonUrl);
 import modeJsonUrl from 'ace-builds/src-noconflict/mode-json?url';
 ace.config.setModuleUrl('ace/mode/json', modeJsonUrl);
-import modeJavaScriptUrl from 'ace-builds/src-noconflict/mode-javascript?url';
-ace.config.setModuleUrl('ace/mode/javascript', modeJavaScriptUrl);
 import modeMarkdownUrl from 'ace-builds/src-noconflict/mode-markdown?url';
 ace.config.setModuleUrl('ace/mode/markdown', modeMarkdownUrl);
 import modeTextUrl from 'ace-builds/src-noconflict/mode-text?url';
@@ -38,8 +36,6 @@ ace.config.setModuleUrl('ace/theme/tomorrow_night_bright', themeUrl);
 // ace.config.setModuleUrl("ace/mode/base", workerBaseUrl);
 import snippetsPyhontUrl from "ace-builds/src-noconflict/snippets/python?url";
 ace.config.setModuleUrl("ace/snippets/python", snippetsPyhontUrl);
-import snippetsJavaScriptUrl from "ace-builds/src-noconflict/snippets/javascript?url";
-ace.config.setModuleUrl("ace/snippets/javascript", snippetsJavaScriptUrl);
 import extSearchboxUrl from 'ace-builds/src-noconflict/ext-searchbox?url';
 ace.config.setModuleUrl('ace/ext/searchbox', extSearchboxUrl);
 import "ace-builds/src-noconflict/ext-language_tools";
@@ -47,13 +43,9 @@ ace.require("ace/ext/language_tools");
 import extAutocompleterUrl from 'ace-builds/src-noconflict/ext-language_tools?url';
 ace.config.setModuleUrl('ace/ext/autocompleter', extAutocompleterUrl);
 const enableAutocompletion = computed(() => {
-    const regex = /Code([^>]+)/;
-    const match = props.langtype.match(regex);
-    if (match) {
-        if (match[1] === "Python") return true;
-        else if (match[1] === "JavaScript") return true;
-    };
-    return false;
+    if (props.langtype === "python") return true;
+    if (props.langtype === "json") return true;
+    else return false;
 });
 const options = reactive({
     // useWorker: true, // 启用语法检查,必须为true
@@ -85,22 +77,6 @@ const codedata = computed({
     set(value) { setValueByPath(thisnode.value, props.path, value) },
 })
 const thisnode = computed(() => { return findNode(props.nodeId); });
-const language = computed(() => {
-    const regex = /Code([^>]+)/;
-    const match = props.langtype.match(regex);
-    if (match) {
-        if (match[1] === "Python")
-            return 'python';
-        else if (match[1] === "JavaScript")
-            return 'javascript';
-        else if (match[1] === "Markdown")
-            return 'markdown';
-        else if (match[1] === "JSON")
-            return 'json';
-    } else {
-        return 'text';
-    };
-});
 
 const isShow = computed(() => {
     return isPathConnected(thisnode.value, props.path) && isShowCodeEditor.value;
@@ -111,7 +87,7 @@ const isShow = computed(() => {
     <n-modal v-model:show="isShow" :close-on-esc="false">
         <n-card :title="`${thisnode.data.label}`" closable @close="isShowCodeEditor = false" :style="{ width: '90%' }"
             content-style="padding: 10px">
-            <v-ace-editor v-model:value="codedata" :lang="language" theme="tomorrow_night_bright" :options="options"
+            <v-ace-editor v-model:value="codedata" :lang="langtype" theme="tomorrow_night_bright" :options="options"
                 style="height: calc(100vh - 200px)" @blur="isEditing = false" @focus="isEditing = true" />
         </n-card>
     </n-modal>

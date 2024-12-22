@@ -13,29 +13,9 @@
                 新增变量
             </n-button>
         </n-flex>
-        <n-flex v-for="(pvar, vindex) in thisnode.data.payloads.byId[pid].data" class="flexctitem"
-            justify="space-between" :style="{ width: '100%' }" :wrap="false">
-            <n-flex vertical :style="{ width: '95%' }">
-                <n-flex :wrap="false">
-                    <n-input :style="{ width: '30%' }" size="small" placeholder="变量名" v-model:value="pvar.key"
-                        :disabled="!isEditorMode" @blur="isEditing = false" @focus="isEditing = true" />
-                    <n-select :style="{ width: '20%' }" size="small" placeholder="类型" :options="typeSelections"
-                        :disabled="!isEditorMode" v-model:value="pvar.type" />
-                    <cp_var_select v-if="pvar.type === 'ref'" :style="{ width: '50%' }" size="small"
-                        :options="selfVarSelections" v-model:value="pvar.value" />
-                    <n-input v-else :style="{ width: '50%' }" size="small" placeholder="数值" v-model:value="pvar.value"
-                        :disabled="!isEditorMode" @blur="isEditing = false" @focus="isEditing = true" />
-                </n-flex>
-            </n-flex>
-            <n-button circle tertiary size="small" type="error" @click="rmVariable(vindex)" :disabled="!isEditorMode">
-                <template #icon>
-                    <n-icon>
-                        <Close />
-                    </n-icon>
-                </template>
-            </n-button>
-        </n-flex>
-
+        <cp_var_input v-for="(pvar, vindex) in thisnode.data.payloads.byId[pid].data" v-model:itemKey="pvar.key"
+            v-model:itemType="pvar.type" v-model:itemValue="pvar.value" :selfVarSelections="selfVarSelections"
+            :itemIdx="vindex" @remove="rmVariable(vindex)" />
     </n-flex>
 
 </template>
@@ -45,11 +25,11 @@ import { ref, computed, h, inject, defineAsyncComponent } from 'vue'
 import { useMessage, NSwitch, NFlex, NText, NIcon, NButton, NCard, NForm, NFormItem, NGrid, NGridItem, NInput, NSelect, NSpace, NTag } from 'naive-ui'
 import { Add, Close } from '@vicons/ionicons5'
 import { useVueFlow } from '@vue-flow/core'
-import { typeSelections } from '@/utils/schemas'
 import editable_header from './common/header.vue'
 import { useFlowAOperation } from '@/services/useFlowAOperation.js'
-const cp_var_select = defineAsyncComponent(() => import('@/components/panelctrls/editables/common/var_select.vue'));
 
+const cp_var_select = defineAsyncComponent(() => import('@/components/panelctrls/editables/common/var_select.vue'));
+const cp_var_input = defineAsyncComponent(() => import('@/components/panelctrls/editables/common/var_input.vue'));
 const props = defineProps({
     nodeId: {
         type: String,

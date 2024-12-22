@@ -22,7 +22,6 @@ const editable_textprint = defineAsyncComponent(() => import('./editables/textpr
 const editable_texttag = defineAsyncComponent(() => import('./editables/texttag.vue'));
 const editable_header = defineAsyncComponent(() => import('./editables/common/header.vue'));
 const editable_codeeditor = defineAsyncComponent(() => import('./editables/codeeditor.vue'));
-const editable_codeinputs = defineAsyncComponent(() => import('./editables/codeinputs.vue'));
 const editable_vars_input = defineAsyncComponent(() => import('./editables/vars_input.vue'));
 const editable_llmprompts = defineAsyncComponent(() => import('./editables/llmprompts.vue'));
 const editable_aggregatebranchs = defineAsyncComponent(() => import('./editables/aggregatebranchs.vue'));
@@ -115,9 +114,6 @@ const payloadComponents = computed(() => {
         }
         else if (uitype === 'codeeditor') {
             acc[pid] = h(editable_codeeditor, { nodeId: props.nodeId, pid });
-        }
-        else if (uitype === 'codeinputs') {
-            acc[pid] = h(editable_codeinputs, { nodeId: props.nodeId, pid, selfVarSelections: selfVarSelections.value });
         }
         else if (uitype === 'vars_input') {
             acc[pid] = h(editable_vars_input, { nodeId: props.nodeId, pid, selfVarSelections: selfVarSelections.value });

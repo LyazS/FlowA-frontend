@@ -48,10 +48,12 @@
                         </n-flex>
                         <n-flex :wrap="false">
                             <n-select :style="{ width: '35%' }" size="small" placeholder="类型" :disabled="!isEditorMode"
-                                :options="compTypeSelections" v-model:value="cond.comparetype" />
+                                :options="typeSelectionsEx" v-model:value="cond.comparetype" />
                             <cp_var_select v-if="cond.comparetype === 'ref'" :style="{ width: '65%' }" size="small"
                                 placeholder="比较变量" :options="selfVarSelections" v-model:value="cond.value" />
-                            <n-input v-else :style="{ width: '65%' }" size="small" placeholder="数值"
+                            <n-switch v-else-if="cond.comparetype === 'Boolean'" :style="{ width: '50%' }" size="medium"
+                                :disabled="!isEditorMode" :value="cond.value" />
+                            <n-input v-else :style="{ width: '65%' }" size="small" placeholder="值"
                                 :disabled="!isEditorMode" v-model:value="cond.value" @blur="isEditing = false"
                                 @focus="isEditing = true" />
                         </n-flex>
@@ -106,6 +108,7 @@ import {
     ContainsTypeSelections,
     BooleanTypeSelections,
     compTypeSelections,
+    typeSelectionsEx,
 } from '@/utils/schemas.js'
 import { useFlowAOperation } from '@/services/useFlowAOperation.js'
 
