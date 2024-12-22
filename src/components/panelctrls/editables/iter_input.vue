@@ -11,10 +11,10 @@
 <style scoped></style>
 <script setup>
 import { ref, computed, inject, watch, nextTick, h, defineAsyncComponent } from 'vue'
-import { NText, NTag, NH6, NInput, NSelect, NInputGroup, NFlex } from 'naive-ui'
-import { Panel, useVueFlow, useHandleConnections } from '@vue-flow/core'
+import { NFlex } from 'naive-ui'
+import { useVueFlow } from '@vue-flow/core'
 import { useFlowAOperation } from '@/services/useFlowAOperation.js'
-import editable_header from './header.vue'
+import editable_header from './common/header.vue'
 
 const cp_var_select = defineAsyncComponent(() => import('@/components/panelctrls/editables/common/var_select.vue'));
 const props = defineProps({

@@ -41,16 +41,7 @@ import { ref, computed, h, inject, defineAsyncComponent } from 'vue'
 import { useMessage, NSwitch, NFlex, NText, NIcon, NButton, NCard, NForm, NFormItem, NGrid, NGridItem, NInput, NSelect, NSpace, NTag } from 'naive-ui'
 import { Add, Close } from '@vicons/ionicons5'
 import { useVueFlow } from '@vue-flow/core'
-import editable_header from './header.vue'
-import {
-    addResult,
-    rmResult,
-    addConnection,
-    rmConnection,
-    addHandle,
-    rmHandle,
-} from '../../nodes/NodeOperator.js'
-import { getUuid } from '@/utils/tools.js'
+import editable_header from './common/header.vue'
 import { useFlowAOperation } from '@/services/useFlowAOperation.js'
 
 const cp_var_select = defineAsyncComponent(() => import('@/components/panelctrls/editables/common/var_select.vue'));

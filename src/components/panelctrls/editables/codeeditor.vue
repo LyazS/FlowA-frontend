@@ -1,8 +1,8 @@
 <script setup>
 import { ref, onMounted, reactive, inject, computed } from 'vue';
 import { useVueFlow } from '@vue-flow/core'
-import { NText, NCode, NIcon, NButton, NH6, NInput, NSelect, NInputGroup, NFlex, NDivider } from 'naive-ui'
-import editable_header from './header.vue'
+import { NCode, NIcon, NButton, NFlex } from 'naive-ui'
+import editable_header from './common/header.vue'
 import { CreateOutline } from '@vicons/ionicons5'
 import { useFlowAOperation } from '@/services/useFlowAOperation.js'
 

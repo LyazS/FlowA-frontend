@@ -46,7 +46,7 @@ import { useMessage, NSwitch, NFlex, NText, NIcon, NButton, NCard, NForm, NFormI
 import { Add, Close } from '@vicons/ionicons5'
 import { useVueFlow } from '@vue-flow/core'
 import { typeSelections } from '@/utils/schemas'
-import editable_header from './header.vue'
+import editable_header from './common/header.vue'
 import { useFlowAOperation } from '@/services/useFlowAOperation.js'
 const cp_var_select = defineAsyncComponent(() => import('@/components/panelctrls/editables/common/var_select.vue'));
 

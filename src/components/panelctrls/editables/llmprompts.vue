@@ -49,10 +49,10 @@
 
 <script setup>
 import { ref, computed, h, inject } from 'vue'
-import { useMessage, NSwitch, NFlex, NText, NIcon, NButton, NCard, NForm, NFormItem, NGrid, NGridItem, NInput, NSelect, NSpace, NTag } from 'naive-ui'
+import { NFlex, NIcon, NButton, NInput, NSelect } from 'naive-ui'
 import { Add, Close } from '@vicons/ionicons5'
 import { useVueFlow } from '@vue-flow/core'
-import editable_header from './header.vue'
+import editable_header from './common/header.vue'
 import { CreateOutline } from '@vicons/ionicons5'
 import { useFlowAOperation } from '@/services/useFlowAOperation.js'
 

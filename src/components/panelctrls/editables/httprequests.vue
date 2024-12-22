@@ -160,33 +160,18 @@
 <script setup>
 import { ref, computed, h, inject, defineAsyncComponent } from 'vue'
 import {
-    useMessage,
-    NSwitch,
     NFlex,
     NText,
     NIcon,
     NButton,
-    NCollapse,
-    NCollapseItem,
-    NCard,
-    NForm,
-    NFormItem,
-    NGrid,
-    NGridItem,
     NInput,
     NSelect,
-    NSlider,
-    NSpace,
-    NTag,
-    NInputNumber,
     NAutoComplete,
-    NCode,
 } from 'naive-ui'
 import { Add, Close, CreateOutline } from '@vicons/ionicons5'
 import { useVueFlow } from '@vue-flow/core'
-import editable_header from './header.vue'
+import editable_header from './common/header.vue'
 import { useFlowAOperation } from '@/services/useFlowAOperation.js'
-import { typeSelectionsWNull, typeSelections } from '@/utils/schemas'
 import { HeaderKeySelectGroup, HeaderValueSelect, HttpMethodSelect, HttpBodyTypeSelect, FormDataContentTypeSelect } from '@/utils/http_schemas'
 
 const cp_var_select = defineAsyncComponent(() => import('@/components/panelctrls/editables/common/var_select.vue'));

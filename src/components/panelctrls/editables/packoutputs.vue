@@ -40,7 +40,7 @@ import { NText, NIcon, NFlex, NTag, NInputGroup, NInput, NSelect, NButton } from
 import { useVueFlow } from '@vue-flow/core'
 import { Add, Close } from '@vicons/ionicons5'
 import { useFlowAOperation } from '@/services/useFlowAOperation.js'
-import editable_header from './header.vue'
+import editable_header from './common/header.vue'
 import { addResultWConnect, rmResultWConnect } from '../../nodes/NodeOperator.js'
 
 const cp_var_select = defineAsyncComponent(() => import('@/components/panelctrls/editables/common/var_select.vue'));

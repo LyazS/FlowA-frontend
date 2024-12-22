@@ -10,10 +10,10 @@
 <style scoped></style>
 <script setup>
 import { ref, computed, inject } from 'vue'
-import { NText, NH6, NInput, NSelect, NInputGroup, NFlex } from 'naive-ui'
-import { useVueFlow, useHandleConnections } from '@vue-flow/core'
+import { NInput, NFlex } from 'naive-ui'
+import { useVueFlow } from '@vue-flow/core'
 import { useFlowAOperation } from '@/services/useFlowAOperation.js'
-import editable_header from './header.vue'
+import editable_header from './common/header.vue'
 const props = defineProps({
     nodeId: {
         type: String,

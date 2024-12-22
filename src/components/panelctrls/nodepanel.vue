@@ -20,7 +20,7 @@ const editable_iter_input = defineAsyncComponent(() => import('./editables/iter_
 const editable_textinput = defineAsyncComponent(() => import('./editables/textinput.vue'));
 const editable_textprint = defineAsyncComponent(() => import('./editables/textprint.vue'));
 const editable_texttag = defineAsyncComponent(() => import('./editables/texttag.vue'));
-const editable_header = defineAsyncComponent(() => import('./editables/header.vue'));
+const editable_header = defineAsyncComponent(() => import('./editables/common/header.vue'));
 const editable_codeeditor = defineAsyncComponent(() => import('./editables/codeeditor.vue'));
 const editable_codeinputs = defineAsyncComponent(() => import('./editables/codeinputs.vue'));
 const editable_vars_input = defineAsyncComponent(() => import('./editables/vars_input.vue'));

@@ -27,7 +27,7 @@
 import { computed } from 'vue'
 import { NText, NFlex, NTag } from 'naive-ui'
 import { useVueFlow } from '@vue-flow/core'
-import editable_header from './header.vue'
+import editable_header from './common/header.vue'
 
 const props = defineProps({
     nodeId: {

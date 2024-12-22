@@ -40,16 +40,6 @@ import {
     NIcon,
     NSelect,
     NButton,
-    NText,
-    NSwitch,
-    NCard,
-    NForm,
-    NFormItem,
-    NGrid,
-    NGridItem,
-    NInput,
-    NSpace,
-    NTag
 } from 'naive-ui';
 import {
     Add as AddIcon,
@@ -57,7 +47,7 @@ import {
     EllipsisVertical as EllipsisVerticalIcon
 } from '@vicons/ionicons5';
 import { useVueFlow } from '@vue-flow/core';
-import editable_header from './header.vue';
+import editable_header from './common/header.vue';
 import { mapVarItemToSelect } from '@/utils/tools'
 import { VueDraggable } from 'vue-draggable-plus';
 import { useFlowAOperation } from '@/services/useFlowAOperation.js';
