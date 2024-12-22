@@ -44,21 +44,20 @@ addConnection(_initInfo, "self", "self", { type: "FromOuter", inputKey: "input" 
 
 addPayload(_initInfo, {
     label: "输入变量", type: "VarsInput", key: "inputvars", data: [
-        { key: "text", type: "value", value: "good assistant" },
+        { key: "query", type: "value", value: "say" },
         { key: "ask", type: "value", value: "hi" },
+        { key: "token", type: "value", value: "xxx" },
+        { key: "cooker", type: "value", value: "yyy" },
     ], uitype: "vars_input"
 });
 
 addPayload(_initInfo, {
     label: "配置", type: "RequestConfig", key: "request", data: {
         method: "GET",
-        url: "https://api.example.com/users",
-        queryParams: [
-            { key: "", value: "" },
-        ],
+        url: "https://api.example.com?{{query}}={{ask}}",
         headers: [
             { key: "Content-Type", value: "application/json" },
-            { key: "Authorization", value: "Bearer ???" }
+            { key: "Authorization", value: "Bearer {{token}}" }
         ],
         body: {
             type: "json",
@@ -71,7 +70,7 @@ addPayload(_initInfo, {
             ],// form-data
         },
         cookies: [
-            { key: "session", value: "abc123" }
+            { key: "cook", value: "{{cooker}}" }
         ]
     }, uitype: "httprequests"
 });

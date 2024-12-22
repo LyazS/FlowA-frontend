@@ -12,39 +12,6 @@
         <n-flex vertical :style="{ width: '100%' }">
             <n-flex class="flexctitem" justify="space-between">
                 <editable_header type="warning" :level="6">
-                    Query参数
-                </editable_header>
-                <n-button text type="warning" @click="addQuery" :disabled="!isEditorMode">
-                    <template #icon>
-                        <n-icon>
-                            <Add />
-                        </n-icon>
-                    </template>
-                    新增Query
-                </n-button>
-            </n-flex>
-            <template v-for="(item, index) in thisQueryParams">
-                <n-flex class="flexctitem" justify="space-between" :style="{ width: '100%' }" :wrap="false">
-                    <n-flex class="flexctitem" :style="{ width: '95%' }" :wrap="false">
-                        <n-input size="small" v-model:value="item.key" :style="{ width: '50%' }" placeholder="键"
-                            @focus="isEditing = true" @blur="isEditing = false" />
-                        <n-input size="small" v-model:value="item.value" :style="{ width: '50%' }" placeholder="值"
-                            @focus="isEditing = true" @blur="isEditing = false" />
-                    </n-flex>
-                    <n-button circle tertiary size="small" type="error" @click="rmQuery(index)"
-                        :disabled="!isEditorMode">
-                        <template #icon>
-                            <n-icon>
-                                <Close />
-                            </n-icon>
-                        </template>
-                    </n-button>
-                </n-flex>
-            </template>
-        </n-flex>
-        <n-flex vertical :style="{ width: '100%' }">
-            <n-flex class="flexctitem" justify="space-between">
-                <editable_header type="warning" :level="6">
                     请求头 Header
                 </editable_header>
                 <n-button text type="warning" @click="addHeader" :disabled="!isEditorMode">
@@ -110,7 +77,6 @@
                 minRows: 3,
                 maxRows: 10,
             }" />
-            <!-- <n-code v-if="isBodyContentText" :code="thisBody.content1" :language="codeLang" show-line-numbers /> -->
             <template v-else-if="isBodyContentXWWWForm" v-for="(item, index) in thisBody.content2">
                 <n-flex class="flexctitem" justify="space-between" :style="{ width: '100%' }" :wrap="false">
                     <n-flex class="flexctitem" :style="{ width: '95%' }" :wrap="false">
@@ -143,6 +109,39 @@
                             :options="selfVarSelections" v-model:value="item.value" />
                     </n-flex>
                     <n-button circle tertiary size="small" type="error" @click="rmBody_FormData(index)"
+                        :disabled="!isEditorMode">
+                        <template #icon>
+                            <n-icon>
+                                <Close />
+                            </n-icon>
+                        </template>
+                    </n-button>
+                </n-flex>
+            </template>
+        </n-flex>
+        <n-flex vertical :style="{ width: '100%' }">
+            <n-flex class="flexctitem" justify="space-between">
+                <editable_header type="warning" :level="6">
+                    Cookies
+                </editable_header>
+                <n-button text type="warning" @click="addCookie" :disabled="!isEditorMode">
+                    <template #icon>
+                        <n-icon>
+                            <Add />
+                        </n-icon>
+                    </template>
+                    新增Cookie
+                </n-button>
+            </n-flex>
+            <template v-for="(item, index) in thisCookies">
+                <n-flex class="flexctitem" justify="space-between" :style="{ width: '100%' }" :wrap="false">
+                    <n-flex class="flexctitem" :style="{ width: '95%' }" :wrap="false">
+                        <n-input size="small" v-model:value="item.key" :style="{ width: '50%' }" placeholder="键"
+                            @focus="isEditing = true" @blur="isEditing = false" />
+                        <n-input size="small" v-model:value="item.value" :style="{ width: '50%' }" placeholder="值"
+                            @focus="isEditing = true" @blur="isEditing = false" />
+                    </n-flex>
+                    <n-button circle tertiary size="small" type="error" @click="rmCookie(index)"
                         :disabled="!isEditorMode">
                         <template #icon>
                             <n-icon>
@@ -208,14 +207,7 @@ const createComputedConfig = (prop) => {
 
 const thisMethod = createComputedConfig('method');
 const thisUrl = createComputedConfig('url');
-// 查询参数
-const thisQueryParams = createComputedConfig('queryParams');
-const rmQuery = (index) => {
-    thisQueryParams.value.splice(index, 1);
-};
-const addQuery = () => {
-    thisQueryParams.value.push({ key: '', value: '' });
-};
+
 // 请求头
 const thisHeaders = createComputedConfig('headers');
 const headerKeyGetShow = (value) => {
@@ -288,6 +280,15 @@ const addBody_kv = () => {
         addBody_FormData();
     }
 }
+
+// 参数
+const thisCookies = createComputedConfig('cookies');
+const rmCookie = (index) => {
+    thisCookies.value.splice(index, 1);
+};
+const addCookie = () => {
+    thisCookies.value.push({ key: '', value: '' });
+};
 </script>
 
 <style scoped>
