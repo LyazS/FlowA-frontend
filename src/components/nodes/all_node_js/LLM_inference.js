@@ -43,12 +43,6 @@ addHandle(_initInfo, "callbackFuncs", "callbackFunc");
 addConnection(_initInfo, "self", "self", { type: "FromOuter", inputKey: "input" });
 
 addPayload(_initInfo, {
-    label: "输入变量", type: "VarsInput", key: "inputvars", data: [
-        { key: "text", type: "value", value: "good assistant" },
-        { key: "ask", type: "value", value: "hi" },
-    ], uitype: "vars_input"
-}, 'D_VARSINPUT');
-addPayload(_initInfo, {
     label: "模型设置", type: "LLMModel", key: "modelconfig", data: {
         model: { type: "value", value: "DeepSeekV2.5" },
         stream: false,
@@ -57,10 +51,16 @@ addPayload(_initInfo, {
         top_p: { type: "null", value: 0.9 },
         top_k: { type: "null", value: 50 },
         frequency_penalty: { type: "null", value: 0.5 },
-        response_format: { type: "null", value: "text" },// json
+        response_format: { type: "null", value: "json" },// json
         stop: { type: "null", value: null },// string|string[]|null
     }, uitype: "llmmodel"
 }, 'D_MODELCONFIG');
+addPayload(_initInfo, {
+    label: "输入变量", type: "VarsInput", key: "inputvars", data: [
+        { key: "text", type: "String", value: "good assistant" },
+        { key: "ask", type: "String", value: "hi" },
+    ], uitype: "vars_input"
+}, 'D_VARSINPUT');
 addPayload(_initInfo, {
     label: "LLMPrompts", type: "Prompts", key: "prompts", data: [
         { role: "system", content: "You are a {{text}}." },

@@ -44,10 +44,10 @@ addConnection(_initInfo, "self", "self", { type: "FromOuter", inputKey: "input" 
 
 addPayload(_initInfo, {
     label: "输入变量", type: "VarsInput", key: "inputvars", data: [
-        { key: "query", type: "value", value: "say" },
-        { key: "ask", type: "value", value: "hi" },
-        { key: "token", type: "value", value: "xxx" },
-        { key: "cooker", type: "value", value: "yyy" },
+        { key: "query", type: "String", value: "say" },
+        { key: "ask", type: "String", value: "hi" },
+        { key: "token", type: "String", value: "xxx" },
+        { key: "cooker", type: "String", value: "yyy" },
     ], uitype: "vars_input"
 }, 'D_VARSINPUT');
 

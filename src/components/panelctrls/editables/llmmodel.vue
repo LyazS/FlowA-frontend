@@ -8,13 +8,13 @@
                             <n-tag :bordered="false" type="info">模型选择</n-tag>
                             <n-select v-model:value="modelConfig.cpType.value" :options="typeSelections" size="tiny"
                                 :style="{ width: '8em' }" :consistent-menu-width="false" />
-                            <template v-if="modelConfig.cpType.value === 'value'">
-                                <n-select v-model:value="modelConfig.cpValue.value" :options="modelConfig.options"
+                            <template v-if="modelConfig.cpType.value === 'ref'">
+                                <cp_var_select v-model:value="modelConfig.cpValue.value" :options="selfVarSelections"
                                     size="tiny" />
                             </template>
                             <template v-else>
-                                <cp_var_select v-model:value="modelConfig.cpValue.value" :options="selfVarSelections"
-                                    size="tiny" />
+                                <n-input v-model:value="modelConfig.cpValue.value" size="tiny" :focus="isEditing = true"
+                                    :blur="isEditing = false" />
                             </template>
                         </n-flex>
                         <n-flex class="flexctitem" :wrap="false">
@@ -25,15 +25,15 @@
                             <n-tag :bordered="false" type="info">{{ config.label }}</n-tag>
                             <n-select v-model:value="config.cpType.value" :options="typeSelectionsWNull" size="tiny"
                                 :style="{ width: '8em' }" :consistent-menu-width="false" />
-                            <template v-if="config.cpType.value === 'value'">
+                            <template v-if="config.cpType.value === 'ref'">
+                                <cp_var_select v-model:value="config.cpValue.value" :options="selfVarSelections"
+                                    size="tiny" />
+                            </template>
+                            <template v-else-if="config.cpType.value === 'value'">
                                 <n-slider v-model:value="config.cpValue.value" :min="config.min" :max="config.max"
                                     :step="config.step" />
                                 <n-input-number v-model:value="config.cpValue.value" size="tiny" :min="config.min"
                                     :max="config.max" :step="config.step" />
-                            </template>
-                            <template v-else-if="config.cpType.value === 'ref'">
-                                <cp_var_select v-model:value="config.cpValue.value" :options="selfVarSelections"
-                                    size="tiny" />
                             </template>
                         </n-flex>
                         <n-flex class="flexctitem" :wrap="false">
@@ -42,7 +42,7 @@
                                 size="tiny" :style="{ width: '8em' }" :consistent-menu-width="false" />
                             <template v-if="responseFormatConfig.cpType.value === 'value'">
                                 <n-select v-model:value="responseFormatConfig.cpValue.value"
-                                    :options="responseFormatConfig.options" size="tiny" />
+                                    :options="response_format_selections" size="tiny" />
                             </template>
                             <template v-else-if="responseFormatConfig.cpType.value === 'ref'">
                                 <cp_var_select v-model:value="responseFormatConfig.cpValue.value"
@@ -68,11 +68,15 @@ import {
     NSlider,
     NTag,
     NInputNumber,
+    NInput,
 } from 'naive-ui'
 import { useVueFlow } from '@vue-flow/core'
 import editable_header from './common/header.vue'
 import { useFlowAOperation } from '@/services/useFlowAOperation.js'
-import { typeSelectionsWNull, typeSelections } from '@/utils/schemas'
+import {
+    typeSelections,
+    typeSelectionsWNull,
+} from '@/utils/schemas'
 
 const cp_var_select = defineAsyncComponent(() => import('@/components/panelctrls/editables/common/var_select.vue'));
 const props = defineProps({
@@ -122,7 +126,7 @@ const modelSelections = [
     { label: "GPT4o", value: "GPT4o" },
 ]
 const response_format_selections = [
-    { label: "text", value: "text" },
+    // { label: "text", value: "text" },
     { label: "json", value: "json" },
 ]
 
@@ -145,7 +149,7 @@ const configs = [
     { label: 'Top K', cpType: createComputedType("top_k"), cpValue: createComputedConfig("top_k", 50), min: 0, max: 100, step: 1 },
     { label: '频率惩罚', cpType: createComputedType("frequency_penalty"), cpValue: createComputedConfig("frequency_penalty", 0.5), min: 0, max: 1, step: 0.1 },
 ];
-const responseFormatConfig = { label: '响应格式', cpType: createComputedType("response_format"), cpValue: createComputedConfig("response_format", "json"), options: response_format_selections };
+const responseFormatConfig = { label: '响应格式', cpType: createComputedType("response_format"), cpValue: createComputedConfig("response_format", "json") };
 </script>
 
 <style scoped>

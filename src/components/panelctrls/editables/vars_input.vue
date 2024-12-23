@@ -51,7 +51,7 @@ const { findNode } = useVueFlow()
 const thisnode = computed(() => findNode(props.nodeId))
 
 const addVariable = () => {
-    const newVar = { key: "", type: "value", value: "" };
+    const newVar = { key: "", type: "String", value: "" };
     thisnode.value.data.payloads.byId[props.pid].data.push(newVar);
 };
 
