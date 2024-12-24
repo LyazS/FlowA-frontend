@@ -133,7 +133,7 @@ export const useFlowAOperation = () => {
   const autoSaveWorkflow = () => {
     if (!canSaveWorkflow.value) return;
     if (!isEditorMode.value) return;
-    console.log("try to autoSaveWorkflow");
+    // console.log("try to autoSaveWorkflow");
     debouncedAutoSaveWorkflow();
   }
 
