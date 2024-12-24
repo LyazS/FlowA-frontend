@@ -52,7 +52,7 @@ addPayload(_initInfo, {
 }, 'D_VARSINPUT');
 
 addPayload(_initInfo, {
-    label: "配置", type: "RequestConfig", key: "request", data: {
+    label: "网络配置", type: "RequestConfig", key: "request", data: {
         method: "GET",
         url: "https://api.example.com?{{query}}={{ask}}",
         headers: [
@@ -74,6 +74,13 @@ addPayload(_initInfo, {
         ]
     }, uitype: "httprequests"
 }, 'D_CONFIG');
+addPayload(_initInfo, {
+    label: "超时配置", type: "TimeoutConfig", key: "timeout", data: {
+        connect: 3,
+        read: 10,
+        write: 5,
+    }, uitype: "httptimeout"
+}, 'D_TIMEOUT');
 
 setOutputsUIType(_initInfo, "tagoutputs");
 addResultWConnect(_initInfo, { label: "请求状态", type: "String", key: "answer", data: "" }, "output", "D_STATUS");

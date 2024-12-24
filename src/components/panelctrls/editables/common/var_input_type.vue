@@ -6,9 +6,11 @@
         @update:value="updateValue" />
     <n-input v-else-if="itemType === 'String'" :size="size" :value="itemValue" :disabled="!isEditorMode"
         @blur="isEditing = false" @focus="isEditing = true" @update:value="updateValue" />
-    <n-input-number v-else-if="itemType === 'Integer' || itemType === 'Number'" :size="size" :value="itemValue"
-        :disabled="!isEditorMode" @blur="isEditing = false" @focus="isEditing = true" @update:value="updateValue"
-        :show-button="false" />
+    <n-input-number v-else-if="itemType === 'Integer'" :size="size" :value="itemValue" :disabled="!isEditorMode"
+        @blur="isEditing = false" @focus="isEditing = true" @update:value="updateValue" :show-button="false"
+        :precision="0" />
+    <n-input-number v-else-if="itemType === 'Number'" :size="size" :value="itemValue" :disabled="!isEditorMode"
+        @blur="isEditing = false" @focus="isEditing = true" @update:value="updateValue" :show-button="false" />
 </template>
 
 <script setup>

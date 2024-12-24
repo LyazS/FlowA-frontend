@@ -27,6 +27,8 @@ const editable_llmprompts = defineAsyncComponent(() => import('./editables/llmpr
 const editable_aggregatebranchs = defineAsyncComponent(() => import('./editables/aggregatebranchs.vue'));
 const editable_llmmodel = defineAsyncComponent(() => import('./editables/llmmodel.vue'));
 const editable_httprequests = defineAsyncComponent(() => import('./editables/httprequests.vue'));
+const editable_httptimeout = defineAsyncComponent(() => import('./editables/httptimeout.vue'));
+
 
 const props = defineProps({
     nodeId: {
@@ -132,6 +134,9 @@ const payloadComponents = computed(() => {
         }
         else if (uitype === 'httprequests') {
             acc[pid] = h(editable_httprequests, { nodeId: props.nodeId, pid, selfVarSelections: selfVarSelections.value });
+        }
+        else if (uitype === 'httptimeout') {
+            acc[pid] = h(editable_httptimeout, { nodeId: props.nodeId, pid });
         }
         return acc;
     }, {});
