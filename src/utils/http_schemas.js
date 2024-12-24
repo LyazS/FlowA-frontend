@@ -357,15 +357,15 @@ const HttpMethodSelect = deepFreeze([
 const HttpBodyTypeSelect = deepFreeze([
     { label: "无", value: "none" },
     { label: "JSON", value: "json" },
-    { label: "x-www-form-urlencoded", value: "x-www-form-urlencoded" },
-    { label: "form-data", value: "form-data" },
-    { label: "纯文本", value: "plain-text" },
-    { label: "文件", value: "file" },
+    { label: "x-www-form-urlencoded", value: "x_www_form_urlencoded" },
+    { label: "form-data", value: "form_data" },
+    { label: "纯文本", value: "text" },
+    // { label: "文件", value: "file" },
 ])
 
 const FormDataContentTypeSelect = deepFreeze([
-    { label: "text", value: "text" },
-    { label: "file", value: "file" },
+    { label: "String", value: "String" },
+    { label: "File", value: "File" },
 ])
 
 export {

@@ -52,21 +52,20 @@ addPayload(_initInfo, {
 }, 'D_VARSINPUT');
 
 addPayload(_initInfo, {
-    label: "网络配置", type: "RequestConfig", key: "request", data: {
+    label: "网络配置", type: "HttpRequestConfig", key: "request", data: {
         method: "GET",
         url: "https://api.example.com?{{query}}={{ask}}",
         headers: [
-            { key: "Content-Type", value: "application/json" },
             { key: "Authorization", value: "Bearer {{token}}" }
         ],
         body: {
-            type: "json",
+            type: "json",// none|json|text|form_data|x_www_form_urlencoded
             content1: "",// json|text
             content2: [
                 // { key: "", value: "" },
             ],// x-www-form-urlencoded
             content3: [
-                // { key: "", type: "file", value: "" },// text|file
+                // { key: "", type: "File", value: "" },// String|File
             ],// form-data
         },
         cookies: [
@@ -75,7 +74,7 @@ addPayload(_initInfo, {
     }, uitype: "httprequests"
 }, 'D_CONFIG');
 addPayload(_initInfo, {
-    label: "超时配置", type: "TimeoutConfig", key: "timeout", data: {
+    label: "超时配置", type: "HttpTimeoutConfig", key: "timeout", data: {
         connect: 3,
         read: 10,
         write: 5,
