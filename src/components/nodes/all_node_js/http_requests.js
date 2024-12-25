@@ -83,9 +83,10 @@ addPayload(_initInfo, {
 
 setOutputsUIType(_initInfo, "tagoutputs");
 addResultWConnect(_initInfo, { label: "返回状态", type: "String", key: "status_code", data: "" }, "output", "DR_STATUS");
-addResultWConnect(_initInfo, { label: "返回头", type: "List", key: "header", data: "" }, "output", "DR_HEADER");
-addResultWConnect(_initInfo, { label: "返回Cookie", type: "Dict", key: "cookie", data: "" }, "output", "DR_COOKIE");
-addResultWConnect(_initInfo, { label: "返回结果", type: "String", key: "response", data: {} }, "output", "DR_RESPONSE");
+addResultWConnect(_initInfo, { label: "返回头", type: "List", key: "header", data: [] }, "output", "DR_HEADER");
+addResultWConnect(_initInfo, { label: "返回Cookie", type: "List", key: "cookie", data: [] }, "output", "DR_COOKIE");
+addResultWConnect(_initInfo, { label: "返回类型", type: "String", key: "content_type", data: [] }, "output", "DR_CONTENTTYPE");
+addResultWConnect(_initInfo, { label: "返回结果", type: "String", key: "response", data: "" }, "output", "DR_RESPONSE");
 
 export const initInfo = cloneDeep(_initInfo);
 

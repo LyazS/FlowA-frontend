@@ -7,7 +7,8 @@
                         :style="{ width: '50%' }" :wrap="false">
                         <n-text>{{ timeout.label }}</n-text>
                         <n-input-number v-model:value="timeout.cpValue.value" :style="{ flex: '1' }" size="small"
-                            @blur="isEditing = false" @focus="isEditing = true" :precision="0" />
+                            :disabled="!isEditorMode" @blur="isEditing = false" @focus="isEditing = true"
+                            :precision="0" />
                     </n-flex>
                 </n-flex>
             </n-collapse-item>
