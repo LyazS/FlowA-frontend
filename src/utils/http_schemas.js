@@ -368,6 +368,17 @@ const FormDataContentTypeSelect = deepFreeze([
     { label: "File", value: "File" },
 ])
 
+const HttpContentTypeSelect = deepFreeze([
+    { label: "application/json", value: "application/json" },
+    { label: "application/x-www-form-urlencoded", value: "application/x-www-form-urlencoded" },
+    { label: "multipart/form-data", value: "multipart/form-data" },
+    { label: "text/plain", value: "text/plain" },
+    { label: "text/html", value: "text/html" },
+    { label: "application/xml", value: "application/xml" },
+    { label: "image/jpeg", value: "image/jpeg" },
+    { label: "其他", value: "other" },
+])
+
 export {
     HeaderKeySelectGroup,
     HeaderValueSelect,
