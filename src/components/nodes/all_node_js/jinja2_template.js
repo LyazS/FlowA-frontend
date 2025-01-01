@@ -30,9 +30,9 @@ const _initInfo = createBaseNodeInfo();
 initConnectionsAttribute(_initInfo);
 initRunningAttribute(_initInfo);
 initStateAttribute(_initInfo);
-setNodeType(_initInfo, "template_convertor");
+setNodeType(_initInfo, "jinja2_template");
 setVueType(_initInfo, "basenode");
-setLabel(_initInfo, "模板转换");
+setLabel(_initInfo, "Jinja2模板");
 initSize(_initInfo, 80, 80);
 
 addHandle(_initInfo, "inputs", "input");
@@ -45,7 +45,9 @@ addPayload(_initInfo, {
     label: "输入变量", type: "VarsInput", key: "inputvars", data: [
         { key: "arg1", type: "String", value: "hello" },
         { key: "arg2", type: "String", value: "world" },
-    ], uitype: "vars_input"
+    ],
+    config: { instance: { key: "", type: "ref", value: "", data: null } },
+    uitype: "vars_input",
 }, 'D_VARSINPUT');
 addPayload(_initInfo, {
     label: "Jinja2 模板", type: "String", key: "Code",

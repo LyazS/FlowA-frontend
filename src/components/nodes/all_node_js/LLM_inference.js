@@ -59,7 +59,9 @@ addPayload(_initInfo, {
     label: "输入变量", type: "VarsInput", key: "inputvars", data: [
         { key: "text", type: "String", value: "good assistant" },
         { key: "ask", type: "String", value: "hi" },
-    ], uitype: "vars_input"
+    ],
+    config: { instance: { key: "", type: "ref", value: "" } },
+    uitype: "vars_input",
 }, 'D_VARSINPUT');
 addPayload(_initInfo, {
     label: "LLMPrompts", type: "Prompts", key: "prompts", data: [

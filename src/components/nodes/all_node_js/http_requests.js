@@ -48,7 +48,9 @@ addPayload(_initInfo, {
         { key: "ask", type: "String", value: "hi" },
         { key: "token", type: "String", value: "xxx" },
         { key: "cooker", type: "String", value: "yyy" },
-    ], uitype: "vars_input"
+    ],
+    config: { instance: { key: "", type: "ref", value: "" } },
+    uitype: "vars_input",
 }, 'D_VARSINPUT');
 
 addPayload(_initInfo, {
