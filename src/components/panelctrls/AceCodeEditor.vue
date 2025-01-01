@@ -29,6 +29,8 @@ import modeMarkdownUrl from 'ace-builds/src-noconflict/mode-markdown?url';
 ace.config.setModuleUrl('ace/mode/markdown', modeMarkdownUrl);
 import modeTextUrl from 'ace-builds/src-noconflict/mode-text?url';
 ace.config.setModuleUrl('ace/mode/text', modeTextUrl);
+import modeDjangoUrl from 'ace-builds/src-noconflict/mode-django?url';
+ace.config.setModuleUrl('ace/mode/django', modeDjangoUrl);
 import themeUrl from 'ace-builds/src-noconflict/theme-tomorrow_night_bright?url';
 ace.config.setModuleUrl('ace/theme/tomorrow_night_bright', themeUrl);
 

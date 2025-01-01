@@ -26,11 +26,13 @@ const CodeEditorLangType = inject("CodeEditorLangType");
 const thisnode = computed(() => {
     return findNode(props.nodeId);
 });
-
+const thislang = computed(() => {
+    return thisnode.value.data.payloads.byId[props.pid].config.language;
+});
 const editCode = () => {
     CodeEditorPath.value = ["data", "payloads", "byId", props.pid, "data"];
     isShowCodeEditor.value = true;
-    CodeEditorLangType.value = 'python';
+    CodeEditorLangType.value = thislang.value;
 }
 
 </script>
@@ -46,10 +48,10 @@ const editCode = () => {
                         <CreateOutline />
                     </n-icon>
                 </template>
-                编辑代码
+                放大编辑
             </n-button>
         </n-flex>
-        <n-code :code="thisnode.data.payloads.byId[pid].data" language="python" show-line-numbers />
+        <n-code :code="thisnode.data.payloads.byId[pid].data" :language="thislang" show-line-numbers />
     </n-flex>
 </template>
 
