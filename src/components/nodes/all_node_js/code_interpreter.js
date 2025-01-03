@@ -45,9 +45,7 @@ addPayload(_initInfo, {
     label: "输入变量", type: "VarsInput", key: "inputvars", data: [
         { key: "arg1", type: "String", value: "hello" },
         { key: "arg2", type: "String", value: "world" },
-    ],
-    config: { instance: { key: "", type: "ref", value: "" } },
-    uitype: "vars_input"
+    ], uitype: "vars_input"
 }, 'D_VARSINPUT');
 addPayload(_initInfo, {
     label: "Python 代码", type: "String", key: "Code",
