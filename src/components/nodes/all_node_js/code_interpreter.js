@@ -1,5 +1,6 @@
 import {
     createBaseNodeInfo,
+    initNodeFlag,
     initAttachedAttribute,
     initNestedAttribute,
     initConnectionsAttribute,
@@ -22,11 +23,13 @@ import {
     addResult,
     rmResult,
 } from '../NodeOperator.js'
+import { nodeFlags } from '@/utils/schemas'
 
 import { cloneDeep } from 'lodash';
 import NodeVue from '../all_node_vue/basenode.vue';
 
 const _initInfo = createBaseNodeInfo();
+initNodeFlag(_initInfo, nodeFlags.isTask);
 initConnectionsAttribute(_initInfo);
 initRunningAttribute(_initInfo);
 initStateAttribute(_initInfo);

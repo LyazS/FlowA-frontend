@@ -10,6 +10,7 @@ import { useKeyboardControls } from "@/hooks/useKeyboardControls";
 import { SubscribeSSE } from '@/services/useSSE'
 import { debounce } from 'lodash';
 import { useMessage } from 'naive-ui';
+import { nodeFlags } from '@/utils/schemas'
 
 let instance = null;
 export const useFlowAOperation = () => {
@@ -47,7 +48,7 @@ export const useFlowAOperation = () => {
           && path[0] === 'state'
           && path[1] == 'status') {
           const vf_node = findNode(oriid);
-          if (vf_node && !vf_node.data.flags.isAttached) {
+          if (vf_node && !(nodeFlags.isAttached & vf_node.data.flag)) {
             vf_node.data.state.copy[nid] = { status: data };
           }
         }
@@ -63,9 +64,6 @@ export const useFlowAOperation = () => {
     }
   }
   const { subscribe, unsubscribe } = SubscribeSSE(
-    'GET',
-    null,
-    null,
     // onOpen
     async (response) => {
       console.log("onopen SSE", response.ok);
@@ -206,7 +204,16 @@ export const useFlowAOperation = () => {
           console.log("start subscribe");
           if (data.data.hasOwnProperty("tid")) {
             setTaskID(data.data["tid"]);
-            subscribe(`${import.meta.env.VITE_API_URL}/api/progress?taskid=${data.data["tid"]}`);
+            subscribe(
+              `${import.meta.env.VITE_API_URL}/api/progress`,
+              'POST',
+              null,
+              {
+                tid: data.data["tid"],
+                node_type: "ALL_TASK_NODE",
+                selected_nids: null,
+              },
+            );
           }
           else {
             console.log(data.data);

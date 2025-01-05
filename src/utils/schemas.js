@@ -78,3 +78,10 @@ export const typeSelectionsEx = deepFreeze([
     { label: "引用", value: "ref" },
     ...BaseVariableTypes,
 ]);
+
+export const nodeFlags = deepFreeze({
+    isNested: 0x01,
+    isAttached: 0x02,
+    isTask: 0x04,
+    isPassive: 0x08,
+});

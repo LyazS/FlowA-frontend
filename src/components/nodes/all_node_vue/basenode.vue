@@ -66,6 +66,7 @@ import { ref, computed, onMounted, nextTick, onBeforeUnmount, onUnmounted, watch
 import { debounce } from 'lodash';
 import { NFlex } from 'naive-ui'
 import { Position, Handle, useVueFlow } from '@vue-flow/core'
+import { nodeFlags } from '@/utils/schemas'
 const { findNode } = useVueFlow();
 const props = defineProps(['id'])
 const thisnode = findNode(props.id);
@@ -125,7 +126,7 @@ const max_handles_bottom = computed(() => {
     return Math.max(outputHandles.value.length, cbfuncHandles.value.length);
 });
 const center_text_pos = computed(() => {
-    if (thisnode.data.flags.isNested)
+    if (nodeFlags.isNested & thisnode.data.flag)
         return { top: 0, trfY: 0, copCountY: 50 }
     else
         return { top: handle_h_pad + max_handles_top.value * handle_h_gap + 10, trfY: -50, copCountY: -50 };
@@ -178,7 +179,7 @@ onMounted(() => {
     }, { deep: true })
 
 
-    if (!thisnode.data.flags.isNested) {
+    if (!(nodeFlags.isNested & thisnode.data.flag)) {
         watch(() => [max_handles_top.value, max_handles_bottom.value], (newValues) => {
             const [newtop, newbottom] = newValues;
             const node_ht = 30 + (newtop + newbottom) * handle_h_gap;

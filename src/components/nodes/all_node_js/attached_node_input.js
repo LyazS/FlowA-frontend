@@ -1,5 +1,6 @@
 import {
     createBaseNodeInfo,
+    initNodeFlag,
     initAttachedAttribute,
     initNestedAttribute,
     initConnectionsAttribute,
@@ -21,12 +22,14 @@ import {
     rmResultWConnect,
     setOutputsUIType,
 } from '../NodeOperator.js'
+import { nodeFlags } from '@/utils/schemas'
 
 import { cloneDeep } from 'lodash';
 import NodeVue from '../all_node_vue/attached_node.vue';
 
 const _initInfo = createBaseNodeInfo();
 initAttachedAttribute(_initInfo);
+initNodeFlag(_initInfo, nodeFlags.isAttached);
 setNodeType(_initInfo, "attached_node_input");
 setVueType(_initInfo, "attached_node");
 setLabel(_initInfo, "附属节点");

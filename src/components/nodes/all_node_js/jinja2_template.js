@@ -1,5 +1,6 @@
 import {
     createBaseNodeInfo,
+    initNodeFlag,
     initAttachedAttribute,
     initNestedAttribute,
     initConnectionsAttribute,
@@ -25,9 +26,10 @@ import {
 
 import { cloneDeep } from 'lodash';
 import NodeVue from '../all_node_vue/basenode.vue';
-import { watch } from 'vue';
+import { nodeFlags } from '@/utils/schemas'
 
 const _initInfo = createBaseNodeInfo();
+initNodeFlag(_initInfo, nodeFlags.isPassive);
 initConnectionsAttribute(_initInfo);
 initRunningAttribute(_initInfo);
 initStateAttribute(_initInfo);
@@ -54,21 +56,5 @@ addPayload(_initInfo, {
     uitype: "codeeditor", config: { language: "django" }
 }, 'D_CODE');
 
-addResult(_initInfo, {
-    label: "输入变量", type: "Dict", key: "inputvars", data: {
-    }
-}, "D_OUTPUT");
-
 export const initInfo = cloneDeep(_initInfo);
-export const initFunc = (node) => {
-    watch(
-        () => node.data.payloads.byId["D_VARSINPUT"].data,
-        (newVal) => {
-            node.data.results.byId["D_OUTPUT"].data = {};
-            for (let i = 0; i < newVal.length; i++) {
-                node.data.results.byId["D_OUTPUT"].data[newVal[i].key] = newVal[i].value;
-            }
-        }
-    )
-}
 export { NodeVue };

@@ -17,6 +17,7 @@ const BaseNodeInfo = {
             isAttached: false,  // 是否为附属节点
             isDisabled: false,  // 是否禁用
         },
+        flag: 0,
     }
 };
 const AttachedAttribute = {
@@ -151,12 +152,15 @@ const StateAttribute = {
 export const createBaseNodeInfo = () => {
     return cloneDeep(BaseNodeInfo);
 };
+export const initNodeFlag = (_BaseNodeInfo, flag) => {
+    _BaseNodeInfo.data.flag = flag;
+};
 export const initAttachedAttribute = (_BaseNodeInfo) => {
-    _BaseNodeInfo.data.flags.isAttached = true;
+    // _BaseNodeInfo.data.flags.isAttached = true;
     Object.assign(_BaseNodeInfo.data, cloneDeep(AttachedAttribute));
 };
 export const initNestedAttribute = (_BaseNodeInfo, tag) => {
-    _BaseNodeInfo.data.flags.isNested = true;
+    // _BaseNodeInfo.data.flags.isppNested = true;
     Object.assign(_BaseNodeInfo.data, cloneDeep(NestedAttribute));
     _BaseNodeInfo.data.nesting.tag = tag;
 };

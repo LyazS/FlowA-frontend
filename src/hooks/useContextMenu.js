@@ -3,6 +3,7 @@ import { ref, reactive } from 'vue';
 import { useVueFlow } from '@vue-flow/core';
 import { useVFlowManagement } from './useVFlowManagement.js';
 import { useVFlowInitial } from './useVFlowInitial.js';
+import { nodeFlags } from '@/utils/schemas'
 
 // 单例模式
 let instance = null;
@@ -94,9 +95,9 @@ export const useContextMenu = () => {
   const showContextMenu = (event_cm) => {
     menuOptions.x = event_cm.event.clientX
     menuOptions.y = event_cm.event.clientY
-    showMenu.value = (event_cm.type === 'node' && !event_cm.node.data.flags.isAttached) || (event_cm.type === 'pane') || (event_cm.type === 'edge');
-    let show_add_node = (event_cm.type === 'node' && event_cm.node.data.flags.isNested) || (event_cm.type === 'pane');
-    let show_rm_node = (event_cm.type === 'node' && !event_cm.node.data.flags.isAttached);
+    showMenu.value = (event_cm.type === 'node' && !(nodeFlags.isAttached & event_cm.node.data.flag)) || (event_cm.type === 'pane') || (event_cm.type === 'edge');
+    let show_add_node = (event_cm.type === 'node' && (nodeFlags.isNested & event_cm.node.data.flag)) || (event_cm.type === 'pane');
+    let show_rm_node = (event_cm.type === 'node' && !(nodeFlags.isAttached & event_cm.node.data.flag));
     let show_rm_edge = (event_cm.type === 'edge');
     menuOptions.items = [];
 
