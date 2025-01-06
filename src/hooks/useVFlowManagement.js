@@ -137,7 +137,7 @@ export const useVFlowManagement = () => {
             const nest_regex = /#(\w+)/g;
             const pid_matches = parentNode.id.match(nest_regex) || [];
             console.log("pid_matches", pid_matches);
-            if (nodeFlags.isNested & parentNode.data.flags.isNested) {
+            if (nodeFlags.isNested & parentNode.data.flag) {
                 new_node_id += pid_matches.join('') + `#${parentNode.data.nesting.tag}`;
             }
         }
