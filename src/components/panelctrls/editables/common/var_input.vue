@@ -42,7 +42,7 @@ const props = defineProps({
         required: true,
     },
     itemValue: {
-        type: [String, Boolean],
+        type: [String, Boolean, Number],
         required: true,
     },
     itemIdx: {

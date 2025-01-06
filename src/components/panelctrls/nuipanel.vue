@@ -23,6 +23,7 @@ const AceCodeEditor = defineAsyncComponent(() => import('./AceCodeEditor.vue'));
 const FlowResults = defineAsyncComponent(() => import('./FlowResults.vue'));
 const FlowRename = defineAsyncComponent(() => import('@/components/panelctrls/FlowRename.vue'));
 const FlowCreator = defineAsyncComponent(() => import('@/components/panelctrls/FlowCreator.vue'));
+const Jinja2Render = defineAsyncComponent(() => import('@/components/panelctrls/Jinja2Render.vue'));
 const props = defineProps({
     nodeId: {
         type: [String, null],
@@ -42,7 +43,8 @@ const isShowWFRename = ref(false);
 provide("isShowWFRename", isShowWFRename);
 const isShowWFCreator = ref(false);
 provide("isShowWFCreator", isShowWFCreator);
-
+const isShowJinja2Render = ref(false);
+provide("isShowJinja2Render", isShowJinja2Render);
 </script>
 
 <template>
@@ -61,6 +63,7 @@ provide("isShowWFCreator", isShowWFCreator);
     <FlowResults />
     <FlowRename />
     <FlowCreator />
+    <Jinja2Render v-if="isShowJinja2Render && TaskID" />
 </template>
 
 <style scoped>

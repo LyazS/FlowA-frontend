@@ -70,7 +70,7 @@ export const useFlowAOperation = () => {
     },
     // onMessage
     async (event) => {
-      console.log("onmessage SSE", event.event);
+      // console.log("onmessage SSE", event.event);
       if (event.event === "updatenode") {
         let data = JSON.parse(event.data);
         // console.log(data);
@@ -99,27 +99,6 @@ export const useFlowAOperation = () => {
     // onError
     async (err) => {
       console.log("onerror SSE", err);
-    },
-  );
-
-  const { subscribe: subscribeJinja2, unsubscribe: unsubscribeJinja2 } = SubscribeSSE(
-    // onOpen
-    async (response) => {
-      console.log("onopen SSE Jinja2", response.ok);
-    },
-    // onMessage
-    async (event) => {
-      console.log("onmessage SSE Jinja2", event.event);
-      let data = JSON.parse(event.data);
-      console.log(data);
-    },
-    // onClose
-    async () => {
-      console.log("onclose SSE Jinja2");
-    },
-    // onError
-    async (err) => {
-      console.log("onerror SSE Jinja2", err);
     },
   );
 
@@ -235,26 +214,6 @@ export const useFlowAOperation = () => {
                 selected_nids: null,
               },
             );
-
-            // 测试Jinja2 =======================================================
-            let selected_nids = [];
-            for (const [idx, node] of Object.entries(vflow.nodes)) {
-              const nid = node.id;
-              if (node.data.flag & nodeFlags.isPassive) {
-                selected_nids.push(nid);
-              }
-            }
-            subscribeJinja2(
-              `${import.meta.env.VITE_API_URL}/api/progress`,
-              'POST',
-              null,
-              {
-                tid: `${data.data["tid"]}/Jinja2`,
-                node_type: "SELECTED",
-                selected_nids: selected_nids,
-              },
-            );
-            // =======================================================
           }
           else {
             console.log(data.data);

@@ -46,6 +46,7 @@ const { getNodes, toObject, fromObject, findNode, removeNodes } = useVueFlow()
 const isShowWFCreator = inject("isShowWFCreator");
 const isShowWFRename = inject("isShowWFRename");
 const isShowFlowResults = inject("isShowFlowResults");
+const isShowJinja2Render = inject("isShowJinja2Render");
 
 const run_loading = ref(false)
 const click2runflow = async () => {
@@ -73,23 +74,7 @@ const click2runflow = async () => {
     );
     console.log(res);
 }
-const startOptions = [
-    {
-        label: '运行',
-        key: 'run_workflow'
-    }
-]
-const handleSelect = (key) => {
-    if (key === 'run_workflow') {
-        click2runflow();
-    }
-    else if (key === 'new_workflow') {
-        isShowWFCreator.value = true;
-    }
-    else if (key === 'rename_workflow') {
-        isShowWFRename.value = true;
-    }
-}
+
 </script>
 
 <template>
@@ -102,6 +87,10 @@ const handleSelect = (key) => {
             <n-ellipsis v-else style="max-width: 240px">
                 工作流管理器
             </n-ellipsis>
+        </n-button>
+        <n-button v-if="TaskID" class="glow-btn" round tertiary type="primary" style="width: 100px;"
+            @click="isShowJinja2Render = true && !!TaskID">
+            Jinja2
         </n-button>
         <template v-if="isEditorMode">
             <n-button class="glow-btn" round tertiary type="success" @click="click2runflow">
