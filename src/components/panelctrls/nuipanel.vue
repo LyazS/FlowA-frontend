@@ -63,7 +63,7 @@ provide("isShowJinja2Render", isShowJinja2Render);
     <FlowResults />
     <FlowRename />
     <FlowCreator />
-    <Jinja2Render v-if="isShowJinja2Render && TaskID" />
+    <Jinja2Render v-if="TaskID" />
 </template>
 
 <style scoped>

@@ -278,7 +278,16 @@ export const useFlowAOperation = () => {
       nodesDraggable.value = false;
       nodesConnectable.value = false;
       console.log("loadResult Done.");
-      subscribe(`${import.meta.env.VITE_API_URL}/api/progress?taskid=${tid}`)
+      subscribe(
+        `${import.meta.env.VITE_API_URL}/api/progress`,
+        'POST',
+        null,
+        {
+          tid: tid,
+          node_type: "ALL_TASK_NODE",
+          selected_nids: null,
+        },
+      )
     }
   };
 

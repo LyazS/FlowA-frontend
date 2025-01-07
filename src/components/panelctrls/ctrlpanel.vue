@@ -79,7 +79,7 @@ const click2runflow = async () => {
 
 <template>
     <n-flex justify="flex-end">
-        <n-button class="glow-btn" round tertiary type="primary" style="min-width: 200px;"
+        <n-button v-if="!TaskID" class="glow-btn" round tertiary type="primary" style="min-width: 200px;"
             @click="isShowFlowResults = true">
             <n-ellipsis v-if="WorkflowName" style="max-width: 240px">
                 {{ WorkflowName }}
@@ -90,7 +90,7 @@ const click2runflow = async () => {
         </n-button>
         <n-button v-if="TaskID" class="glow-btn" round tertiary type="primary" style="width: 100px;"
             @click="isShowJinja2Render = true && !!TaskID">
-            Jinja2
+            Jinja2渲染
         </n-button>
         <template v-if="isEditorMode">
             <n-button class="glow-btn" round tertiary type="success" @click="click2runflow">
