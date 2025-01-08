@@ -29,6 +29,7 @@ export const useFlowAOperation = () => {
   const WorkflowID = ref(null);
   const WorkflowName = ref(null);
   const AutoSaveMessage = ref("");
+  const Jinja2RenderNodeIDs = ref([]);
   const isEditorMode = computed(() => {
     return TaskID.value === null;
   });
@@ -306,6 +307,7 @@ export const useFlowAOperation = () => {
     TaskID,
     WorkflowID,
     WorkflowName,
+    Jinja2RenderNodeIDs,
     AutoSaveMessage,
     isEditorMode,
     runflow,

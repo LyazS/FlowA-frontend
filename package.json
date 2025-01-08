@@ -20,6 +20,7 @@
     "axios": "^1.7.7",
     "highlight.js": "^11.10.0",
     "lodash": "^4.17.21",
+    "nunjucks": "^3.2.4",
     "vue": "^3.5.12",
     "vue-draggable-plus": "^0.6.0",
     "vue3-ace-editor": "^2.2.4"

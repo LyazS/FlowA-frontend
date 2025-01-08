@@ -1,5 +1,5 @@
 <template>
-  <n-config-provider :theme="darkTheme" :hljs="hljs">
+  <n-config-provider :theme="darkTheme" :hljs="hljs" :locale="zhCN" :date-locale="dateZhCN">
     <n-dialog-provider>
       <n-message-provider>
         <div :style="{ height: '100vh', width: '100vw' }">
@@ -16,6 +16,8 @@ import {
   darkTheme,
   NConfigProvider,
   NDialogProvider,
+  dateZhCN,
+  zhCN,
 } from 'naive-ui';
 import vflow from '@/components/vflow.vue';
 import hljs from 'highlight.js/lib/core'
