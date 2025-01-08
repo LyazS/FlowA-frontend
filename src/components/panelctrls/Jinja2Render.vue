@@ -1,5 +1,5 @@
 <template>
-    <n-modal v-model:show="isShowJinja2Render" :close-on-esc="true" transform-origin="center">
+    <n-modal :show="isShowJinja2Render" :close-on-esc="false" transform-origin="center">
         <n-card title="Jinja2渲染" closable @close="isShowJinja2Render = false"
             :style="{ width: '80%', maxWidth: '1000px' }">
             <editable_header type="success">
