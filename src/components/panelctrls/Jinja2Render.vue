@@ -11,8 +11,11 @@
                 </n-collapse>
             </editable_header>
             <!-- <pre> {{ thedata }}</pre> -->
-            <pre> {{ Jinja2RenderNodeIDs }}</pre>
-            <pre> {{ Jinja2RenderData }}</pre>
+            <!-- <pre> {{ Jinja2RenderNodeIDs }}</pre> -->
+            <!-- <pre> {{ Jinja2RenderData }}</pre> -->
+            <!-- 这里渲染Jinja2模板结果 -->
+            <!-- <pre v-if="renderedTemplate">{{ renderedTemplate }}</pre> -->
+            <div v-if="renderedTemplate" v-for="(rendered, nid) in renderedTemplate" :key="nid" v-html="rendered"></div>
         </n-card>
     </n-modal>
 </template>
@@ -74,6 +77,28 @@ const Jinja2NodeOptions = computed(() => {
 });
 
 const Jinja2RenderData = ref({});
+const renderedTemplate = ref({});
+
+// 创建 Web Worker
+const worker = new Worker(new URL('@/services/useJinja2RenderWoker.js', import.meta.url), { type: 'module' });
+
+worker.onmessage = function (event) {
+    const { nid, success, rendered, error } = event.data;
+    if (success) {
+        renderedTemplate.value[nid] = rendered;
+    } else {
+        console.error('Template rendering failed:', error);
+    }
+};
+const Jinja2RenderUseWorker = throttle(() => {
+    // 发送模板和数据给 Web Worker 进行渲染
+    for (const nid in Jinja2RenderData.value) {
+        const { template, content } = Jinja2RenderData.value[nid];
+        worker.postMessage({ nid, template, content: JSON.parse(JSON.stringify(content)) });
+    }
+}, 1000);
+
+
 const { subscribe: subscribeJinja2, unsubscribe: unsubscribeJinja2 } = SubscribeSSE(
     // onOpen
     async (response) => {
@@ -128,11 +153,11 @@ const { subscribe: subscribeJinja2, unsubscribe: unsubscribeJinja2 } = Subscribe
                             break;
                     }
                 }
-
             } catch (error) {
                 console.error('Error parsing line:', line, error);
             }
         }
+        Jinja2RenderUseWorker();
     },
     // onClose
     async () => {
@@ -144,7 +169,7 @@ const { subscribe: subscribeJinja2, unsubscribe: unsubscribeJinja2 } = Subscribe
     },
 );
 
-const Jinja2RenderNodeChange = throttle(async () => {
+const Jinja2RenderNodeChange = debounce(async () => {
     if (!isShowJinja2Render.value) return;
     console.log("Jinja2RenderNodeChange", Jinja2RenderNodeIDs.value);
     // 取消订阅 unsubscribeJinja2
