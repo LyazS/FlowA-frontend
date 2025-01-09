@@ -86,7 +86,6 @@ const Jinja2RenderData = ref({});
 
 // 创建 Web Worker
 const worker = new Worker(new URL('@/services/useJinja2RenderWoker.js', import.meta.url), { type: 'module' });
-
 worker.onmessage = function (event) {
     const { nid, success, rendered, error } = event.data;
     if (success) {
@@ -97,12 +96,16 @@ worker.onmessage = function (event) {
         console.error('Template rendering failed:', error);
     }
 };
+
 const Jinja2RenderUseWorker = throttle(() => {
     // 发送模板和数据给 Web Worker 进行渲染
-    for (const nid in Jinja2RenderData.value) {
-        const { template, content } = Jinja2RenderData.value[nid];
-        worker.postMessage({ nid, template, content: JSON.parse(JSON.stringify(content)) });
-    }
+    worker.postMessage({
+        tasks: Object.entries(Jinja2RenderData.value).map(([nid, { template, content }]) => ({
+            nid,
+            template,
+            content: JSON.parse(JSON.stringify(content)),
+        })),
+    });
 }, 1000);
 
 
@@ -236,6 +239,7 @@ onMounted(() => {
 onUnmounted(() => {
     console.log("unmounted Jinja2Render");
     unsubscribeJinja2();
+    worker.terminate();
 });
 
 </script>
