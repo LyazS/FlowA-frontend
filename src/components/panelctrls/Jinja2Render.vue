@@ -1,21 +1,26 @@
 <template>
     <n-modal :show="isShowJinja2Render" :close-on-esc="false" transform-origin="center">
-        <n-card title="Jinja2渲染" closable @close="isShowJinja2Render = false"
-            :style="{ width: '80%', maxWidth: '1000px' }">
-            <editable_header type="success">
-                <n-collapse arrow-placement="right">
-                    <n-collapse-item title="节点选择">
-                        <n-transfer v-model:value="Jinja2RenderNodeIDs" :options="Jinja2NodeOptions"
-                            @update:value="Jinja2RenderNodeChange" size="large" />
-                    </n-collapse-item>
-                </n-collapse>
-            </editable_header>
-            <!-- <pre> {{ thedata }}</pre> -->
-            <!-- <pre> {{ Jinja2RenderNodeIDs }}</pre> -->
-            <!-- <pre> {{ Jinja2RenderData }}</pre> -->
+        <n-card closable @close="isShowJinja2Render = false" :style="{ width: '96%' }">
+            <template #header>
+                <editable_header type="success" :level="1">
+                    <n-collapse arrow-placement="right">
+                        <n-collapse-item title="Jinja2模板渲染 —— 节点选择">
+                            <n-transfer v-model:value="Jinja2RenderNodeIDs" :options="Jinja2NodeOptions"
+                                @update:value="Jinja2RenderNodeChange" size="large" />
+                        </n-collapse-item>
+                    </n-collapse>
+                </editable_header>
+            </template>
             <!-- 这里渲染Jinja2模板结果 -->
-            <!-- <pre v-if="renderedTemplate">{{ renderedTemplate }}</pre> -->
-            <div v-if="renderedTemplate" v-for="(rendered, nid) in renderedTemplate" :key="nid" v-html="rendered"></div>
+            <n-flex justify="space-between">
+                <template v-for="(value, nid) in Jinja2RenderData" :key="nid">
+                    <n-flex vertical style="flex: 1;">
+                        <n-tag :bordered="false" type="warning">{{ value['label'] }}</n-tag>
+                        <div v-if="value['rendered']" v-html="value['rendered']">
+                        </div>
+                    </n-flex>
+                </template>
+            </n-flex>
         </n-card>
     </n-modal>
 </template>
@@ -41,6 +46,7 @@ import {
     NEllipsis,
     NUpload,
     NTransfer,
+    NTag,
 } from 'naive-ui'
 import editable_header from '@/components/panelctrls/editables/common/header.vue'
 import { debounce, throttle } from 'lodash'
@@ -77,7 +83,6 @@ const Jinja2NodeOptions = computed(() => {
 });
 
 const Jinja2RenderData = ref({});
-const renderedTemplate = ref({});
 
 // 创建 Web Worker
 const worker = new Worker(new URL('@/services/useJinja2RenderWoker.js', import.meta.url), { type: 'module' });
@@ -85,7 +90,9 @@ const worker = new Worker(new URL('@/services/useJinja2RenderWoker.js', import.m
 worker.onmessage = function (event) {
     const { nid, success, rendered, error } = event.data;
     if (success) {
-        renderedTemplate.value[nid] = rendered;
+        if (Jinja2RenderData.value.hasOwnProperty(nid)) {
+            Jinja2RenderData.value[nid].rendered = rendered;
+        }
     } else {
         console.error('Template rendering failed:', error);
     }
@@ -169,7 +176,7 @@ const { subscribe: subscribeJinja2, unsubscribe: unsubscribeJinja2 } = Subscribe
     },
 );
 
-const Jinja2RenderNodeChange = debounce(async () => {
+const Jinja2RenderNodeChange = throttle(async () => {
     if (!isShowJinja2Render.value) return;
     console.log("Jinja2RenderNodeChange", Jinja2RenderNodeIDs.value);
     // 取消订阅 unsubscribeJinja2
@@ -184,12 +191,13 @@ const Jinja2RenderNodeChange = debounce(async () => {
     for (const nid of Jinja2RenderNodeIDs.value) {
         const thenode = findNode(nid);
         if (thenode) {
+            const nlabel = thenode.data.label;
             let thecontent = {}
             for (const vardata of thenode.data.payloads.byId['D_VARSINPUT'].data) {
                 thecontent[vardata['key']] = null;
             }
             const thetemplate = thenode.data.payloads.byId['D_CODE'].data;
-            Jinja2RenderData.value[nid] = { template: thetemplate, content: thecontent };
+            Jinja2RenderData.value[nid] = { label: nlabel, template: thetemplate, content: thecontent, rendered: null };
             selected_nids.push(nid);
         }
     }
