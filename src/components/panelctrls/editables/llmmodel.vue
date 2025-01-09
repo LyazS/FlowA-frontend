@@ -13,8 +13,8 @@
                                     size="tiny" />
                             </template>
                             <template v-else>
-                                <n-input v-model:value="modelConfig.cpValue.value" size="tiny" :focus="isEditing = true"
-                                    :blur="isEditing = false" />
+                                <n-select v-model:value="modelConfig.cpValue.value" size="tiny"
+                                    :options="modelSelections" />
                             </template>
                         </n-flex>
                         <n-flex class="flexctitem" :wrap="false">
@@ -58,7 +58,7 @@
 </template>
 
 <script setup>
-import { ref, computed, h, inject, defineAsyncComponent } from 'vue'
+import { ref, computed, h, onMounted, inject, defineAsyncComponent } from 'vue'
 import {
     NSwitch,
     NFlex,
@@ -69,15 +69,18 @@ import {
     NTag,
     NInputNumber,
     NInput,
+    useMessage,
 } from 'naive-ui'
 import { useVueFlow } from '@vue-flow/core'
 import editable_header from './common/header.vue'
 import { useFlowAOperation } from '@/services/useFlowAOperation.js'
+import { useRequestMethod } from "@/services/useRequestMethod";
 import {
     typeSelections,
     typeSelectionsWNull,
 } from '@/utils/schemas'
-
+const message = useMessage();
+const { postData, getData } = useRequestMethod();
 const cp_var_select = defineAsyncComponent(() => import('@/components/panelctrls/editables/common/var_select.vue'));
 const props = defineProps({
     nodeId: {
@@ -98,8 +101,7 @@ const { isEditorMode } = useFlowAOperation();
 // 获取节点数据
 const { findNode } = useVueFlow()
 const thisnode = computed(() => findNode(props.nodeId))
-const createComputedConfig = (prop, defaultValue = null) => {
-    thisnode.value.data.payloads.byId[props.pid].data[prop].value = defaultValue;
+const createComputedConfig = (prop) => {
     return computed({
         get() {
             return thisnode.value.data.payloads.byId[props.pid].data[prop].value;
@@ -121,10 +123,7 @@ const createComputedType = (prop) => {
     });
 };
 
-const modelSelections = [
-    { label: "DeepSeekV2.5", value: "DeepSeekV2.5" },
-    { label: "GPT4o", value: "GPT4o" },
-]
+const modelSelections = ref([]);
 const response_format_selections = [
     // { label: "text", value: "text" },
     { label: "json", value: "json" },
@@ -141,15 +140,27 @@ const streamConfig = computed({
 
 // const thisConfig_stop = createComputedConfig("stop", null);
 
-const modelConfig = { label: '模型选择', cpType: createComputedType("model"), cpValue: createComputedConfig("model", "DeepSeekV2.5"), options: modelSelections };
+const modelConfig = { label: '模型选择', cpType: createComputedType("model"), cpValue: createComputedConfig("model"), options: modelSelections };
 const configs = [
-    { label: '最长回复', cpType: createComputedType("max_tokens"), cpValue: createComputedConfig("max_tokens", 4096), min: 256, max: 8192, step: 1 },
-    { label: '温度', cpType: createComputedType("temperature"), cpValue: createComputedConfig("temperature", 0.8), min: 0, max: 1, step: 0.1 },
-    { label: 'Top P', cpType: createComputedType("top_p"), cpValue: createComputedConfig("top_p", 0.9), min: 0, max: 1, step: 0.1 },
-    { label: 'Top K', cpType: createComputedType("top_k"), cpValue: createComputedConfig("top_k", 50), min: 0, max: 100, step: 1 },
-    { label: '频率惩罚', cpType: createComputedType("frequency_penalty"), cpValue: createComputedConfig("frequency_penalty", 0.5), min: 0, max: 1, step: 0.1 },
+    { label: '最长回复', cpType: createComputedType("max_tokens"), cpValue: createComputedConfig("max_tokens"), min: 256, max: 8192, step: 1 },
+    { label: '温度', cpType: createComputedType("temperature"), cpValue: createComputedConfig("temperature"), min: 0, max: 1, step: 0.1 },
+    { label: 'Top P', cpType: createComputedType("top_p"), cpValue: createComputedConfig("top_p"), min: 0, max: 1, step: 0.1 },
+    { label: 'Top K', cpType: createComputedType("top_k"), cpValue: createComputedConfig("top_k"), min: 0, max: 100, step: 1 },
+    { label: '频率惩罚', cpType: createComputedType("frequency_penalty"), cpValue: createComputedConfig("frequency_penalty"), min: 0, max: 1, step: 0.1 },
 ];
-const responseFormatConfig = { label: '响应格式', cpType: createComputedType("response_format"), cpValue: createComputedConfig("response_format", "json") };
+const responseFormatConfig = { label: '响应格式', cpType: createComputedType("response_format"), cpValue: createComputedConfig("response_format") };
+
+onMounted(async () => {
+    const res = await getData(`workflow/nodeconfig?ntype=LLM_inference`);
+    if (!res.success) {
+        message.error(res.message);
+    }
+    else {
+        modelSelections.value = Object.values(res.data).map((item) => {
+            return { label: item.name, value: item.name }
+        })
+    }
+})
 </script>
 
 <style scoped>
