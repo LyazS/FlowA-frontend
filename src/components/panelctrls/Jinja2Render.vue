@@ -100,12 +100,16 @@ worker.onmessage = function (event) {
 const Jinja2RenderUseWorker = throttle(() => {
     // 发送模板和数据给 Web Worker 进行渲染
     worker.postMessage({
-        tasks: Object.entries(Jinja2RenderData.value).map(([nid, { template, content }]) => ({
-            nid,
-            template,
-            content: JSON.parse(JSON.stringify(content)),
-        })),
-    });
+        tasks: Object.entries(Jinja2RenderData.value).map(([nid, { template, content, isdirty }]) => {
+            if (isdirty) {
+                return {
+                    nid,
+                    template,
+                    content: JSON.parse(JSON.stringify(content)),
+                };
+            }
+        }).filter(item => item !== undefined)
+    })
 }, 1000);
 
 
@@ -132,6 +136,7 @@ const { subscribe: subscribeJinja2, unsubscribe: unsubscribeJinja2 } = Subscribe
             try {
                 const parsedData = line;
                 const nid = parsedData.nid;
+                Jinja2RenderData.value[nid].isdirty = true;
                 for (const pdata of parsedData.data) {
                     const { path, operation, new_value, old_value } = pdata.data;
                     let current = Jinja2RenderData.value[nid].content;
@@ -200,7 +205,7 @@ const Jinja2RenderNodeChange = throttle(async () => {
                 thecontent[vardata['key']] = null;
             }
             const thetemplate = thenode.data.payloads.byId['D_CODE'].data;
-            Jinja2RenderData.value[nid] = { label: nlabel, template: thetemplate, content: thecontent, rendered: null };
+            Jinja2RenderData.value[nid] = { label: nlabel, template: thetemplate, content: thecontent, rendered: null, isdirty: false };
             selected_nids.push(nid);
         }
     }

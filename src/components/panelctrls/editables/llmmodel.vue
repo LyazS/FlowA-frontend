@@ -145,7 +145,7 @@ const configs = [
     { label: '最长回复', cpType: createComputedType("max_tokens"), cpValue: createComputedConfig("max_tokens"), min: 256, max: 8192, step: 1 },
     { label: '温度', cpType: createComputedType("temperature"), cpValue: createComputedConfig("temperature"), min: 0, max: 1, step: 0.1 },
     { label: 'Top P', cpType: createComputedType("top_p"), cpValue: createComputedConfig("top_p"), min: 0, max: 1, step: 0.1 },
-    { label: 'Top K', cpType: createComputedType("top_k"), cpValue: createComputedConfig("top_k"), min: 0, max: 100, step: 1 },
+    // { label: 'Top K', cpType: createComputedType("top_k"), cpValue: createComputedConfig("top_k"), min: 0, max: 100, step: 1 },
     { label: '频率惩罚', cpType: createComputedType("frequency_penalty"), cpValue: createComputedConfig("frequency_penalty"), min: 0, max: 1, step: 0.1 },
 ];
 const responseFormatConfig = { label: '响应格式', cpType: createComputedType("response_format"), cpValue: createComputedConfig("response_format") };

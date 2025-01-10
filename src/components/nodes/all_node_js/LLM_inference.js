@@ -98,6 +98,7 @@ addResultWConnect(_initInfo, { label: "推理结果", type: "String", key: "answ
 addResultWConnect(_initInfo, { label: "LLM模型", type: "String", key: "model", data: "" }, "output", "D_MODEL");
 addResultWConnect(_initInfo, { label: "输入Token", type: "Integer", key: "input_token", data: 0 }, "output", "D_IN_TOKEN");
 addResultWConnect(_initInfo, { label: "输出Token", type: "Integer", key: "output_token", data: 0 }, "output", "D_OUT_TOKEN");
+addResultWConnect(_initInfo, { label: "停止原因", type: "String", key: "stop_reason", data: "" }, "output", "D_STOP_REASON");
 
 export const initInfo = cloneDeep(_initInfo);
 
