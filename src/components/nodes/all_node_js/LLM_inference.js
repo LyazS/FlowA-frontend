@@ -47,12 +47,12 @@ addConnection(_initInfo, "self", "self", { type: "FromOuter", inputKey: "input" 
 
 addPayload(_initInfo, {
     label: "模型设置", type: "LLMModel", key: "modelconfig", data: {
-        model: { type: "value", value: "DeepSeekV2.5" },
-        stream: false,
+        model: { type: "value", value: "deepseek-ai/DeepSeek-V2.5" },
+        stream: true,
         max_tokens: { type: "null", value: 4096 },
         temperature: { type: "null", value: 0.75 },
         top_p: { type: "null", value: 0.9 },
-        top_k: { type: "null", value: 50 },
+        // top_k: { type: "null", value: 50 },
         frequency_penalty: { type: "null", value: 0.5 },
         response_format: { type: "null", value: "json" },// json
         stop: { type: "null", value: null },// string|string[]|null
@@ -68,6 +68,29 @@ addPayload(_initInfo, {
     label: "LLMPrompts", type: "Prompts", key: "prompts", data: [
         { role: "system", content: "You are a {{text}}." },
         { role: "user", content: "{{ask}}" },
+        // {
+        //     "role": "user",
+        //     "content":[
+        //         {
+        //             "type": "image_url",
+        //             "image_url": {
+        //                 "url": "https://xxx.png",
+        //                 "detail":"high",
+        //             }
+        //         },
+        //         {
+        //             "type": "image_url",
+        //             "image_url": {
+        //                 "url": "data:image/png;base64,{base64_image}",
+        //                 "detail":"low",
+        //             }
+        //         },
+        //         {
+        //             "type": "text",
+        //             "text": "text-prompt here"
+        //         }
+        //     ]
+        // },
     ], uitype: "llmprompts"
 }, 'D_PROMPTS');
 setOutputsUIType(_initInfo, "tagoutputs");
