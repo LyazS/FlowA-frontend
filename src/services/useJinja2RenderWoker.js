@@ -39,7 +39,7 @@ const renderMarkdownWithLatex = (markdown) => {
 
     // 捕获所有 \begin{...}...\end{...} 环境并替换为占位符
     processedMarkdown = processedMarkdown.replace(/\\begin{(\w+\*?)}(.*?)\\end{\1}/gs, (match, env, latex) => {
-        latexBlocks.push(latex); // 存储捕获的 LaTeX
+        latexBlocks.push(`\\begin{${env}}${latex}\\end{${env}}`); // 存储整个 LaTeX 块
         return `@@BLOCK${latexBlocks.length - 1}@@`; // 使用占位符替换
     });
 
