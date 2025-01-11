@@ -5,16 +5,22 @@ import katex from 'katex'; // 引入 KaTeX
 // 配置 Nunjucks 环境
 const nunjucks_env = nunjucks.configure();
 
-// 自定义 Markdown 渲染函数，支持 LaTeX
 const renderMarkdownWithLatex = (markdown) => {
     // 用于存储捕获的 LaTeX 公式
     const latexBlocks = [];
     const inlineLatex = [];
     const displayLatex = []; // 用于存储 \[ ... \] 的行间公式
     const inlineParenLatex = []; // 用于存储 \( ... \) 的行内公式
+    const codeBlockLatex = []; // 用于存储 ```latex ... ``` 的代码块
+
+    // 捕获 ```latex ... ``` 代码块并替换为占位符
+    let processedMarkdown = markdown.replace(/```latex\s*([\s\S]*?)\s*```/g, (match, latex) => {
+        codeBlockLatex.push(latex.trim()); // 存储捕获的 LaTeX，并去除首尾空白
+        return `@@CODEBLOCK${codeBlockLatex.length - 1}@@`; // 使用占位符替换
+    });
 
     // 捕获块级 LaTeX 公式（$$...$$）并替换为占位符
-    let processedMarkdown = markdown.replace(/\$\$(.*?)\$\$/gs, (match, latex) => {
+    processedMarkdown = processedMarkdown.replace(/\$\$(.*?)\$\$/gs, (match, latex) => {
         latexBlocks.push(latex); // 存储捕获的 LaTeX
         return `@@BLOCK${latexBlocks.length - 1}@@`; // 使用占位符替换
     });
@@ -50,7 +56,7 @@ const renderMarkdownWithLatex = (markdown) => {
     html = html.replace(/@@BLOCK(\d+)@@/g, (match, index) => {
         const latex = latexBlocks[parseInt(index)];
         try {
-            return katex.renderToString(latex, { displayMode: true, throwOnError: false, output: 'mathml',  });
+            return katex.renderToString(latex, { displayMode: true, throwOnError: false, output: 'mathml' });
         } catch (e) {
             return `$$${latex}$$`; // 如果渲染失败，返回原始公式
         }
@@ -60,7 +66,7 @@ const renderMarkdownWithLatex = (markdown) => {
     html = html.replace(/@@DISPLAY(\d+)@@/g, (match, index) => {
         const latex = displayLatex[parseInt(index)];
         try {
-            return katex.renderToString(latex, { displayMode: true, throwOnError: false, output: 'mathml',  });
+            return katex.renderToString(latex, { displayMode: true, throwOnError: false, output: 'mathml' });
         } catch (e) {
             return `\\[${latex}\\]`; // 如果渲染失败，返回原始公式
         }
@@ -70,7 +76,7 @@ const renderMarkdownWithLatex = (markdown) => {
     html = html.replace(/@@INLINE(\d+)@@/g, (match, index) => {
         const latex = inlineLatex[parseInt(index)];
         try {
-            return katex.renderToString(latex, { throwOnError: false, output: 'mathml',  });
+            return katex.renderToString(latex, { throwOnError: false, output: 'mathml' });
         } catch (e) {
             return `$${latex}$`; // 如果渲染失败，返回原始公式
         }
@@ -80,9 +86,19 @@ const renderMarkdownWithLatex = (markdown) => {
     html = html.replace(/@@INLINEPAREN(\d+)@@/g, (match, index) => {
         const latex = inlineParenLatex[parseInt(index)];
         try {
-            return katex.renderToString(latex, { throwOnError: false, output: 'mathml',  });
+            return katex.renderToString(latex, { throwOnError: false, output: 'mathml' });
         } catch (e) {
             return `\\(${latex}\\)`; // 如果渲染失败，返回原始公式
+        }
+    });
+
+    // 将 ```latex ... ``` 代码块占位符替换为 KaTeX 渲染结果
+    html = html.replace(/@@CODEBLOCK(\d+)@@/g, (match, index) => {
+        const latex = codeBlockLatex[parseInt(index)];
+        try {
+            return katex.renderToString(latex, { displayMode: true, throwOnError: false, output: 'mathml' });
+        } catch (e) {
+            return `\`\`\`latex\n${latex}\n\`\`\``; // 如果渲染失败，返回原始代码块
         }
     });
 
