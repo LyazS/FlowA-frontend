@@ -295,6 +295,9 @@ export const useFlowAOperation = () => {
   const onMountedFunc = async () => {
     // 打开网页就加载上一次的工作流，如果没有就新建一个空白的工作流
     const ls_wid = localStorage.getItem('curWorkflowID') || null;
+    if (ls_wid) {
+      Jinja2RenderNodeIDs.value = JSON.parse(localStorage.getItem(`${ls_wid}:Jinja2RenderNodeIDs`) || 'null') ?? null;
+    }
     await loadWorkflow(ls_wid);
     console.log("loadWorkflow Done.");
   };

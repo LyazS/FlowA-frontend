@@ -187,7 +187,6 @@ const { subscribe: subscribeJinja2, unsubscribe: unsubscribeJinja2 } = Subscribe
 
 const Jinja2RenderNodeChange = throttle(async () => {
     if (!isShowJinja2Render.value) return;
-    console.log("Jinja2RenderNodeChange", Jinja2RenderNodeIDs.value);
     // 取消订阅 unsubscribeJinja2
     // 预构建Jinja2渲染数据结构
     // 订阅 subscribeJinja2
@@ -212,6 +211,7 @@ const Jinja2RenderNodeChange = throttle(async () => {
     }
     Jinja2RenderNodeIDs.value = selected_nids;
     console.log("subscribeJinja2 nodes: ", selected_nids);
+    localStorage.setItem(`${WorkflowID.value}:Jinja2RenderNodeIDs`, JSON.stringify(selected_nids));
     if (selected_nids.length === 0) {
         return;
     }
