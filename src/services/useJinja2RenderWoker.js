@@ -11,6 +11,7 @@ const renderMarkdownWithLatex = (markdown) => {
     const latexBlocks = [];
     const inlineLatex = [];
     const displayLatex = []; // 用于存储 \[ ... \] 的行间公式
+    const inlineParenLatex = []; // 用于存储 \( ... \) 的行内公式
 
     // 捕获块级 LaTeX 公式（$$...$$）并替换为占位符
     let processedMarkdown = markdown.replace(/\$\$(.*?)\$\$/gs, (match, latex) => {
@@ -28,6 +29,18 @@ const renderMarkdownWithLatex = (markdown) => {
     processedMarkdown = processedMarkdown.replace(/\$(.*?)\$/g, (match, latex) => {
         inlineLatex.push(latex); // 存储捕获的 LaTeX
         return `@@INLINE${inlineLatex.length - 1}@@`; // 使用占位符替换
+    });
+
+    // 捕获行内 LaTeX 公式（\(...\)）并替换为占位符
+    processedMarkdown = processedMarkdown.replace(/\\\((.*?)\\\)/g, (match, latex) => {
+        inlineParenLatex.push(latex); // 存储捕获的 LaTeX
+        return `@@INLINEPAREN${inlineParenLatex.length - 1}@@`; // 使用占位符替换
+    });
+
+    // 捕获所有 \begin{...}...\end{...} 环境并替换为占位符
+    processedMarkdown = processedMarkdown.replace(/\\begin{(\w+\*?)}(.*?)\\end{\1}/gs, (match, env, latex) => {
+        latexBlocks.push(latex); // 存储捕获的 LaTeX
+        return `@@BLOCK${latexBlocks.length - 1}@@`; // 使用占位符替换
     });
 
     // 使用 marked 渲染 Markdown
@@ -60,6 +73,16 @@ const renderMarkdownWithLatex = (markdown) => {
             return katex.renderToString(latex, { throwOnError: false, output: 'mathml',  });
         } catch (e) {
             return `$${latex}$`; // 如果渲染失败，返回原始公式
+        }
+    });
+
+    // 将行内 LaTeX 占位符（\(...\)）替换为 KaTeX 渲染结果
+    html = html.replace(/@@INLINEPAREN(\d+)@@/g, (match, index) => {
+        const latex = inlineParenLatex[parseInt(index)];
+        try {
+            return katex.renderToString(latex, { throwOnError: false, output: 'mathml',  });
+        } catch (e) {
+            return `\\(${latex}\\)`; // 如果渲染失败，返回原始公式
         }
     });
 
