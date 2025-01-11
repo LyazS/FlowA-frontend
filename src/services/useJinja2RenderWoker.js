@@ -7,24 +7,59 @@ const nunjucks_env = nunjucks.configure();
 
 // 自定义 Markdown 渲染函数，支持 LaTeX
 const renderMarkdownWithLatex = (markdown) => {
-    // 使用 marked 渲染 Markdown
-    let html = marked.parse(markdown);
+    // 用于存储捕获的 LaTeX 公式
+    const latexBlocks = [];
+    const inlineLatex = [];
+    const displayLatex = []; // 用于存储 \[ ... \] 的行间公式
 
-    // 渲染行内 LaTeX 公式（$...$）
-    html = html.replace(/\$(.*?)\$/g, (match, latex) => {
+    // 捕获块级 LaTeX 公式（$$...$$）并替换为占位符
+    let processedMarkdown = markdown.replace(/\$\$(.*?)\$\$/gs, (match, latex) => {
+        latexBlocks.push(latex); // 存储捕获的 LaTeX
+        return `@@BLOCK${latexBlocks.length - 1}@@`; // 使用占位符替换
+    });
+
+    // 捕获行间 LaTeX 公式（\[...\]）并替换为占位符
+    processedMarkdown = processedMarkdown.replace(/\\\[(.*?)\\\]/gs, (match, latex) => {
+        displayLatex.push(latex); // 存储捕获的 LaTeX
+        return `@@DISPLAY${displayLatex.length - 1}@@`; // 使用占位符替换
+    });
+
+    // 捕获行内 LaTeX 公式（$...$）并替换为占位符
+    processedMarkdown = processedMarkdown.replace(/\$(.*?)\$/g, (match, latex) => {
+        inlineLatex.push(latex); // 存储捕获的 LaTeX
+        return `@@INLINE${inlineLatex.length - 1}@@`; // 使用占位符替换
+    });
+
+    // 使用 marked 渲染 Markdown
+    let html = marked.parse(processedMarkdown);
+
+    // 将块级 LaTeX 占位符替换为 KaTeX 渲染结果
+    html = html.replace(/@@BLOCK(\d+)@@/g, (match, index) => {
+        const latex = latexBlocks[parseInt(index)];
         try {
-            return katex.renderToString(latex, { throwOnError: false });
+            return katex.renderToString(latex, { displayMode: true, throwOnError: false, output: 'mathml',  });
         } catch (e) {
-            return match; // 如果渲染失败，返回原始内容
+            return `$$${latex}$$`; // 如果渲染失败，返回原始公式
         }
     });
 
-    // 渲染块级 LaTeX 公式（$$...$$）
-    html = html.replace(/\$\$(.*?)\$\$/g, (match, latex) => {
+    // 将行间 LaTeX 占位符替换为 KaTeX 渲染结果
+    html = html.replace(/@@DISPLAY(\d+)@@/g, (match, index) => {
+        const latex = displayLatex[parseInt(index)];
         try {
-            return katex.renderToString(latex, { displayMode: true, throwOnError: false });
+            return katex.renderToString(latex, { displayMode: true, throwOnError: false, output: 'mathml',  });
         } catch (e) {
-            return match; // 如果渲染失败，返回原始内容
+            return `\\[${latex}\\]`; // 如果渲染失败，返回原始公式
+        }
+    });
+
+    // 将行内 LaTeX 占位符替换为 KaTeX 渲染结果
+    html = html.replace(/@@INLINE(\d+)@@/g, (match, index) => {
+        const latex = inlineLatex[parseInt(index)];
+        try {
+            return katex.renderToString(latex, { throwOnError: false, output: 'mathml',  });
+        } catch (e) {
+            return `$${latex}$`; // 如果渲染失败，返回原始公式
         }
     });
 

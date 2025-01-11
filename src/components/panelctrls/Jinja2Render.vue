@@ -91,6 +91,7 @@ worker.onmessage = function (event) {
     if (success) {
         if (Jinja2RenderData.value.hasOwnProperty(nid)) {
             Jinja2RenderData.value[nid].rendered = rendered;
+            Jinja2RenderData.value[nid].isdirty = false;
         }
     } else {
         console.error('Template rendering failed:', error);

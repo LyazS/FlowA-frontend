@@ -85,6 +85,7 @@ export const useVFlowEvents = () => {
                 recursiveUpdateNodeSize(node.parentNode)
             }
         })
+        autoSaveWorkflow();
     })
     onNodeContextMenu((event) => {
         console.log("右键节点", event.node.id);
@@ -119,15 +120,6 @@ export const useVFlowEvents = () => {
 
     onConnect((event) => {
         addEdgeToVFlow(event);
-    })
-
-    onNodesChange((event) => {
-        // console.log("节点变化", event);
-        autoSaveWorkflow();
-    })
-
-    onEdgesChange((event) => {
-        // console.log("边变化", event);
         autoSaveWorkflow();
     })
 

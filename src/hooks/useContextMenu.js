@@ -3,6 +3,7 @@ import { ref, reactive } from 'vue';
 import { useVueFlow } from '@vue-flow/core';
 import { useVFlowManagement } from './useVFlowManagement.js';
 import { useVFlowInitial } from './useVFlowInitial.js';
+import { useFlowAOperation } from '@/services/useFlowAOperation.js';
 import { nodeFlags } from '@/utils/schemas'
 
 // 单例模式
@@ -54,6 +55,7 @@ export const useContextMenu = () => {
     getVFNodeCount,
     increaseVFNodeCount,
   } = useVFlowInitial();
+  const { autoSaveWorkflow } = useFlowAOperation();
 
   const onClickContextMenuRmNode = (event_cm) => {
     console.log('删除节点');
@@ -63,6 +65,7 @@ export const useContextMenu = () => {
     removeNodeFromVFlow(node);
     buildNestedNodeGraph();
     recursiveUpdateNodeSize(parent_id);
+    autoSaveWorkflow();
   }
   const showMenu = ref(false);
   const menuOptions = reactive({
@@ -88,10 +91,15 @@ export const useContextMenu = () => {
           })
         };
         addNodeToVFlow(event_cm.node?.id, node_info);
+        autoSaveWorkflow();
       },
     }));
   };
-
+  const onClickContextMenuRmEdge = (event_cm) => {
+    console.log('删除边');
+    removeEdges([event_cm.edge]);
+    autoSaveWorkflow();
+  };
   const showContextMenu = (event_cm) => {
     menuOptions.x = event_cm.event.clientX
     menuOptions.y = event_cm.event.clientY
@@ -116,7 +124,7 @@ export const useContextMenu = () => {
     if (show_rm_edge) {
       menuOptions.items.push({
         label: '删除边',
-        onClick: () => removeEdges([event_cm.edge]),
+        onClick: () => onClickContextMenuRmEdge(event_cm),
       });
     }
   };
