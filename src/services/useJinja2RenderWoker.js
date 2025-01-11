@@ -11,12 +11,10 @@ const renderMarkdownWithLatex = (markdown) => {
     const inlineLatex = [];
     const displayLatex = []; // 用于存储 \[ ... \] 的行间公式
     const inlineParenLatex = []; // 用于存储 \( ... \) 的行内公式
-    const codeBlockLatex = []; // 用于存储 ```latex ... ``` 的代码块
 
-    // 捕获 ```latex ... ``` 代码块并替换为占位符
+    // 捕获 ```latex ... ``` 去掉前缀和后缀的 LaTeX 代码块
     let processedMarkdown = markdown.replace(/```latex\s*([\s\S]*?)\s*```/g, (match, latex) => {
-        codeBlockLatex.push(latex.trim()); // 存储捕获的 LaTeX，并去除首尾空白
-        return `@@CODEBLOCK${codeBlockLatex.length - 1}@@`; // 使用占位符替换
+        return latex.trim(); // 存储捕获的 LaTeX，并去除首尾空白
     });
 
     // 捕获块级 LaTeX 公式（$$...$$）并替换为占位符
@@ -92,21 +90,11 @@ const renderMarkdownWithLatex = (markdown) => {
         }
     });
 
-    // 将 ```latex ... ``` 代码块占位符替换为 KaTeX 渲染结果
-    html = html.replace(/@@CODEBLOCK(\d+)@@/g, (match, index) => {
-        const latex = codeBlockLatex[parseInt(index)];
-        try {
-            return katex.renderToString(latex, { displayMode: true, throwOnError: false, output: 'mathml' });
-        } catch (e) {
-            return `\`\`\`latex\n${latex}\n\`\`\``; // 如果渲染失败，返回原始代码块
-        }
-    });
-
     return html;
 };
 
 // 添加自定义过滤器，用于渲染 Markdown 和 LaTeX
-nunjucks_env.addFilter('markdown', function(str) {
+nunjucks_env.addFilter('markdown', function (str) {
     return renderMarkdownWithLatex(str);
 });
 
