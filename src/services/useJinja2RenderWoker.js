@@ -12,9 +12,53 @@ const renderMarkdownWithLatex = (markdown) => {
     const displayLatex = []; // 用于存储 \[ ... \] 的行间公式
     const inlineParenLatex = []; // 用于存储 \( ... \) 的行内公式
 
-    // 捕获 ```latex ... ``` 去掉前缀和后缀的 LaTeX 代码块
+    // 捕获 ```latex ... ``` 代码块并处理其中的 LaTeX 公式
     let processedMarkdown = markdown.replace(/```latex\s*([\s\S]*?)\s*```/g, (match, latex) => {
-        return latex.trim(); // 存储捕获的 LaTeX，并去除首尾空白
+        // 检查代码块中是否包含其他类型的 LaTeX 公式
+        const containsOtherLatex = /(\$\$.*?\$\$|\\\[.*?\\\]|\$.*?\$|\\\(.*?\\\)|\\begin\{.*?\}.*?\\end\{.*?\})/gs.test(latex);
+
+        if (containsOtherLatex) {
+            // 如果包含其他类型的 LaTeX 公式，则按原逻辑处理
+            let processedLatex = latex.replace(/\$\$(.*?)\$\$/gs, (match, innerLatex) => {
+                latexBlocks.push(innerLatex); // 存储捕获的 LaTeX
+                return `@@BLOCK${latexBlocks.length - 1}@@`; // 使用占位符替换
+            });
+
+            processedLatex = processedLatex.replace(/\\\[(.*?)\\\]/gs, (match, innerLatex) => {
+                displayLatex.push(innerLatex); // 存储捕获的 LaTeX
+                return `@@DISPLAY${displayLatex.length - 1}@@`; // 使用占位符替换
+            });
+
+            processedLatex = processedLatex.replace(/\$(.*?)\$/g, (match, innerLatex) => {
+                inlineLatex.push(innerLatex); // 存储捕获的 LaTeX
+                return `@@INLINE${inlineLatex.length - 1}@@`; // 使用占位符替换
+            });
+
+            processedLatex = processedLatex.replace(/\\\((.*?)\\\)/g, (match, innerLatex) => {
+                inlineParenLatex.push(innerLatex); // 存储捕获的 LaTeX
+                return `@@INLINEPAREN${inlineParenLatex.length - 1}@@`; // 使用占位符替换
+            });
+
+            processedLatex = processedLatex.replace(/\\begin{(\w+\*?)}(.*?)\\end{\1}/gs, (match, env, innerLatex) => {
+                latexBlocks.push(`\\begin{${env}}${innerLatex}\\end{${env}}`); // 存储整个 LaTeX 块
+                return `@@BLOCK${latexBlocks.length - 1}@@`; // 使用占位符替换
+            });
+
+            return processedLatex; // 返回处理后的 LaTeX 代码块
+        } else {
+            // 如果不包含其他类型的 LaTeX 公式，则根据是否包含换行符决定块级或行内
+            const containsNewline = /\n/.test(latex);
+
+            if (containsNewline) {
+                // 如果包含换行符，视为块级 LaTeX 公式
+                latexBlocks.push(latex.trim()); // 存储捕获的 LaTeX
+                return `@@BLOCK${latexBlocks.length - 1}@@`; // 使用占位符替换
+            } else {
+                // 如果不包含换行符，视为行内 LaTeX 公式
+                inlineLatex.push(latex.trim()); // 存储捕获的 LaTeX
+                return `@@INLINE${inlineLatex.length - 1}@@`; // 使用占位符替换
+            }
+        }
     });
 
     // 捕获块级 LaTeX 公式（$$...$$）并替换为占位符
