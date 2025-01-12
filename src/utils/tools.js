@@ -185,3 +185,17 @@ export function isJsonString(value) {
         return false;
     }
 }
+
+export const downloadJson = (jsonData, filename) => {
+    const blob = new Blob([jsonData], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = filename; // 设置下载的文件名
+    document.body.appendChild(link); // 将链接添加到 DOM 中
+    link.click(); // 模拟点击下载
+
+    // 清理临时对象 URL
+    URL.revokeObjectURL(url);
+    document.body.removeChild(link); // 移除 <a> 标签
+};

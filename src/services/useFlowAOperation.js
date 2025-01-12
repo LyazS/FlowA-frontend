@@ -3,7 +3,7 @@ import { ref, watch, computed, onMounted, onUnmounted, nextTick } from 'vue';
 import { fetchEventSource } from "@microsoft/fetch-event-source";
 import { useVueFlow } from "@vue-flow/core";
 import { useVFlowInitial } from "@/hooks/useVFlowInitial";
-import { getUuid, setValueByPath } from "@/utils/tools";
+import { getUuid, setValueByPath, downloadJson } from "@/utils/tools";
 import { useRequestMethod } from "@/services/useRequestMethod";
 import { useVFlowManagement } from "@/hooks/useVFlowManagement";
 import { useKeyboardControls } from "@/hooks/useKeyboardControls";
@@ -194,7 +194,20 @@ export const useFlowAOperation = () => {
       }
     }
   };
-
+  const downloadWorkflow = async (wid) => {
+    const res = await postData(`workflow/read`, { wid: wid, locations: ["name", "vflow"] });
+    console.log(`Download Workflow ${wid}: `, res);
+    if (!res.success) {
+      message.error(res.message);
+    }
+    else {
+      const wfname = res.data[0];
+      const flow = JSON.stringify(res.data[1]);
+      // 要符合文件名规范，不能包含特殊字符
+      const wfname_safe = wfname.replace(/[\\/:*?"<>|]/g, '_');
+      downloadJson(flow, `${wfname_safe}.json`);
+    }
+  };
   const runflow = async (callback = null) => {
     const vflow = toObject();
     const re_callback = {
@@ -323,6 +336,7 @@ export const useFlowAOperation = () => {
     loadResult,
     returnEditorMode,
     deleteWorkflow,
+    downloadWorkflow,
     onMountedFunc,
   };
   return instance;

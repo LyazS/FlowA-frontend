@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, reactive, inject, computed, watch } from 'vue';
+import { ref, onMounted, reactive, h, inject, computed, watch } from 'vue';
 import { useVueFlow, useHandleConnections } from '@vue-flow/core'
 import {
     useDialog,
@@ -14,13 +14,14 @@ import {
     NGrid,
     NGridItem,
     NDivider,
+    NDropdown,
     NEllipsis,
     NUpload,
 } from 'naive-ui'
 import { debounce } from 'lodash'
 import { useVFlowManagement } from '@/hooks/useVFlowManagement'
 import { useFlowAOperation } from '@/services/useFlowAOperation'
-import { Ellipse, Close, Add, Pencil, DownloadOutline, CloudUploadOutline, CloudDownloadOutline } from '@vicons/ionicons5'
+import { Ellipse, Close, Add, Pencil, DownloadOutline, CloudUploadOutline, CloudDownloadOutline, CaretDown } from '@vicons/ionicons5'
 const { findNode } = useVueFlow();
 // const { } = useVFlowManagement();
 const {
@@ -32,6 +33,7 @@ const {
     getResults,
     loadResult,
     deleteWorkflow,
+    downloadWorkflow,
 } = useFlowAOperation();
 const dialog = useDialog();
 const isEditing = inject("isEditing");
@@ -125,7 +127,45 @@ watch(isShowFlowResults, async (newVal) => {
         updateWorkflows();
     }
 });
-const downloadWorkflow_btn = async (wid) => { };
+
+const downloadWorkflow_btn = async (wid) => { 
+    await downloadWorkflow(wid);
+};
+const renderIcon = (icon) => {
+    return () => {
+        return h(NIcon, null, {
+            default: () => h(icon)
+        })
+    }
+};
+const wfOperations = [
+    {
+        label: '重命名',
+        key: 'rename',
+        icon: renderIcon(Pencil)
+    },
+    {
+        label: '导出工作流',
+        key: 'exportWF',
+        icon: renderIcon(CloudDownloadOutline)
+    },
+    {
+        label: '删除工作流',
+        key: 'deleteWF',
+        icon: renderIcon(Close)
+    }
+];
+const handleSelectWFOperator = (key) => {
+    if (key ==='rename') {
+        isShowWFRename.value = true;
+    }
+    else if (key === 'exportWF') {
+        downloadWorkflow_btn(WorkflowID.value);
+    }
+    else if (key === 'deleteWF') {
+        deleteWorkflow_btn(WorkflowID.value, WorkflowName.value);
+    }
+};
 </script>
 <template>
     <n-modal v-model:show="isShowFlowResults" :close-on-esc="true" transform-origin="center">
@@ -164,29 +204,15 @@ const downloadWorkflow_btn = async (wid) => { };
                                             :style="{ flex: '1' }">
                                             <n-ellipsis style="max-width: 12em"> {{ item.name }}</n-ellipsis>
                                         </n-button>
-                                        <n-button circle quaternary size="small" @click="isShowWFRename = true">
-                                            <template #icon>
-                                                <n-icon>
-                                                    <Pencil />
-                                                </n-icon>
-                                            </template>
-                                        </n-button>
-                                        <n-button circle quaternary size="small"
-                                            @click="downloadWorkflow_btn(item.wid)">
-                                            <template #icon>
-                                                <n-icon>
-                                                    <CloudDownloadOutline />
-                                                </n-icon>
-                                            </template>
-                                        </n-button>
-                                        <n-button circle quaternary size="small" type="error"
-                                            @click="deleteWorkflow_btn(item.wid, item.name)">
-                                            <template #icon>
-                                                <n-icon>
-                                                    <Close />
-                                                </n-icon>
-                                            </template>
-                                        </n-button>
+                                        <n-dropdown :options="wfOperations" @select="handleSelectWFOperator">
+                                            <n-button size="large" text>
+                                                <template #icon>
+                                                    <n-icon>
+                                                        <CaretDown />
+                                                    </n-icon>
+                                                </template>
+                                            </n-button>
+                                        </n-dropdown>
                                     </n-flex>
                                 </template>
                             </n-flex>
