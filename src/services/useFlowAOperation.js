@@ -267,7 +267,7 @@ export const useFlowAOperation = () => {
     const res = await postData(`workflow/delete?wid=${wid}`);
     console.log(`delete Workflow ${wid}: `, res);
     if (res.success) {
-      if (WorkflowID.value === wid) {
+      if (WorkflowID.value == wid) {
         canSaveWorkflow.value = false;
         WorkflowID.value = null;
         WorkflowName.value = null;
@@ -330,7 +330,7 @@ export const useFlowAOperation = () => {
     // 打开网页就加载上一次的工作流，如果没有就新建一个空白的工作流
     const ls_wid = localStorage.getItem('curWorkflowID') || null;
     if (ls_wid) {
-      Jinja2RenderNodeIDs.value = JSON.parse(localStorage.getItem(`${ls_wid}:Jinja2RenderNodeIDs`) || 'null') ?? null;
+      Jinja2RenderNodeIDs.value = JSON.parse(localStorage.getItem(`${ls_wid}:Jinja2RenderNodeIDs`) || '[]') ?? [];
     }
     await loadWorkflow(ls_wid);
     console.log("loadWorkflow Done.");

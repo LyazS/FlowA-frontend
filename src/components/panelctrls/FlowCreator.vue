@@ -27,8 +27,8 @@ const onPositiveClick = async () => {
     if (newWflowName.value.trim() === "") {
         newWflowName.value = WorkflowName.value;
     }
-    isShowFlowResults.value = false;
     await createNewWorkflow(newWflowName.value);
+    isShowFlowResults.value = false;
 }
 </script>
 

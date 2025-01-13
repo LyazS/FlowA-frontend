@@ -122,7 +122,7 @@ const deleteWorkflow_btn = async (wid, wname) => {
         negativeText: '取消',
         onPositiveClick: async () => {
             await deleteWorkflow(wid);
-            updateWorkflows();
+            await updateWorkflows();
         },
     });
 };
