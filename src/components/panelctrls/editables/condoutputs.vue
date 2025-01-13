@@ -49,13 +49,8 @@
                         <n-flex :wrap="false">
                             <n-select :style="{ width: '35%' }" size="small" placeholder="类型" :disabled="!isEditorMode"
                                 :options="typeSelectionsEx" v-model:value="cond.comparetype" />
-                            <cp_var_select v-if="cond.comparetype === 'ref'" :style="{ width: '65%' }" size="small"
-                                placeholder="比较变量" :options="selfVarSelections" v-model:value="cond.value" />
-                            <n-switch v-else-if="cond.comparetype === 'Boolean'" :style="{ width: '50%' }" size="medium"
-                                :disabled="!isEditorMode" :value="cond.value" />
-                            <n-input v-else :style="{ width: '65%' }" size="small" placeholder="值"
-                                :disabled="!isEditorMode" v-model:value="cond.value" @blur="isEditing = false"
-                                @focus="isEditing = true" />
+                            <cp_var_input_type :style="{ width: '65%' }" :itemType="cond.comparetype" v-model:itemValue="cond.value"
+                                :selfVarSelections="selfVarSelections" />
                         </n-flex>
                     </n-flex>
                     <n-button circle tertiary size="small" type="error" @click="rmBranchCondition(branch.rid, cindex)"
@@ -107,12 +102,12 @@ import {
     NotEuqalTypeSelections,
     ContainsTypeSelections,
     BooleanTypeSelections,
-    compTypeSelections,
     typeSelectionsEx,
 } from '@/utils/schemas.js'
 import { useFlowAOperation } from '@/services/useFlowAOperation.js'
 
 const cp_var_select = defineAsyncComponent(() => import('@/components/panelctrls/editables/common/var_select.vue'));
+const cp_var_input_type = defineAsyncComponent(() => import('@/components/panelctrls/editables/common/var_input_type.vue'));
 const props = defineProps({
     nodeId: {
         type: String,

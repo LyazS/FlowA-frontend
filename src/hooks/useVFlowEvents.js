@@ -3,6 +3,7 @@ import { useVueFlow } from '@vue-flow/core';
 import { useVFlowManagement } from './useVFlowManagement.js'
 import { useContextMenu } from './useContextMenu.js'
 import { useFlowAOperation } from '@/services/useFlowAOperation.js';
+import { nodeFlags } from '@/utils/schemas'
 
 // 单例模式
 let instance = null;
@@ -52,7 +53,7 @@ export const useVFlowEvents = () => {
     const lastClickedNodeId = ref(null);
     const selcetNodeEvent = (event) => {
         const node = event.node;
-        if (node.data.flags.isAttached) return;
+        if (nodeFlags.isAttached & node.data.flag) return;
         // 如果点击的是同一个节点，不做任何操作
         if (lastClickedNodeId.value === node.id) return;
         // 如果之前有选中的节点，先取消选中
@@ -84,6 +85,7 @@ export const useVFlowEvents = () => {
                 recursiveUpdateNodeSize(node.parentNode)
             }
         })
+        autoSaveWorkflow();
     })
     onNodeContextMenu((event) => {
         console.log("右键节点", event.node.id);
@@ -118,15 +120,6 @@ export const useVFlowEvents = () => {
 
     onConnect((event) => {
         addEdgeToVFlow(event);
-    })
-
-    onNodesChange((event) => {
-        // console.log("节点变化", event);
-        autoSaveWorkflow();
-    })
-
-    onEdgesChange((event) => {
-        // console.log("边变化", event);
         autoSaveWorkflow();
     })
 

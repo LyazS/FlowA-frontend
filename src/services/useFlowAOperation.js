@@ -3,13 +3,14 @@ import { ref, watch, computed, onMounted, onUnmounted, nextTick } from 'vue';
 import { fetchEventSource } from "@microsoft/fetch-event-source";
 import { useVueFlow } from "@vue-flow/core";
 import { useVFlowInitial } from "@/hooks/useVFlowInitial";
-import { getUuid, setValueByPath } from "@/utils/tools";
+import { getUuid, setValueByPath, downloadJson } from "@/utils/tools";
 import { useRequestMethod } from "@/services/useRequestMethod";
 import { useVFlowManagement } from "@/hooks/useVFlowManagement";
 import { useKeyboardControls } from "@/hooks/useKeyboardControls";
 import { SubscribeSSE } from '@/services/useSSE'
 import { debounce } from 'lodash';
 import { useMessage } from 'naive-ui';
+import { nodeFlags } from '@/utils/schemas'
 
 let instance = null;
 export const useFlowAOperation = () => {
@@ -28,6 +29,7 @@ export const useFlowAOperation = () => {
   const WorkflowID = ref(null);
   const WorkflowName = ref(null);
   const AutoSaveMessage = ref("");
+  const Jinja2RenderNodeIDs = ref([]);
   const isEditorMode = computed(() => {
     return TaskID.value === null;
   });
@@ -47,7 +49,7 @@ export const useFlowAOperation = () => {
           && path[0] === 'state'
           && path[1] == 'status') {
           const vf_node = findNode(oriid);
-          if (vf_node && !vf_node.data.flags.isAttached) {
+          if (vf_node && !(nodeFlags.isAttached & vf_node.data.flag)) {
             vf_node.data.state.copy[nid] = { status: data };
           }
         }
@@ -63,16 +65,13 @@ export const useFlowAOperation = () => {
     }
   }
   const { subscribe, unsubscribe } = SubscribeSSE(
-    'GET',
-    null,
-    null,
     // onOpen
     async (response) => {
       console.log("onopen SSE", response.ok);
     },
     // onMessage
     async (event) => {
-      console.log("onmessage SSE", event.event);
+      // console.log("onmessage SSE", event.event);
       if (event.event === "updatenode") {
         let data = JSON.parse(event.data);
         // console.log(data);
@@ -172,16 +171,16 @@ export const useFlowAOperation = () => {
     WorkflowName.value = name;
     localStorage.setItem('curWorkflowID', WorkflowID.value);
   }
+
   const loadWorkflow = async (wid) => {
     clearTaskID();
-    if (!wid) {
-      await createNewWorkflow('新建工作流');
-    }
-    else {
+    WorkflowID.value = null;
+    WorkflowName.value = null;
+    if (wid) {
       const res = await postData(`workflow/read`, { wid: wid, locations: ["name", "vflow"] });
       console.log(`read Workflow ${wid}: `, res);
       if (!res.success) {
-        await createNewWorkflow('新建工作流');
+        message.error(res.message);
       }
       else {
         const name = res.data[0];
@@ -196,6 +195,35 @@ export const useFlowAOperation = () => {
     }
   };
 
+  const uploadWorkflow = async (name, wf_json) => {
+    const vflow = wf_json.vflow;
+    const res = await postData(`workflow/create`, { name, vflow });
+    if (!res.success) {
+      message.error(res.message);
+      return;
+    }
+    else {
+      const wid = res.data;
+      await loadWorkflow(wid);
+      message.success(`上传工作流【${name}】成功`);
+    }
+  };
+
+  const downloadWorkflow = async (wid) => {
+    const res = await postData(`workflow/read`, { wid: wid, locations: ["name", "vflow"] });
+    console.log(`Download Workflow ${wid}: `, res);
+    if (!res.success) {
+      message.error(res.message);
+    }
+    else {
+      const wfname = res.data[0];
+      const flow = JSON.stringify({ version: "0.0.1", vflow: res.data[1] });
+      // 要符合文件名规范，不能包含特殊字符
+      const wfname_safe = wfname.replace(/[\\/:*?"<>|]/g, '_');
+      downloadJson(flow, `${wfname_safe}.json`);
+    }
+  };
+
   const runflow = async (callback = null) => {
     const vflow = toObject();
     const re_callback = {
@@ -206,7 +234,16 @@ export const useFlowAOperation = () => {
           console.log("start subscribe");
           if (data.data.hasOwnProperty("tid")) {
             setTaskID(data.data["tid"]);
-            subscribe(`${import.meta.env.VITE_API_URL}/api/progress?taskid=${data.data["tid"]}`);
+            subscribe(
+              `${import.meta.env.VITE_API_URL}/api/progress`,
+              'POST',
+              null,
+              {
+                tid: data.data["tid"],
+                node_type: "ALL_TASK_NODE",
+                selected_nids: null,
+              },
+            );
           }
           else {
             console.log(data.data);
@@ -271,13 +308,25 @@ export const useFlowAOperation = () => {
       nodesDraggable.value = false;
       nodesConnectable.value = false;
       console.log("loadResult Done.");
-      subscribe(`${import.meta.env.VITE_API_URL}/api/progress?taskid=${tid}`)
+      subscribe(
+        `${import.meta.env.VITE_API_URL}/api/progress`,
+        'POST',
+        null,
+        {
+          tid: tid,
+          node_type: "ALL_TASK_NODE",
+          selected_nids: null,
+        },
+      )
     }
   };
 
   const onMountedFunc = async () => {
     // 打开网页就加载上一次的工作流，如果没有就新建一个空白的工作流
     const ls_wid = localStorage.getItem('curWorkflowID') || null;
+    if (ls_wid) {
+      Jinja2RenderNodeIDs.value = JSON.parse(localStorage.getItem(`${ls_wid}:Jinja2RenderNodeIDs`) || 'null') ?? null;
+    }
     await loadWorkflow(ls_wid);
     console.log("loadWorkflow Done.");
   };
@@ -290,11 +339,13 @@ export const useFlowAOperation = () => {
     TaskID,
     WorkflowID,
     WorkflowName,
+    Jinja2RenderNodeIDs,
     AutoSaveMessage,
     isEditorMode,
     runflow,
     autoSaveWorkflow,
     createNewWorkflow,
+    uploadWorkflow,
     renameWorkflow,
     getWorkflows,
     loadWorkflow,
@@ -302,6 +353,7 @@ export const useFlowAOperation = () => {
     loadResult,
     returnEditorMode,
     deleteWorkflow,
+    downloadWorkflow,
     onMountedFunc,
   };
   return instance;

@@ -23,26 +23,38 @@ const AceCodeEditor = defineAsyncComponent(() => import('./AceCodeEditor.vue'));
 const FlowResults = defineAsyncComponent(() => import('./FlowResults.vue'));
 const FlowRename = defineAsyncComponent(() => import('@/components/panelctrls/FlowRename.vue'));
 const FlowCreator = defineAsyncComponent(() => import('@/components/panelctrls/FlowCreator.vue'));
+const Jinja2Render = defineAsyncComponent(() => import('@/components/panelctrls/Jinja2Render.vue'));
 const props = defineProps({
     nodeId: {
         type: [String, null],
         required: true
     }
 })
-const { TaskID, WorkflowName, AutoSaveMessage } = useFlowAOperation();
+const { TaskID, WorkflowID, WorkflowName, AutoSaveMessage } = useFlowAOperation();
 const isShowCodeEditor = ref(false);
 const CodeEditorPath = ref([]);
 const CodeEditorLangType = ref('CodePython');
 provide('isShowCodeEditor', isShowCodeEditor);
 provide('CodeEditorPath', CodeEditorPath);
 provide('CodeEditorLangType', CodeEditorLangType);
-const isShowFlowResults = ref(false);
+const isShowFlowResults_inner = ref(false);
+const isShowFlowResults = computed({
+    get: () => {
+        if (!!WorkflowID.value) { return isShowFlowResults_inner.value; }
+        else { return true; }
+    },
+    set: (val) => {
+        if (!!WorkflowID.value) { isShowFlowResults_inner.value = val; }
+        else { isShowFlowResults_inner.value = true; }
+    }
+})
 provide('isShowFlowResults', isShowFlowResults);
 const isShowWFRename = ref(false);
 provide("isShowWFRename", isShowWFRename);
 const isShowWFCreator = ref(false);
 provide("isShowWFCreator", isShowWFCreator);
-
+const isShowJinja2Render = ref(false);
+provide("isShowJinja2Render", isShowJinja2Render);
 </script>
 
 <template>
@@ -61,6 +73,7 @@ provide("isShowWFCreator", isShowWFCreator);
     <FlowResults />
     <FlowRename />
     <FlowCreator />
+    <Jinja2Render v-if="TaskID" />
 </template>
 
 <style scoped>

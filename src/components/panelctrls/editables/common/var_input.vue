@@ -6,14 +6,10 @@
                 @blur="isEditing = false" @focus="isEditing = true" @update:value="updateKey" />
             <!-- 类型选择 -->
             <n-select :style="{ width: '20%' }" size="small" :options="typeSelectionsEx" :disabled="!isEditorMode"
-                :value="itemType" @update:value="updateType" :consistent-menu-width="false"/>
+                :value="itemType" @update:value="updateType" :consistent-menu-width="false" />
             <!-- 值输入 -->
-            <cp_var_select v-if="itemType === 'ref'" :style="{ width: '50%' }" size="small" :options="selfVarSelections"
-                :value="itemValue" @update:value="updateValue" />
-            <n-switch v-else-if="itemType === 'Boolean'" :style="{ width: '50%' }" size="medium"
-                :disabled="!isEditorMode" :value="itemValue" @update:value="updateValue" />
-            <n-input v-else :style="{ width: '50%' }" size="small" :value="itemValue" :disabled="!isEditorMode"
-                @blur="isEditing = false" @focus="isEditing = true" @update:value="updateValue" />
+            <cp_var_input_type :style="{ width: '50%' }" size="small" :itemType="itemType" :itemValue="itemValue"
+                :selfVarSelections="selfVarSelections" @update:itemValue="updateValue" />
         </n-flex>
         <!-- 删除按钮 -->
         <n-button circle tertiary size="small" type="error" @click="rmItem" :disabled="!isEditorMode">
@@ -28,12 +24,13 @@
 
 <script setup>
 import { ref, computed, h, inject, defineAsyncComponent } from 'vue'
-import { useMessage, NSwitch, NFlex, NText, NIcon, NButton, NCard, NForm, NFormItem, NGrid, NGridItem, NInput, NSelect, NSpace, NTag } from 'naive-ui'
+import { useMessage, NSwitch, NFlex, NText, NIcon, NButton, NCard, NForm, NFormItem, NGrid, NGridItem, NInput, NInputNumber, NSelect, NSpace, NTag } from 'naive-ui'
 import { Add, Close } from '@vicons/ionicons5'
 import { typeSelectionsEx } from '@/utils/schemas'
 import { useFlowAOperation } from '@/services/useFlowAOperation.js'
 
 const cp_var_select = defineAsyncComponent(() => import('@/components/panelctrls/editables/common/var_select.vue'));
+const cp_var_input_type = defineAsyncComponent(() => import('@/components/panelctrls/editables/common/var_input_type.vue'));
 
 const props = defineProps({
     itemKey: {
@@ -45,7 +42,7 @@ const props = defineProps({
         required: true,
     },
     itemValue: {
-        type: [String, Boolean],
+        type: [String, Boolean, Number],
         required: true,
     },
     itemIdx: {

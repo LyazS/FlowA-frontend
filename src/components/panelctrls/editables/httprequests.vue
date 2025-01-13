@@ -5,8 +5,9 @@
                 请求 Method & URL
             </editable_header>
             <n-flex class="flexctitem" justify="space-between" :style="{ width: '100%' }" :wrap="false">
-                <n-select v-model:value="thisMethod" :options="HttpMethodSelect" :style="{ width: '8em' }" />
-                <n-input v-model:value="thisUrl" :style="{ flex: '1' }" />
+                <n-select v-model:value="thisMethod" :options="HttpMethodSelect" :style="{ width: '8em' }"
+                    :disabled="!isEditorMode" />
+                <n-input v-model:value="thisUrl" :style="{ flex: '1' }" :disabled="!isEditorMode" />
             </n-flex>
         </n-flex>
         <n-flex vertical :style="{ width: '100%' }">
@@ -27,10 +28,10 @@
                 <n-flex class="flexctitem" justify="space-between" :style="{ width: '100%' }" :wrap="false">
                     <n-flex class="flexctitem" :style="{ width: '95%' }" :wrap="false">
                         <n-auto-complete size="small" v-model:value="item.key" :options="HeaderKeySelectGroup"
-                            placeholder="按'/'键自动填充" :get-show="headerKeyGetShow" :style="{ width: '50%' }"
-                            @focus="isEditing = true" @blur="isEditing = false" />
+                            :disabled="!isEditorMode" placeholder="按'/'键自动填充" :get-show="headerKeyGetShow"
+                            :style="{ width: '50%' }" @focus="isEditing = true" @blur="isEditing = false" />
                         <n-auto-complete size="small" v-model:value="item.value" placeholder="按'/'键自动填充"
-                            :options="buildHeaderValueSelect(item.key)"
+                            :disabled="!isEditorMode" :options="buildHeaderValueSelect(item.key)"
                             :get-show="(value) => headerValueGetShow(item.key, value)" :style="{ width: '50%' }"
                             @focus="isEditing = true" @blur="isEditing = false" />
                     </n-flex>
@@ -70,20 +71,20 @@
                         添加
                     </n-button>
                     <n-select v-model:value="thisBody.type" :options="HttpBodyTypeSelect" :consistent-menu-width="false"
-                        :style="{ width: 'auto' }" />
+                        :disabled="!isEditorMode" :style="{ width: 'auto' }" />
                 </n-flex>
             </n-flex>
             <n-input v-if="isBodyContentText" v-model:value="thisBody.content1" type="textarea" size="small" :autosize="{
                 minRows: 3,
                 maxRows: 10,
-            }" />
+            }" :disabled="!isEditorMode" />
             <template v-else-if="isBodyContentXWWWForm" v-for="(item, index) in thisBody.content2">
                 <n-flex class="flexctitem" justify="space-between" :style="{ width: '100%' }" :wrap="false">
                     <n-flex class="flexctitem" :style="{ width: '95%' }" :wrap="false">
                         <n-input size="small" v-model:value="item.key" :style="{ width: '50%' }" placeholder="键"
-                            @focus="isEditing = true" @blur="isEditing = false" />
+                            :disabled="!isEditorMode" @focus="isEditing = true" @blur="isEditing = false" />
                         <n-input size="small" v-model:value="item.value" :style="{ width: '50%' }" placeholder="值"
-                            @focus="isEditing = true" @blur="isEditing = false" />
+                            :disabled="!isEditorMode" @focus="isEditing = true" @blur="isEditing = false" />
                     </n-flex>
                     <n-button circle tertiary size="small" type="error" @click="rmBody_XWWWForm(index)"
                         :disabled="!isEditorMode">
@@ -99,12 +100,12 @@
                 <n-flex class="flexctitem" justify="space-between" :style="{ width: '100%' }" :wrap="false">
                     <n-flex class="flexctitem" :style="{ width: '95%' }" :wrap="false">
                         <n-input size="small" v-model:value="item.key" :style="{ width: '30%' }" placeholder="键"
-                            @focus="isEditing = true" @blur="isEditing = false" />
+                            :disabled="!isEditorMode" @focus="isEditing = true" @blur="isEditing = false" />
                         <n-select v-model:value="item.type" :options="FormDataContentTypeSelect"
-                            :consistent-menu-width="false" :style="{ width: '20%' }" />
+                            :disabled="!isEditorMode" :consistent-menu-width="false" :style="{ width: '20%' }" />
                         <n-input v-if="item.type === 'text'" size="small" v-model:value="item.value"
-                            :style="{ width: '50%' }" placeholder="值" @focus="isEditing = true"
-                            @blur="isEditing = false" />
+                            :disabled="!isEditorMode" :style="{ width: '50%' }" placeholder="值"
+                            @focus="isEditing = true" @blur="isEditing = false" />
                         <cp_var_select v-else-if="item.type === 'file'" :style="{ width: '50%' }" size="small"
                             :options="selfVarSelections" v-model:value="item.value" />
                     </n-flex>
@@ -137,9 +138,9 @@
                 <n-flex class="flexctitem" justify="space-between" :style="{ width: '100%' }" :wrap="false">
                     <n-flex class="flexctitem" :style="{ width: '95%' }" :wrap="false">
                         <n-input size="small" v-model:value="item.key" :style="{ width: '50%' }" placeholder="键"
-                            @focus="isEditing = true" @blur="isEditing = false" />
+                            :disabled="!isEditorMode" @focus="isEditing = true" @blur="isEditing = false" />
                         <n-input size="small" v-model:value="item.value" :style="{ width: '50%' }" placeholder="值"
-                            @focus="isEditing = true" @blur="isEditing = false" />
+                            :disabled="!isEditorMode" @focus="isEditing = true" @blur="isEditing = false" />
                     </n-flex>
                     <n-button circle tertiary size="small" type="error" @click="rmCookie(index)"
                         :disabled="!isEditorMode">

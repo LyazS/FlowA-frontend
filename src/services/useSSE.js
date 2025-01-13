@@ -1,9 +1,6 @@
 import { fetchEventSource } from "@microsoft/fetch-event-source";
 
 export function SubscribeSSE(
-    method,
-    headers,
-    body,
     onOpen,
     onMessage,
     onClose,
@@ -11,7 +8,7 @@ export function SubscribeSSE(
 ) {
     let controller = null;
 
-    async function subscribe(url) {
+    async function subscribe(url, method, headers, body) {
         // Abort any existing subscription
         if (controller) {
             controller.abort();
@@ -26,7 +23,7 @@ export function SubscribeSSE(
                 method: method,
                 signal: controller.signal,
                 ...(headers !== null && { headers }),
-                ...(body !== null && { body }),
+                ...(body !== null && { body: JSON.stringify(body) }),
                 async onopen(event) {
                     if (signal.aborted) {
                         return;
@@ -39,14 +36,14 @@ export function SubscribeSSE(
                     }
                     await onMessage(event);
                 },
-                async onclose() { 
-                    await onClose(); 
-                    controller.abort(); 
+                async onclose() {
+                    await onClose();
+                    controller.abort();
                 },
-                async onerror(err) { 
-                    await onError(err); 
-                    controller.abort(); 
-                    throw err; 
+                async onerror(err) {
+                    await onError(err);
+                    controller.abort();
+                    throw err;
                 },
             };
 

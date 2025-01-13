@@ -23,25 +23,25 @@ import {
     addResult,
     rmResult,
 } from '../NodeOperator.js'
-import { nodeFlags } from '@/utils/schemas'
 
 import { cloneDeep } from 'lodash';
 import NodeVue from '../all_node_vue/basenode.vue';
+import { nodeFlags } from '@/utils/schemas'
 
 const _initInfo = createBaseNodeInfo();
-initNodeFlag(_initInfo, nodeFlags.isTask);
+initNodeFlag(_initInfo, nodeFlags.isPassive);
 initConnectionsAttribute(_initInfo);
 initRunningAttribute(_initInfo);
 initStateAttribute(_initInfo);
-setNodeType(_initInfo, "code_interpreter");
+setNodeType(_initInfo, "jinja2_template");
 setVueType(_initInfo, "basenode");
-setLabel(_initInfo, "代码解释器");
+setLabel(_initInfo, "Jinja2模板");
 initSize(_initInfo, 80, 80);
 
 addHandle(_initInfo, "inputs", "input");
-addHandle(_initInfo, "outputs", "output");
-addHandle(_initInfo, "callbackUsers", "callbackUser");
-addHandle(_initInfo, "callbackFuncs", "callbackFunc");
+// addHandle(_initInfo, "outputs", "output");
+// addHandle(_initInfo, "callbackUsers", "callbackUser");
+// addHandle(_initInfo, "callbackFuncs", "callbackFunc");
 
 addConnection(_initInfo, "self", "self", { type: "FromOuter", inputKey: "input" });
 addPayload(_initInfo, {
@@ -51,14 +51,10 @@ addPayload(_initInfo, {
     ], uitype: "vars_input"
 }, 'D_VARSINPUT');
 addPayload(_initInfo, {
-    label: "Python 代码", type: "String", key: "Code",
-    data: "#You can use numpy and cv2 by import\ndef main(arg1, arg2):\n    # do something\n    return {\n        \"output1\": arg1,\n        \"output2\": arg2\n    }",
-    uitype: "codeeditor", config: { language: "python" }
+    label: "Jinja2 模板", type: "String", key: "Code",
+    data: "{{ arg1 }} {{ arg2 }}",
+    uitype: "codeeditor", config: { language: "django" }
 }, 'D_CODE');
-setOutputsUIType(_initInfo, "codeoutputs");
-addResultWConnect(_initInfo, { label: "output1", type: "String", key: "output1", data: null, }, "output");
-addResultWConnect(_initInfo, { label: "output2", type: "String", key: "output2", data: null, }, "output");
 
 export const initInfo = cloneDeep(_initInfo);
-
 export { NodeVue };

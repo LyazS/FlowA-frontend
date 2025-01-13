@@ -29,6 +29,8 @@ import modeMarkdownUrl from 'ace-builds/src-noconflict/mode-markdown?url';
 ace.config.setModuleUrl('ace/mode/markdown', modeMarkdownUrl);
 import modeTextUrl from 'ace-builds/src-noconflict/mode-text?url';
 ace.config.setModuleUrl('ace/mode/text', modeTextUrl);
+import modeDjangoUrl from 'ace-builds/src-noconflict/mode-django?url';
+ace.config.setModuleUrl('ace/mode/django', modeDjangoUrl);
 import themeUrl from 'ace-builds/src-noconflict/theme-tomorrow_night_bright?url';
 ace.config.setModuleUrl('ace/theme/tomorrow_night_bright', themeUrl);
 
@@ -84,7 +86,7 @@ const isShow = computed(() => {
 
 </script>
 <template>
-    <n-modal v-model:show="isShow" :close-on-esc="false">
+    <n-modal :show="isShow" :close-on-esc="false">
         <n-card :title="`${thisnode.data.label}`" closable @close="isShowCodeEditor = false" :style="{ width: '90%' }"
             content-style="padding: 10px">
             <v-ace-editor v-model:value="codedata" :lang="langtype" theme="tomorrow_night_bright" :options="options"

@@ -5,6 +5,7 @@ import { useRequestMethod } from '@/services/useRequestMethod';
 import { getUuid, setValueByPath } from '@/utils/tools.js';
 import { useMessage } from 'naive-ui';
 import { resetState } from "@/components/nodes/NodeOperator.js"
+import { nodeFlags } from '@/utils/schemas'
 // 单例模式
 let instance = null;
 export const useVFlowManagement = () => {
@@ -47,6 +48,8 @@ export const useVFlowManagement = () => {
                 NestedNodeGraph.value[node.parentNode].children.push(nid)
             }
         })
+        // console.log("getNodes.value", getNodes.value);
+        // console.log("buildNestedNodeGraph", NestedNodeGraph.value);
     }
 
     function getNumberWithPrefix(prefix, str) {
@@ -58,7 +61,13 @@ export const useVFlowManagement = () => {
         let vf_node = findNode(nodeId);
         let nested_node = getNestedNodeById(nodeId);
         if (!vf_node || !nested_node) return;
-        if (nested_node.children.length <= 0) return;
+        const nested_node_childs = nested_node.children.reduce((acc, childId) => {
+            let vf_node_child = findNode(childId);
+            // 子节点不计算
+            if (!(nodeFlags.isAttached & vf_node_child.data.flag)) acc += 1;
+            return acc;
+        }, 0);
+        if (nested_node_childs <= 0) return;
 
         let vf_node_pos = vf_node.position;
         // 遍历子节点，计算最小包围盒
@@ -66,7 +75,7 @@ export const useVFlowManagement = () => {
         nested_node.children.forEach(childId => {
             let vf_node_child = findNode(childId);
             // 固定位置的子节点不计算
-            if (vf_node_child.data.flags.isAttached) return;
+            if (nodeFlags.isAttached & vf_node_child.data.flag) return;
             minX = Math.min(minX, vf_node_child.position.x + vf_node_pos.x);
             minY = Math.min(minY, vf_node_child.position.y + vf_node_pos.y);
             maxX = Math.max(maxX, vf_node_child.position.x + vf_node_pos.x + vf_node_child.data.size.width);
@@ -85,7 +94,7 @@ export const useVFlowManagement = () => {
         nested_node.children.forEach(childId => {
             let vf_node_child = findNode(childId);
             // 固定位置的子节点
-            if (vf_node_child.data.flags.isAttached) {
+            if (nodeFlags.isAttached & vf_node_child.data.flag) {
                 let [yPart, xPart] = vf_node_child.data.attaching.pos.split('-');
                 if (yPart.startsWith("bottom")) {
                     const yOffset = getNumberWithPrefix("bottom", yPart) * vf_node.data.nesting.attached_pad.gap;
@@ -128,7 +137,7 @@ export const useVFlowManagement = () => {
             const nest_regex = /#(\w+)/g;
             const pid_matches = parentNode.id.match(nest_regex) || [];
             console.log("pid_matches", pid_matches);
-            if (parentNode.data.flags.isNested) {
+            if (nodeFlags.isNested & parentNode.data.flag) {
                 new_node_id += pid_matches.join('') + `#${parentNode.data.nesting.tag}`;
             }
         }
@@ -173,9 +182,7 @@ export const useVFlowManagement = () => {
             else if (xPart == "center") {
                 new_node_position.x = parentNode.position.x + parentNode.data.size.width / 2 - parentNode.data.nesting.attached_pad.right;
             }
-            // new_node.data.flags.isAttached = true;
-            // new_node.data.attaching.pos = nodeinfo.position;
-            // new_node.data.attaching.type = nodeinfo.attached_type;
+
             new_node.draggable = false;
             new_node.selectable = false;
             new_node_position.x -= offset_size.width / 2;
@@ -234,7 +241,10 @@ export const useVFlowManagement = () => {
             || (params.sourceHandle.startsWith("callbackUser") && params.targetHandle.startsWith("callbackFunc"));
         let is_diff_node = (params.source !== params.target);
         let is_same_parent = (getNestedNodeById(params.source)?.parentNode === getNestedNodeById(params.target)?.parentNode);
-        let is_all_attached = (findNode(params.source)?.data.flags.isAttached && findNode(params.target)?.data.flags.isAttached);
+        let is_all_attached = (
+            (nodeFlags.isAttached & findNode(params.source)?.data.flag)
+            && (nodeFlags.isAttached & findNode(params.target)?.data.flag)
+        );
         console.log("is_match_port", is_match_port, "is_diff_node", is_diff_node, "is_same_parent", is_same_parent, "is_all_attached", is_all_attached);
         if (is_match_port
             && is_diff_node

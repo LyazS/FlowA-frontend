@@ -2,6 +2,7 @@ import { ref, reactive, markRaw, onBeforeMount } from "vue";
 import { cloneDeep } from "lodash";
 import { useVueFlow } from "@vue-flow/core";
 import { getUuid } from "@/utils/tools";
+import { nodeFlags } from '@/utils/schemas'
 // 单例模式
 let instance = null;
 
@@ -36,7 +37,7 @@ export const useVFlowInitial = () => {
     AddNodeListFromInitInfos.value = Object.entries(AllNodeInitInfos.value)
       .sort((a, b) => a[0].localeCompare(b[0])) // 按key排序
       .map(([key, item]) => item)
-      .filter((item) => !item.data.flags.isAttached);
+      .filter((item) => !(nodeFlags.isAttached & item.data.flag));
     console.log(
       "AddNodeListFromInitInfos.value",
       AddNodeListFromInitInfos.value
@@ -60,14 +61,14 @@ export const useVFlowInitial = () => {
   };
 
   const reBuildCounter = () => {
-    for(const key in AllNodeCounters.value){
+    for (const key in AllNodeCounters.value) {
       AllNodeCounters.value[key] = 0;
     }
     getNodes.value.forEach((node) => {
       AllNodeCounters.value[node.data.ntype]++;
     });
   };
-  
+
   instance = {
     AllVFNodeTypes,
     initAllNodeInfos,
