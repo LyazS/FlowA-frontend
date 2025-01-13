@@ -174,12 +174,13 @@ export const useFlowAOperation = () => {
 
   const loadWorkflow = async (wid) => {
     clearTaskID();
-    WorkflowID.value = null;
-    WorkflowName.value = null;
+
     if (wid) {
       const res = await postData(`workflow/read`, { wid: wid, locations: ["name", "vflow"] });
       console.log(`read Workflow ${wid}: `, res);
       if (!res.success) {
+        WorkflowID.value = null;
+        WorkflowName.value = null;
         message.error(res.message);
       }
       else {
@@ -192,6 +193,10 @@ export const useFlowAOperation = () => {
         canSaveWorkflow.value = true;
         localStorage.setItem('curWorkflowID', wid);
       }
+    }
+    else {
+      WorkflowID.value = null;
+      WorkflowName.value = null;
     }
   };
 
