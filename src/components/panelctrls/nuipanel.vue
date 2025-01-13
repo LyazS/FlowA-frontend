@@ -30,14 +30,24 @@ const props = defineProps({
         required: true
     }
 })
-const { TaskID, WorkflowName, AutoSaveMessage } = useFlowAOperation();
+const { TaskID, WorkflowID, WorkflowName, AutoSaveMessage } = useFlowAOperation();
 const isShowCodeEditor = ref(false);
 const CodeEditorPath = ref([]);
 const CodeEditorLangType = ref('CodePython');
 provide('isShowCodeEditor', isShowCodeEditor);
 provide('CodeEditorPath', CodeEditorPath);
 provide('CodeEditorLangType', CodeEditorLangType);
-const isShowFlowResults = ref(false);
+const isShowFlowResults_inner = ref(false);
+const isShowFlowResults = computed({
+    get: () => {
+        if (!!WorkflowID.value) { return isShowFlowResults_inner.value; }
+        else { return true; }
+    },
+    set: (val) => {
+        if (!!WorkflowID.value) { isShowFlowResults_inner.value = val; }
+        else { isShowFlowResults_inner.value = true; }
+    }
+})
 provide('isShowFlowResults', isShowFlowResults);
 const isShowWFRename = ref(false);
 provide("isShowWFRename", isShowWFRename);

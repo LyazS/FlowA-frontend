@@ -171,16 +171,16 @@ export const useFlowAOperation = () => {
     WorkflowName.value = name;
     localStorage.setItem('curWorkflowID', WorkflowID.value);
   }
+
   const loadWorkflow = async (wid) => {
     clearTaskID();
-    if (!wid) {
-      await createNewWorkflow('新建工作流');
-    }
-    else {
+    WorkflowID.value = null;
+    WorkflowName.value = null;
+    if (wid) {
       const res = await postData(`workflow/read`, { wid: wid, locations: ["name", "vflow"] });
       console.log(`read Workflow ${wid}: `, res);
       if (!res.success) {
-        await createNewWorkflow('新建工作流');
+        message.error(res.message);
       }
       else {
         const name = res.data[0];
@@ -194,6 +194,21 @@ export const useFlowAOperation = () => {
       }
     }
   };
+
+  const uploadWorkflow = async (name, wf_json) => {
+    const vflow = wf_json.vflow;
+    const res = await postData(`workflow/create`, { name, vflow });
+    if (!res.success) {
+      message.error(res.message);
+      return;
+    }
+    else {
+      const wid = res.data;
+      await loadWorkflow(wid);
+      message.success(`上传工作流【${name}】成功`);
+    }
+  };
+
   const downloadWorkflow = async (wid) => {
     const res = await postData(`workflow/read`, { wid: wid, locations: ["name", "vflow"] });
     console.log(`Download Workflow ${wid}: `, res);
@@ -202,12 +217,13 @@ export const useFlowAOperation = () => {
     }
     else {
       const wfname = res.data[0];
-      const flow = JSON.stringify(res.data[1]);
+      const flow = JSON.stringify({ version: "0.0.1", vflow: res.data[1] });
       // 要符合文件名规范，不能包含特殊字符
       const wfname_safe = wfname.replace(/[\\/:*?"<>|]/g, '_');
       downloadJson(flow, `${wfname_safe}.json`);
     }
   };
+
   const runflow = async (callback = null) => {
     const vflow = toObject();
     const re_callback = {
@@ -329,6 +345,7 @@ export const useFlowAOperation = () => {
     runflow,
     autoSaveWorkflow,
     createNewWorkflow,
+    uploadWorkflow,
     renameWorkflow,
     getWorkflows,
     loadWorkflow,

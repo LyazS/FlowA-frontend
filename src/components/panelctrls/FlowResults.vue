@@ -17,6 +17,8 @@ import {
     NDropdown,
     NEllipsis,
     NUpload,
+    NSkeleton,
+    useMessage,
 } from 'naive-ui'
 import { debounce } from 'lodash'
 import { useVFlowManagement } from '@/hooks/useVFlowManagement'
@@ -30,11 +32,13 @@ const {
     WorkflowName,
     getWorkflows,
     loadWorkflow,
+    uploadWorkflow,
     getResults,
     loadResult,
     deleteWorkflow,
     downloadWorkflow,
 } = useFlowAOperation();
+const message = useMessage();
 const dialog = useDialog();
 const isEditing = inject("isEditing");
 const isShowFlowResults = inject("isShowFlowResults");
@@ -45,6 +49,7 @@ const titlename = computed(() => {
     return `工作流管理器`
 });
 const history_titlename = computed(() => {
+    if (!WorkflowID.value) { return '选择工作流以查看历史记录'; }
     return `【${WorkflowName.value}】的历史记录`
 });
 const loadResult_btn = async (tid) => {
@@ -121,14 +126,8 @@ const deleteWorkflow_btn = async (wid, wname) => {
         },
     });
 };
-watch(isShowFlowResults, async (newVal) => {
-    if (newVal) {
-        updateResults();
-        updateWorkflows();
-    }
-});
 
-const downloadWorkflow_btn = async (wid) => { 
+const downloadWorkflow_btn = async (wid) => {
     await downloadWorkflow(wid);
 };
 const renderIcon = (icon) => {
@@ -155,17 +154,67 @@ const wfOperations = [
         icon: renderIcon(Close)
     }
 ];
-const handleSelectWFOperator = (key) => {
-    if (key ==='rename') {
+const handleSelectWFOperator = (key, wid, wname) => {
+    if (key === 'rename') {
         isShowWFRename.value = true;
     }
     else if (key === 'exportWF') {
-        downloadWorkflow_btn(WorkflowID.value);
+        downloadWorkflow_btn(wid);
     }
     else if (key === 'deleteWF') {
-        deleteWorkflow_btn(WorkflowID.value, WorkflowName.value);
+        deleteWorkflow_btn(wid, wname);
     }
 };
+const uploadWF = async ({
+    file,
+    data,
+    headers,
+    withCredentials,
+    action,
+    onFinish,
+    onError,
+    onProgress
+}) => {
+    // console.log(file.name);
+    // console.log(file.file);
+    // 检查文件类型是否为 JSON
+    if (file.file && file.file.type === 'application/json') {
+        const reader = new FileReader(); // 创建 FileReader 对象
+
+        // 读取文件内容
+        reader.onload = async (event) => {
+            try {
+                const jsonContent = JSON.parse(event.target.result); // 解析 JSON
+                // console.log('文件内容:', jsonContent); // 打印 JSON 内容
+                await uploadWorkflow(file.name.replace('.json', ''), jsonContent);
+                isShowFlowResults.value = false;
+            } catch (error) {
+                message.error(`JSON 解析失败:${error}`);
+            }
+        };
+
+        reader.onerror = (error) => {
+            message.error(`读取文件失败:${error}`);
+        };
+
+        reader.readAsText(file.file); // 以文本形式读取文件
+    } else {
+        message.error('文件不是 JSON 类型');
+    }
+};
+
+watch(isShowFlowResults, async (newVal) => {
+    if (newVal) {
+        await updateWorkflows();
+        await updateResults();
+    }
+});
+
+onMounted(async () => {
+    await updateWorkflows();
+    await updateResults();
+});
+
 </script>
 <template>
     <n-modal v-model:show="isShowFlowResults" :close-on-esc="true" transform-origin="center">
@@ -183,7 +232,7 @@ const handleSelectWFOperator = (key) => {
                                 </template>
                                 新建工作流
                             </n-button>
-                            <n-upload :show-file-list="false">
+                            <n-upload :show-file-list="false" :custom-request="uploadWF">
                                 <n-flex justify="center" align="center" :style="{ height: '100%' }">
                                     <n-button type="info" text>
                                         <template #icon>
@@ -204,7 +253,8 @@ const handleSelectWFOperator = (key) => {
                                             :style="{ flex: '1' }">
                                             <n-ellipsis style="max-width: 12em"> {{ item.name }}</n-ellipsis>
                                         </n-button>
-                                        <n-dropdown :options="wfOperations" @select="handleSelectWFOperator">
+                                        <n-dropdown :options="wfOperations"
+                                            @select="(value) => handleSelectWFOperator(value, item.wid, item.name)">
                                             <n-button size="large" text>
                                                 <template #icon>
                                                     <n-icon>
@@ -226,7 +276,8 @@ const handleSelectWFOperator = (key) => {
                 </n-grid-item>
                 <n-grid-item :span="6">
                     <n-text>{{ history_titlename }}</n-text>
-                    <n-scrollbar style="max-height: 50vh">
+                    <n-skeleton v-if="!WorkflowID" text :repeat="5" :sharp="false" size="medium" />
+                    <n-scrollbar v-else style="max-height: 50vh">
                         <n-flex vertical :style="{ width: '100%' }">
                             <n-button v-for="(item, idx) in results" :key="'result_' + idx"
                                 @click="loadResult_btn(item.tid)" secondary :type="item.type" style="text-align: left;">
