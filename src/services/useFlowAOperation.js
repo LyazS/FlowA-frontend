@@ -170,6 +170,7 @@ export const useFlowAOperation = () => {
     WorkflowID.value = res.data;
     WorkflowName.value = name;
     localStorage.setItem('curWorkflowID', WorkflowID.value);
+    await returnEditorMode(false);
   }
 
   const loadWorkflow = async (wid) => {
@@ -268,6 +269,7 @@ export const useFlowAOperation = () => {
     console.log(`delete Workflow ${wid}: `, res);
     if (res.success) {
       if (WorkflowID.value == wid) {
+        await returnEditorMode(false);
         canSaveWorkflow.value = false;
         WorkflowID.value = null;
         WorkflowName.value = null;
@@ -290,10 +292,12 @@ export const useFlowAOperation = () => {
     nodesConnectable.value = true;
   }
 
-  const returnEditorMode = async () => {
+  const returnEditorMode = async (isLoad = false) => {
     clearTaskID();
     unsubscribe();
-    await loadWorkflow(WorkflowID.value);
+    if (isLoad) {
+      await loadWorkflow(WorkflowID.value);
+    }
   }
 
   const getResults = async () => {
