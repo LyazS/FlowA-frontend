@@ -1,6 +1,6 @@
 <template>
     <n-modal :show="isShowJinja2Render" :close-on-esc="false" transform-origin="center">
-        <n-card closable @close="isShowJinja2Render = false" :style="{ width: '96%' }">
+        <n-card closable @close="isShowJinja2Render = false" class="fullscreen-card">
             <template #header>
                 <editable_header type="success" :level="1">
                     <n-collapse arrow-placement="right">
@@ -16,8 +16,10 @@
                 <template v-for="(value, nid) in Jinja2RenderData" :key="nid">
                     <n-flex vertical style="flex: 1;">
                         <n-tag :bordered="false" type="warning">{{ value['label'] }}</n-tag>
-                        <div v-if="value['rendered']" v-html="value['rendered']">
-                        </div>
+                        <n-scrollbar class="scrollable-content">
+                            <div v-if="value['rendered']" v-html="value['rendered']" class="scrollable-content">
+                            </div>
+                        </n-scrollbar>
                     </n-flex>
                 </template>
             </n-flex>
@@ -111,7 +113,7 @@ const Jinja2RenderUseWorker = throttle(() => {
             }
         }).filter(item => item !== undefined)
     })
-}, 1000);
+}, 300);
 
 
 const { subscribe: subscribeJinja2, unsubscribe: unsubscribeJinja2 } = SubscribeSSE(
@@ -252,8 +254,22 @@ onUnmounted(() => {
 
 
 <style scoped>
+.fullscreen-card {
+    width: 100vw;
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    margin: 0;
+    padding: 0;
+}
+
 .flexctitem {
     align-content: center;
     align-items: center;
+}
+.scrollable-content {
+    /* overflow-y: auto; */
+    max-height: calc(100vh - 120px);
 }
 </style>
