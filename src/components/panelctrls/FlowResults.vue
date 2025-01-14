@@ -19,6 +19,7 @@ import {
     NUpload,
     NSkeleton,
     useMessage,
+    NInput,
 } from 'naive-ui'
 import { debounce } from 'lodash'
 import { useVFlowManagement } from '@/hooks/useVFlowManagement'
@@ -38,14 +39,16 @@ const {
     loadResult,
     deleteWorkflow,
     downloadWorkflow,
+    createNewWorkflow,
+    renameWorkflow,
     returnEditorMode,
 } = useFlowAOperation();
 const message = useMessage();
 const dialog = useDialog();
 const isEditing = inject("isEditing");
 const isShowFlowResults = inject("isShowFlowResults");
-const isShowWFRename = inject("isShowWFRename");
-const isShowWFCreator = inject("isShowWFCreator");
+const results = ref([]);
+const workflows = ref([]);
 
 const titlename = computed(() => {
     return `工作流管理器`
@@ -69,8 +72,6 @@ const loadWorkflow_btn = async (wid) => {
     isShowFlowResults.value = false;
 }
 
-const results = ref([]);
-const workflows = ref([]);
 const updateResults = async () => {
     const res = await getResults();
     // console.log(res);
@@ -131,6 +132,57 @@ const deleteWorkflow_btn = async (wid, wname) => {
     });
 };
 
+const remaneWorkflow_btn = async (wid, wname) => {
+    const new_name = ref(wname);
+    dialog.warning({
+        title: '重命名工作流',
+        content: () => h(NInput, {
+            value: new_name.value,
+            onUpdateValue: (value) => {
+                new_name.value = value;
+            }
+        }, {}),
+        positiveText: '确定',
+        negativeText: '取消',
+        onPositiveClick: async () => {
+            if (new_name.value.trim() === "") {
+                message.error("名称不能为空");
+                return;
+            }
+            await renameWorkflow(wid, new_name.value, {
+                success: () => {
+                    message.success(`重命名为【${new_name.value}】`);
+                },
+                error: (err) => {
+                    message.error(`重命名【${new_name.value}】失败: ${err}`)
+                },
+            });
+            await updateWorkflows();
+        },
+    });
+};
+const createNewWorkflow_btn = async () => {
+    const new_name = ref('');
+    dialog.warning({
+        title: '新建工作流',
+        content: () => h(NInput, {
+            value: new_name.value,
+            onUpdateValue: (value) => {
+                new_name.value = value;
+            }
+        }, {}),
+        positiveText: '确定',
+        negativeText: '取消',
+        onPositiveClick: async () => {
+            if (new_name.value.trim() === "") {
+                message.error("名称不能为空");
+                return;
+            }
+            await createNewWorkflow(new_name.value);
+            isShowFlowResults.value = false;
+        },
+    });
+};
 const downloadWorkflow_btn = async (wid) => {
     await downloadWorkflow(wid);
 };
@@ -160,7 +212,7 @@ const wfOperations = [
 ];
 const handleSelectWFOperator = (key, wid, wname) => {
     if (key === 'rename') {
-        isShowWFRename.value = true;
+        remaneWorkflow_btn(wid, wname);
     }
     else if (key === 'exportWF') {
         downloadWorkflow_btn(wid);
@@ -228,7 +280,7 @@ onMounted(async () => {
                 <n-grid-item :span="8">
                     <n-flex>
                         <n-flex :style="{ flexWrap: 'nowrap', width: '100%' }">
-                            <n-button type="info" text @click="isShowWFCreator = true">
+                            <n-button type="info" text @click="createNewWorkflow_btn">
                                 <template #icon>
                                     <n-icon>
                                         <Add />

@@ -43,8 +43,6 @@ const { reBuildCounter } = useVFlowInitial()
 
 const { getNodes, toObject, fromObject, findNode, removeNodes } = useVueFlow()
 
-const isShowWFCreator = inject("isShowWFCreator");
-const isShowWFRename = inject("isShowWFRename");
 const isShowFlowResults = inject("isShowFlowResults");
 const isShowJinja2Render = inject("isShowJinja2Render");
 

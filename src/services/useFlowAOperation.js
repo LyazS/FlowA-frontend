@@ -136,15 +136,14 @@ export const useFlowAOperation = () => {
     debouncedAutoSaveWorkflow();
   }
 
-  const renameWorkflow = async (name, callback) => {
-    if (!WorkflowID.value) return;
+  const renameWorkflow = async (wid, name, callback) => {
     const data = {
-      wid: WorkflowID.value,
+      wid: wid,
       location: "name",
       data: name,
     }
     const res = await postData("workflow/update", data, callback);
-    if (res.success) {
+    if (res.success && WorkflowID.value == wid) {
       WorkflowName.value = name;
     }
   }
