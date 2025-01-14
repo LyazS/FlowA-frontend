@@ -170,16 +170,18 @@ export const useFlowAOperation = () => {
     WorkflowID.value = res.data;
     WorkflowName.value = name;
     localStorage.setItem('curWorkflowID', WorkflowID.value);
+    await returnEditorMode(false);
   }
 
   const loadWorkflow = async (wid) => {
     clearTaskID();
-    WorkflowID.value = null;
-    WorkflowName.value = null;
+
     if (wid) {
       const res = await postData(`workflow/read`, { wid: wid, locations: ["name", "vflow"] });
       console.log(`read Workflow ${wid}: `, res);
       if (!res.success) {
+        WorkflowID.value = null;
+        WorkflowName.value = null;
         message.error(res.message);
       }
       else {
@@ -192,6 +194,10 @@ export const useFlowAOperation = () => {
         canSaveWorkflow.value = true;
         localStorage.setItem('curWorkflowID', wid);
       }
+    }
+    else {
+      WorkflowID.value = null;
+      WorkflowName.value = null;
     }
   };
 
@@ -262,7 +268,8 @@ export const useFlowAOperation = () => {
     const res = await postData(`workflow/delete?wid=${wid}`);
     console.log(`delete Workflow ${wid}: `, res);
     if (res.success) {
-      if (WorkflowID.value === wid) {
+      if (WorkflowID.value == wid) {
+        await returnEditorMode(false);
         canSaveWorkflow.value = false;
         WorkflowID.value = null;
         WorkflowName.value = null;
@@ -285,10 +292,12 @@ export const useFlowAOperation = () => {
     nodesConnectable.value = true;
   }
 
-  const returnEditorMode = async () => {
+  const returnEditorMode = async (isLoad = false) => {
     clearTaskID();
     unsubscribe();
-    await loadWorkflow(WorkflowID.value);
+    if (isLoad) {
+      await loadWorkflow(WorkflowID.value);
+    }
   }
 
   const getResults = async () => {
@@ -325,7 +334,7 @@ export const useFlowAOperation = () => {
     // 打开网页就加载上一次的工作流，如果没有就新建一个空白的工作流
     const ls_wid = localStorage.getItem('curWorkflowID') || null;
     if (ls_wid) {
-      Jinja2RenderNodeIDs.value = JSON.parse(localStorage.getItem(`${ls_wid}:Jinja2RenderNodeIDs`) || 'null') ?? null;
+      Jinja2RenderNodeIDs.value = JSON.parse(localStorage.getItem(`${ls_wid}:Jinja2RenderNodeIDs`) || '[]') ?? [];
     }
     await loadWorkflow(ls_wid);
     console.log("loadWorkflow Done.");

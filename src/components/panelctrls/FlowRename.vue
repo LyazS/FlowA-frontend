@@ -21,7 +21,7 @@ const message = useMessage();
 const isEditing = inject("isEditing");
 const isShowWFRename = inject("isShowWFRename");
 const isShowFlowResults = inject("isShowFlowResults");
-const renameWflow = ref(WorkflowName.value || "");
+const renameWflow = ref("");
 const renameWflowPlaceHolder = computed(() => {
     return `默认为【${WorkflowName.value}】`
 });
@@ -34,6 +34,7 @@ const onPositiveClick = async () => {
     await renameWorkflow(renameWflow.value, {
         success: () => {
             message.success(`重命名为【${renameWflow.value}】`);
+            renameWflow.value = "";
         },
         error: (err) => {
             message.error(`重命名【${renameWflow.value}】失败: ${err}`)

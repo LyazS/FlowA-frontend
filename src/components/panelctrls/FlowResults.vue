@@ -30,6 +30,7 @@ const {
     TaskID,
     WorkflowID,
     WorkflowName,
+    isEditorMode,
     getWorkflows,
     loadWorkflow,
     uploadWorkflow,
@@ -37,6 +38,7 @@ const {
     loadResult,
     deleteWorkflow,
     downloadWorkflow,
+    returnEditorMode,
 } = useFlowAOperation();
 const message = useMessage();
 const dialog = useDialog();
@@ -59,9 +61,11 @@ const loadResult_btn = async (tid) => {
     isShowFlowResults.value = false;
 }
 const loadWorkflow_btn = async (wid) => {
-    if (WorkflowID.value !== wid) {
-        await loadWorkflow(wid);
+    if (WorkflowID.value == wid) return;
+    if (!isEditorMode.value) {
+        await returnEditorMode(false);
     }
+    await loadWorkflow(wid);
     isShowFlowResults.value = false;
 }
 
@@ -122,7 +126,7 @@ const deleteWorkflow_btn = async (wid, wname) => {
         negativeText: '取消',
         onPositiveClick: async () => {
             await deleteWorkflow(wid);
-            updateWorkflows();
+            await updateWorkflows();
         },
     });
 };

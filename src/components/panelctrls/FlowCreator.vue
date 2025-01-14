@@ -21,14 +21,15 @@ const message = useMessage();
 const isEditing = inject("isEditing");
 const isShowWFCreator = inject("isShowWFCreator");
 const isShowFlowResults = inject("isShowFlowResults");
-const newWflowName = ref(WorkflowName.value || "");
+const newWflowName = ref("");
 
 const onPositiveClick = async () => {
     if (newWflowName.value.trim() === "") {
         newWflowName.value = WorkflowName.value;
     }
-    isShowFlowResults.value = false;
     await createNewWorkflow(newWflowName.value);
+    newWflowName.value = "";
+    isShowFlowResults.value = false;
 }
 </script>
 

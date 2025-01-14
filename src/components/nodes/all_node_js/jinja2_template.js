@@ -52,7 +52,7 @@ addPayload(_initInfo, {
 }, 'D_VARSINPUT');
 addPayload(_initInfo, {
     label: "Jinja2 模板", type: "String", key: "Code",
-    data: "{{ arg1 }} {{ arg2 }}",
+    data: "<p>{{ arg1 }}<p>\n<hr>\n<p>{{ arg2 }}<p>",
     uitype: "codeeditor", config: { language: "django" }
 }, 'D_CODE');
 
