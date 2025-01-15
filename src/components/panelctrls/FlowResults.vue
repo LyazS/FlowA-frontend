@@ -47,6 +47,7 @@ const message = useMessage();
 const dialog = useDialog();
 const isEditing = inject("isEditing");
 const isShowFlowResults = inject("isShowFlowResults");
+const selectedNodeId = inject("selectedNodeId");
 const results = ref([]);
 const workflows = ref([]);
 
@@ -59,6 +60,7 @@ const history_titlename = computed(() => {
 });
 const loadResult_btn = async (tid) => {
     if (TaskID.value !== tid) {
+        selectedNodeId.value = null;
         await loadResult(tid);
     }
     isShowFlowResults.value = false;
@@ -68,6 +70,7 @@ const loadWorkflow_btn = async (wid) => {
     if (!isEditorMode.value) {
         await returnEditorMode(false);
     }
+    selectedNodeId.value = null;
     await loadWorkflow(wid);
     isShowFlowResults.value = false;
 }
@@ -178,6 +181,7 @@ const createNewWorkflow_btn = async () => {
                 message.error("名称不能为空");
                 return;
             }
+            selectedNodeId.value = null;
             await createNewWorkflow(new_name.value);
             isShowFlowResults.value = false;
         },
