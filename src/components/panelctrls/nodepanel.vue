@@ -42,6 +42,7 @@ const {
 } = useVueFlow();
 const isEditing = inject("isEditing");
 const { isEditorMode, autoSaveWorkflow } = useFlowAOperation();
+const selectedNodeId = inject('selectedNodeId');
 
 // 获取节点
 const thisnode = computed(() => {
@@ -189,7 +190,7 @@ onUnmounted(() => {
 
 <template>
     <n-scrollbar style="max-height: calc(100vh - 80px); border-radius:10px;">
-        <n-card header-style="height: 70px;">
+        <n-card header-style="height: 70px;" closable @close="selectedNodeId = null">
             <template #header>
                 <n-h2 prefix="bar" align-text v-if="!isEditingTitle" class="card-title" @click="startEditTilte">
                     <n-text type="success" strong>{{ thisnode.data.label }}</n-text>

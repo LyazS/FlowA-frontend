@@ -40,7 +40,7 @@
             </n-flex>
             <n-input type="textarea" placeholder="请输入Prompt" clearable :disabled="!isEditorMode" :autosize="{
                 minRows: 3,
-                maxRows: 5,
+                maxRows: 15,
             }" v-model:value="pvar.content" @blur="isEditing = false" @focus="isEditing = true" />
         </n-flex>
     </n-flex>

@@ -1,6 +1,6 @@
 <template>
     <n-select :style="style" :value="value" @update:value="updateValue" :options="options" :render-label="renderLabel"
-        :disabled="!isEditorMode" :size="size" :placeholder="placeholder" />
+        :disabled="!isEditorMode" :size="size" :placeholder="placeholder" :consistent-menu-width="false" placement="bottom-end"/>
 </template>
 
 <script setup>

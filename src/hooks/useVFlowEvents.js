@@ -43,6 +43,7 @@ export const useVFlowEvents = () => {
         onNodeMouseLeave,
         onNodeMouseMove,
         onPaneContextMenu,
+        onPaneClick,
         onEdgeContextMenu,
         screenToFlowCoordinate,
         getViewport,
@@ -50,33 +51,29 @@ export const useVFlowEvents = () => {
     } = useVueFlow();
     const { autoSaveWorkflow } = useFlowAOperation();
     // 节点选择事件 =================================================
-    const lastClickedNodeId = ref(null);
+    const selectedNodeId = ref(null);
     const selcetNodeEvent = (event) => {
         const node = event.node;
         if (nodeFlags.isAttached & node.data.flag) return;
         // 如果点击的是同一个节点，不做任何操作
-        if (lastClickedNodeId.value === node.id) return;
+        if (selectedNodeId.value === node.id) return;
         // 如果之前有选中的节点，先取消选中
-        if (lastClickedNodeId.value) {
-            console.log(`Node ${lastClickedNodeId.value} de selected`);
-            lastClickedNodeId.value = null;
+        if (selectedNodeId.value) {
+            console.log(`Node ${selectedNodeId.value} de selected`);
+            selectedNodeId.value = null;
         }
         console.log(`Node ${node.id} selected`);
-        lastClickedNodeId.value = node.id;
+        selectedNodeId.value = node.id;
     };
-    watch(getSelectedNodes, (nodes) => {
-        // 如果选中的节点数量不为1，说明是批量选择或取消选择
-        if (nodes.length !== 1) {
-            if (lastClickedNodeId.value) {
-                console.log(`Node ${lastClickedNodeId.value} de selected`);
-                lastClickedNodeId.value = null;
-            }
-        }
-    })
 
     // vueflow事件监听 =============================================
+    onPaneClick((event) => {
+        selectedNodeId.value = null;
+        // console.log("空白区域点击", event);
+    })
     onNodeClick((event) => {
         selcetNodeEvent(event);
+        // console.log("节点点击", event);
     })
     onNodeDrag((event) => {
         const e_nodes = event.nodes;
@@ -124,7 +121,7 @@ export const useVFlowEvents = () => {
     })
 
     instance = {
-        lastClickedNodeId,
+        selectedNodeId,
     };
     return instance;
 };

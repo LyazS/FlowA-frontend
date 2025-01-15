@@ -51,7 +51,7 @@ const editCode = () => {
                 放大编辑
             </n-button>
         </n-flex>
-        <n-code :code="thisnode.data.payloads.byId[pid].data" :language="thislang" show-line-numbers />
+        <n-code :code="thisnode.data.payloads.byId[pid].data" :language="thislang" show-line-numbers word-wrap/>
     </n-flex>
 </template>
 

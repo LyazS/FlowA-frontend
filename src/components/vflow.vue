@@ -4,9 +4,8 @@
         :select-nodes-on-drag="false" elevate-edges-on-select multi-selection-key-code="Control"
         delete-key-code="Delete">
         <Background />
-        <!-- <miniMap /> -->
         <miniMapCtrl />
-        <nuipanel :nodeId="lastClickedNodeId" />
+        <nuipanel />
 
         <template #edge-normal="buttonEdgeProps">
             <normal_edge :id="buttonEdgeProps.id" :source-x="buttonEdgeProps.sourceX"
@@ -33,17 +32,10 @@
 </style>
 
 <script setup>
-import { cloneDeep } from 'lodash';
 import { ref, markRaw, onMounted, onBeforeMount, onBeforeUnmount, reactive, watch, provide } from 'vue'
-import { ConnectionMode, VueFlow, Panel, useVueFlow } from '@vue-flow/core'
+import { ConnectionMode, VueFlow } from '@vue-flow/core'
 import { Background } from '@vue-flow/background'
 import { ContextMenu } from '@imengyu/vue3-context-menu';
-import {
-    useMessage,
-    darkTheme,
-    NConfigProvider,
-    NMessageProvider,
-} from 'naive-ui';
 import miniMapCtrl from '@/components/panelctrls/miniMapCtrl.vue'
 import nuipanel from '@/components/panelctrls/nuipanel.vue'
 import normal_edge from '@/components/edges/normal_edge/edge.vue'
@@ -75,8 +67,9 @@ const {
 } = useVFlowManagement()
 
 const {
-    lastClickedNodeId
+    selectedNodeId
 } = useVFlowEvents()
+provide('selectedNodeId', selectedNodeId);
 
 const {
     onClickContextMenuRmNode,

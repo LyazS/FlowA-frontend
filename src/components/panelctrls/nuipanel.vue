@@ -1,5 +1,5 @@
 <script setup>
-import { computed, ref, watch, provide, defineAsyncComponent } from 'vue';
+import { computed, ref, watch, provide, defineAsyncComponent, inject } from 'vue';
 import {
     useMessage,
     darkTheme,
@@ -22,12 +22,7 @@ import ctrlpanel from './ctrlpanel.vue';
 const AceCodeEditor = defineAsyncComponent(() => import('./AceCodeEditor.vue'));
 const FlowResults = defineAsyncComponent(() => import('./FlowResults.vue'));
 const Jinja2Render = defineAsyncComponent(() => import('@/components/panelctrls/Jinja2Render.vue'));
-const props = defineProps({
-    nodeId: {
-        type: [String, null],
-        required: true
-    }
-})
+
 const { TaskID, WorkflowID, WorkflowName, AutoSaveMessage } = useFlowAOperation();
 const isShowCodeEditor = ref(false);
 const CodeEditorPath = ref([]);
@@ -49,6 +44,7 @@ const isShowFlowResults = computed({
 provide('isShowFlowResults', isShowFlowResults);
 const isShowJinja2Render = ref(false);
 provide("isShowJinja2Render", isShowJinja2Render);
+const selectedNodeId = inject('selectedNodeId');
 </script>
 
 <template>
@@ -61,9 +57,10 @@ provide("isShowJinja2Render", isShowJinja2Render);
         <ctrlpanel />
     </Panel>
     <Panel class="nodepanel" position="top-right">
-        <nodepanel v-if="!!nodeId" :nodeId="nodeId" />
+        <nodepanel v-if="!!selectedNodeId" :nodeId="selectedNodeId" />
     </Panel>
-    <AceCodeEditor v-if="!!nodeId" :nodeId="nodeId" :path="CodeEditorPath" :langtype="CodeEditorLangType" />
+    <AceCodeEditor v-if="!!selectedNodeId" :nodeId="selectedNodeId" :path="CodeEditorPath"
+        :langtype="CodeEditorLangType" />
     <FlowResults />
     <Jinja2Render v-if="TaskID" />
 </template>
