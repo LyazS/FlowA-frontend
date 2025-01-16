@@ -6,6 +6,7 @@ import { CreateOutline } from '@vicons/ionicons5'
 import { useVFlowManagement } from '@/hooks/useVFlowManagement';
 import { mapVarItemToSelect } from '@/utils/tools'
 import { useFlowAOperation } from '@/services/useFlowAOperation.js'
+import { selectedNodeId } from "@/hooks/useSelectedNodeId.js";
 
 const {
     findVarFromIO,
@@ -42,7 +43,6 @@ const {
 } = useVueFlow();
 const isEditing = inject("isEditing");
 const { isEditorMode, autoSaveWorkflow } = useFlowAOperation();
-const selectedNodeId = inject('selectedNodeId');
 
 // 获取节点
 const thisnode = computed(() => {

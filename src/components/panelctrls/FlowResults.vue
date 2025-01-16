@@ -25,6 +25,7 @@ import { debounce } from 'lodash'
 import { useVFlowManagement } from '@/hooks/useVFlowManagement'
 import { useFlowAOperation } from '@/services/useFlowAOperation'
 import { Ellipse, Close, Add, Pencil, DownloadOutline, CloudUploadOutline, CloudDownloadOutline, CaretDown } from '@vicons/ionicons5'
+import { selectedNodeId } from "@/hooks/useSelectedNodeId.js";
 const { findNode } = useVueFlow();
 // const { } = useVFlowManagement();
 const {
@@ -47,7 +48,6 @@ const message = useMessage();
 const dialog = useDialog();
 const isEditing = inject("isEditing");
 const isShowFlowResults = inject("isShowFlowResults");
-const selectedNodeId = inject("selectedNodeId");
 const results = ref([]);
 const workflows = ref([]);
 

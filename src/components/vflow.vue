@@ -47,6 +47,8 @@ import { useVFlowEvents } from '@/hooks/useVFlowEvents.js'
 import { useContextMenu } from '@/hooks/useContextMenu.js'
 import { useKeyboardControls } from '@/hooks/useKeyboardControls.js'
 import { useFlowAOperation } from '@/services/useFlowAOperation';
+import { selectedNodeId } from "@/hooks/useSelectedNodeId.js";
+
 const {
     AllVFNodeTypes,
     initAllNodeInfos,
@@ -66,10 +68,7 @@ const {
     addEdgeToVFlow,
 } = useVFlowManagement()
 
-const {
-    selectedNodeId
-} = useVFlowEvents()
-provide('selectedNodeId', selectedNodeId);
+const {} = useVFlowEvents()
 
 const {
     onClickContextMenuRmNode,

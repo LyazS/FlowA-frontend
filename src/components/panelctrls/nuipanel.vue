@@ -17,6 +17,7 @@ import {
 import { Panel, useVueFlow } from '@vue-flow/core'
 import { useVFlowManagement } from '@/hooks/useVFlowManagement'
 import { useFlowAOperation } from '@/services/useFlowAOperation'
+import { selectedNodeId } from "@/hooks/useSelectedNodeId.js";
 import nodepanel from './nodepanel.vue'
 import ctrlpanel from './ctrlpanel.vue';
 const AceCodeEditor = defineAsyncComponent(() => import('./AceCodeEditor.vue'));
@@ -44,7 +45,6 @@ const isShowFlowResults = computed({
 provide('isShowFlowResults', isShowFlowResults);
 const isShowJinja2Render = ref(false);
 provide("isShowJinja2Render", isShowJinja2Render);
-const selectedNodeId = inject('selectedNodeId');
 </script>
 
 <template>

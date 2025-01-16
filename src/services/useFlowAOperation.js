@@ -1,5 +1,5 @@
 import axios from "axios";
-import { ref, watch, computed, onMounted, onUnmounted, nextTick } from 'vue';
+import { ref, watch, inject, computed, onMounted, onUnmounted, nextTick } from 'vue';
 import { fetchEventSource } from "@microsoft/fetch-event-source";
 import { useVueFlow } from "@vue-flow/core";
 import { useVFlowInitial } from "@/hooks/useVFlowInitial";
@@ -11,6 +11,7 @@ import { SubscribeSSE } from '@/services/useSSE'
 import { debounce } from 'lodash';
 import { useMessage } from 'naive-ui';
 import { nodeFlags } from '@/utils/schemas'
+import { selectedNodeId } from "@/hooks/useSelectedNodeId.js";
 
 let instance = null;
 export const useFlowAOperation = () => {
@@ -33,7 +34,6 @@ export const useFlowAOperation = () => {
   const isEditorMode = computed(() => {
     return TaskID.value === null;
   });
-
 
   const updateNodeFromSSE = (data) => {
     const nid = data.nid;
@@ -292,6 +292,7 @@ export const useFlowAOperation = () => {
   }
 
   const returnEditorMode = async (isLoad = false) => {
+    selectedNodeId.value = null;
     clearTaskID();
     unsubscribe();
     if (isLoad) {

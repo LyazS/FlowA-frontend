@@ -4,6 +4,7 @@ import { useVFlowManagement } from './useVFlowManagement.js'
 import { useContextMenu } from './useContextMenu.js'
 import { useFlowAOperation } from '@/services/useFlowAOperation.js';
 import { nodeFlags } from '@/utils/schemas'
+import { selectedNodeId } from "@/hooks/useSelectedNodeId.js";
 
 // 单例模式
 let instance = null;
@@ -51,7 +52,6 @@ export const useVFlowEvents = () => {
     } = useVueFlow();
     const { autoSaveWorkflow } = useFlowAOperation();
     // 节点选择事件 =================================================
-    const selectedNodeId = ref(null);
     const selcetNodeEvent = (event) => {
         const node = event.node;
         if (nodeFlags.isAttached & node.data.flag) return;
